@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="home.css">
+    <script src="script_home.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+
+<body>
+    <div class="navbar">
+        <!-- ฝั่งซ้าย: ปุ่มเปิดเมนู + โลโก้ -->
+        <div class="nav-left">
+            <button type="button" class="menu-btn" id="openMenuBtn">
+                <i data-lucide="menu"></i>
+            </button>
+            <h1 class="trademark">Internsight</h1>
+        </div>
+
+        <form class="search-bar" action="">
+            <span class="search-icon">
+                <i data-lucide="search"></i>
+            </span>
+            <input class="search-input" type="text" placeholder="Search">
+
+            <button type="submit" class="search-btn">ค้นหา</button>
+
+            <button type="button" class="filter-btn">
+                <i data-lucide="filter"></i>
+            </button>
+        </form>
+
+        <div class="nav-actions">
+            <button type="button" class="icon-btn bookmark-btn">
+                <i data-lucide="bookmark"></i>
+            </button>
+
+            <div class="user-profile" id="userProfileBtn">
+                <i data-lucide="circle-user-round" class="user-avatar"></i>
+                <span class="user-name" id="currentUserName">User - 101</span>
+                <i data-lucide="chevron-down" class="chevron-icon"></i>
+            </div>
+        </div>
+    </div>
+
+        <!-- เนื้อหาหลักของหน้าเว็บ -->
+        <main class="container">
+
+            <!-- ส่วนหัวข้อหลัก (Hero Section) -->
+            <section class="hero-section">
+                <div class="hero-text">
+                    <h2 class="hero-title">
+                        ทุกประสบการณ์ฝึกงาน<br>
+                        มีเรื่องให้ส่งต่อ
+                    </h2>
+                    <div class="page-indicator">
+                        <span class="pin">📌</span>
+                        <span>หน้าหลัก</span>
+                    </div>
+                </div>
+
+                <!-- กระดาษโน้ต 3 แผ่นฝั่งขวาตาม Mockup -->
+                <div class="hero-papers">
+                    <div class="paper paper-1"></div>
+                    <div class="paper paper-2"></div>
+                    <div class="paper paper-3"></div>
+                </div>
+            </section>
+
+            <!-- โซนการ์ดรีวิวฝึกงาน (ให้ JavaScript วิ่ง Loop มาสร้างใส่ตรงนี้) -->
+            <div class="cards-grid" id="cardsGrid"></div>
+
+
+        </main>
+        <!-- 1. ฉากหลังสีดำทึบโปร่งแสง -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- 2. แผงเมนู Sidebar ด้านซ้าย -->
+        <aside class="sidebar" id="sidebar">
+            <!-- หัว Sidebar: โลโก้ + ปุ่มปิด (X) -->
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i data-lucide="search"></i>
+                    <span class="logo-text">Internsight</span>
+                </div>
+                <button type="button" class="close-btn" id="closeMenuBtn">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <!-- รายการเมนูตาม Mockup -->
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-item">
+                    <i data-lucide="user"></i>
+                    <span>user</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <i data-lucide="filter"></i>
+                    <span>filter</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <i data-lucide="bookmark"></i>
+                    <span>bookmarks</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <i data-lucide="settings"></i>
+                    <span>setting</span>
+                </a>
+            </nav>
+        </aside>
+
+
+</body>
+
+</html>
