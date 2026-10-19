@@ -1,0 +1,396 @@
+/* เปลี่ยนสีภายหลังได้จากตัวแปรชุดนี้ */
+:root {
+	--background: #fff;
+	--paper: #f0f0f0;
+	--ink: #000;
+	--muted: #595959;
+	--tape: #908d8e;
+	--rule: #aaa;
+}
+
+* {
+	box-sizing: border-box;
+}
+body {
+	margin: 0;
+	background: var(--background);
+	color: var(--ink);
+	font-family: "Noto Sans Thai", Tahoma, Arial, sans-serif;
+}
+button,
+input {
+	font: inherit;
+}
+button {
+	cursor: pointer;
+}
+.icon-definitions {
+	position: absolute;
+	width: 0;
+	height: 0;
+	overflow: hidden;
+}
+.icon {
+	width: 24px;
+	height: 24px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.8;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	flex-shrink: 0;
+}
+.site-header {
+	height: 100px;
+	padding: 36px 38px;
+}
+.brand {
+	display: inline-flex;
+	align-items: center;
+	gap: 24px;
+	font:
+		700 21px Arial,
+		sans-serif;
+}
+.brand-icon {
+	width: 29px;
+	height: 29px;
+}
+
+/* สัดส่วนอ้างอิงภาพ Figma 1440 × 1024 */
+.notebook {
+	position: relative;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 28px;
+	max-width: 1290px;
+	margin: 20px auto 70px;
+	width: calc(100% - 100px);
+}
+.intro-page,
+.login-page {
+	position: relative;
+	min-width: 0;
+	height: 782px;
+	background: var(--paper);
+	border: 1px solid var(--ink);
+	border-radius: 60px;
+}
+.top-tape {
+	position: absolute;
+	z-index: 2;
+	width: 106px;
+	height: 35px;
+	left: 108px;
+	top: -17px;
+	background: var(--tape);
+	transform: rotate(-6deg);
+}
+.ruled-paper {
+	position: absolute;
+	top: 100px;
+	bottom: 100px;
+	left: 10.2%;
+	right: 14.5%;
+	background: repeating-linear-gradient(
+		to bottom,
+		var(--rule) 0 1px,
+		transparent 1px 46.5px
+	);
+}
+.intro-page h1 {
+	position: relative;
+	margin: 77px 20px 0;
+	text-align: center;
+	font-size: clamp(40px, 4.5vw, 64px);
+	line-height: 1.12;
+	font-weight: 800;
+	transform: rotate(-6deg);
+	letter-spacing: -1.5px;
+}
+.intro-caption {
+	position: relative;
+	margin: 36px 16px 0;
+	font-size: 24px;
+	font-weight: 500;
+	text-align: center;
+	color: var(--muted);
+	white-space: nowrap;
+}
+.notes {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+.note {
+	position: absolute;
+	background: white;
+	box-shadow: 0 0 10px #0003;
+}
+.note span {
+	position: absolute;
+	top: -10px;
+	left: 30%;
+	width: 42%;
+	height: 17px;
+	background: var(--tape);
+}
+.note-left {
+	width: 147px;
+	height: 140px;
+	top: 373px;
+	left: 14.8%;
+	transform: rotate(-22deg);
+}
+.note-right {
+	width: 163px;
+	height: 155px;
+	top: 382px;
+	right: 13.8%;
+	transform: rotate(15deg);
+}
+.note-front {
+	width: 218px;
+	height: 191px;
+	top: 498px;
+	left: 34.1%;
+	transform: rotate(-9deg);
+}
+.note-front span {
+	height: 20px;
+}
+.binding {
+	position: absolute;
+	z-index: 3;
+	top: 191px;
+	bottom: 191px;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	pointer-events: none;
+}
+.binding span {
+	width: 87px;
+	height: 24px;
+	background: var(--tape);
+}
+
+.login-content {
+	max-width: 462px;
+	width: calc(100% - 100px);
+	margin: 48px auto 0;
+}
+.login-content h2 {
+	margin: 0;
+	text-align: center;
+	font-size: 64px;
+	line-height: 1.45;
+	font-weight: 800;
+}
+.welcome {
+	margin: 8px 0 31px;
+	text-align: center;
+	color: var(--muted);
+	font-size: 24px;
+	font-weight: 500;
+}
+.field {
+	margin-top: 14px;
+}
+.field label {
+	display: block;
+	margin-bottom: 4px;
+	font-size: 24px;
+	font-weight: 700;
+}
+.field input {
+	display: block;
+	width: 100%;
+	height: 53px;
+	padding: 0 28px;
+	border: 1px solid var(--ink);
+	border-radius: 8px;
+	background: white;
+	font-size: 20px;
+}
+.field input::placeholder {
+	color: #aaa;
+	opacity: 1;
+}
+.password-wrapper {
+	position: relative;
+}
+.password-wrapper input {
+	padding-right: 56px;
+}
+.password-wrapper input::placeholder {
+	color: black;
+	letter-spacing: 6px;
+}
+.eye-button {
+	position: absolute;
+	top: 0;
+	right: 10px;
+	height: 100%;
+	width: 44px;
+	display: grid;
+	place-items: center;
+	border: 0;
+	background: transparent;
+}
+.eye-slash {
+	display: none;
+}
+.eye-button[aria-pressed="true"] .eye-slash {
+	display: block;
+}
+.forgot-row {
+	text-align: right;
+	margin-top: 8px;
+}
+.text-button {
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+.forgot-row .text-button {
+	font-size: 16px;
+}
+.login-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	width: 100%;
+	height: 52px;
+	border: 1px solid black;
+	border-radius: 8px;
+	background: black;
+	color: white;
+	font-size: 20px;
+}
+#login-form .login-button {
+	margin-top: 20px;
+}
+.divider {
+	display: flex;
+	align-items: center;
+	gap: 25px;
+	margin: 26px 0 22px;
+	font-size: 24px;
+}
+.divider::before,
+.divider::after {
+	content: "";
+	height: 1px;
+	flex: 1;
+	background: #333;
+}
+.kmutt-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 19px;
+	width: 100%;
+	height: 52px;
+	padding: 0 10px;
+	border: 1px solid #999;
+	border-radius: 8px;
+	background: white;
+	color: black;
+	font-size: 20px;
+}
+.kmutt-button .icon {
+	width: 28px;
+	height: 28px;
+}
+.signup {
+	text-align: center;
+	margin: 25px 0 0;
+	font-size: 24px;
+	font-weight: 500;
+}
+button:hover {
+	filter: brightness(0.88);
+}
+:focus-visible {
+	outline: 3px solid #666;
+	outline-offset: 4px;
+}
+dialog {
+	width: min(440px, calc(100% - 40px));
+	padding: 28px;
+	border: 1px solid black;
+	border-radius: 16px;
+}
+dialog::backdrop {
+	background: #0006;
+}
+dialog h2 {
+	margin-top: 0;
+}
+dialog p {
+	line-height: 1.7;
+}
+
+@media (max-width: 1150px) {
+	.intro-caption {
+		font-size: 18px;
+		white-space: normal;
+	}
+	.login-content {
+		width: calc(100% - 70px);
+	}
+	.login-content h2 {
+		font-size: 52px;
+	}
+	.welcome,
+	.signup {
+		font-size: 20px;
+	}
+	.kmutt-button {
+		font-size: 16px;
+		gap: 10px;
+	}
+}
+@media (max-width: 800px) {
+	.site-header {
+		height: 80px;
+		padding: 25px;
+	}
+	.notebook {
+		grid-template-columns: 1fr;
+		width: calc(100% - 40px);
+		max-width: 620px;
+		margin: 30px auto;
+	}
+	.intro-page,
+	.binding {
+		display: none;
+	}
+	.login-page {
+		height: auto;
+		min-height: 710px;
+		border-radius: 36px;
+		padding-bottom: 40px;
+	}
+	.login-content {
+		width: calc(100% - 48px);
+		margin-top: 35px;
+	}
+	.login-content h2 {
+		font-size: 46px;
+	}
+	.field label {
+		font-size: 21px;
+	}
+	.field input {
+		padding-left: 16px;
+		font-size: 18px;
+	}
+}
