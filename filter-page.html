@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Internsight Filter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Prompt:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/filter-style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <button class="icon-btn" aria-label="เมนู"><svg class="lg"><use href="icons/icons.svg#i-menu"/></svg></button>
+  <div class="brand"><svg><use href="icons/icons.svg#i-logo"/></svg><span>Internsight</span></div>
+  <form class="search" role="search">
+    <svg><use href="icons/icons.svg#i-search"/></svg>
+    <input type="search" placeholder="พิมพ์คำค้นหา" aria-label="ค้นหา">
+    <button type="submit" class="go">ค้นหา</button>
+    <svg><use href="icons/icons.svg#i-filter"/></svg>
+  </form>
+  <button class="icon-btn" aria-label="รายการที่บันทึก"><svg class="lg solid"><use href="icons/icons.svg#i-mark"/></svg></button>
+  <div class="user"><span class="avatar"><svg><use href="icons/icons.svg#i-user"/></svg></span><span class="user-name">User - 101</span></div>
+</header>
+
+<main>
+  <div class="crumb">
+    <svg class="solid pin"><use href="icons/icons.svg#i-pin"/></svg>หน้าหลัก <svg><use href="icons/icons.svg#i-arrow"/></svg> <svg><use href="icons/icons.svg#i-filter"/></svg> filter
+  </div>
+
+  <div class="layout">
+
+    <aside class="left-bar">
+      <h2><svg><use href="icons/icons.svg#i-filter"/></svg>ตัวกรองค้นหา</h2>
+      <div class="grp">
+        <h3>เรียงตาม</h3>
+        <select class="sel" aria-label="เรียงตาม">
+          <option>รีวิวล่าสุด</option>
+          <option>รีวิวที่เก่าที่สุด</option>
+          <option>รีวิวที่มียอดไลค์สูงสุด</option>
+          <option>รีวิวที่มีคะแนนสูงสุด</option>
+        </select>
+      </div>
+
+      <div class="grp">
+        <h3>ค้นหาบริษัทและตำแหน่งงาน</h3>
+        <label class="lbl" for="company">ชื่อบริษัท</label>
+        <div class="field-icon"><svg><use href="icons/icons.svg#i-search"/></svg><input id="company" placeholder="พิมพ์ชื่อบริษัท เช่น AAAA, KB"></div>
+        <div class="row2">
+          <div><label class="lbl" for="ctype">ประเภทของบริษัท</label>
+            <select class="sel" id="ctype">
+              <option>ทั้งหมด</option>
+              <option>Start-up</option>
+              <option>Corporate</option>
+              <option>ธนาคาร/การเงิน</option>
+              <option>หน่วยงานรัฐ/รัฐวิสาหกิจ</option>
+              <option>SME</option>
+            </select></div>
+          <div><label class="lbl" for="role">ตำแหน่งงาน</label>
+            <select class="sel" id="role">
+              <option>ทั้งหมด</option>
+              <option>UX/UI</option>
+              <option>Frontend Developer</option>
+              <option>Backend Developer</option>
+              <option>Full-stack Developer</option>
+              <option>Data Analyst</option>
+            </select></div>
+        </div>
+      </div>
+
+      <div class="grp">
+        <h3>รูปแบบการทำงาน</h3>
+        <div class="pills">
+          <label><input type="radio" name="mode" checked><span>ทั้งหมด</span></label>
+          <label><input type="radio" name="mode"><span>On-site</span></label>
+          <label><input type="radio" name="mode"><span>Remote</span></label>
+          <label><input type="radio" name="mode"><span>Hybrid</span></label>
+        </div>
+      </div>
+
+      <div class="grp">
+        <h3>ค่าตอบแทนต่อวัน</h3>
+        <div class="pills">
+          <label><input type="radio" name="pay" checked><span>ทั้งหมด</span></label>
+          <label><input type="radio" name="pay"><span>ไม่มีเบี้ยเลี้ยง</span></label>
+          <label><input type="radio" name="pay"><span>300-500 ฿</span></label>
+          <label><input type="radio" name="pay"><span>500-800 ฿</span></label>
+          <label><input type="radio" name="pay"><span>800+ ฿</span></label>
+        </div>
+      </div>
+
+      <div class="grp">
+        <h3>ทักษะ</h3>
+        <div class="field-icon"><svg><use href="icons/icons.svg#i-search"/></svg><input placeholder="พิมพ์ค้นหาทักษะ เช่น Python Java" aria-label="ทักษะ"></div>
+        <div class="tags">
+          <span class="tag">Figma <button type="button" aria-label="ลบ Figma"><svg><use href="icons/icons.svg#i-x"/></svg></button></span>
+          <span class="tag">SQL <button type="button" aria-label="ลบ SQL"><svg><use href="icons/icons.svg#i-x"/></svg></button></span>
+        </div>
+      </div>
+
+      <button class="btn primary">นำตัวกรองไปใช้</button>
+      <button class="btn ghost">ล้างค่าตัวกรอง</button>
+    </aside>
+
+
+    <section class="right-bar">
+      <div class="grid">
+        <article class="card">
+          <div class="top"><h3>ชื่อบริษัท</h3><span class="mode">work mode</span></div>
+          <div class="line role"><svg><use href="icons/icons.svg#i-case"/></svg>ชื่อตำแหน่งงาน</div>
+          <div class="line pay"><svg><use href="icons/icons.svg#i-coin"/></svg>350 THB/Day</div>
+          <div class="line"><svg><use href="icons/icons.svg#i-code"/></svg><div class="chips"><span class="chip">skill</span><span class="chip">skill</span><span class="chip">skill</span></div></div>
+          <div class="line contains">Contains <span class="chip">3 Interview Questions</span><span class="chip">pros</span></div>
+          <div class="stars"><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><span>4.5</span></div>
+          <div class="who"><span class="avatar"><svg><use href="icons/icons.svg#i-user"/></svg></span><div><b>User - 101</b><small>วัน เดือน ปี</small></div></div>
+          <div class="acts"><button><svg class="solid"><use href="icons/icons.svg#i-up"/></svg>12</button><button><svg><use href="icons/icons.svg#i-chat"/></svg>5</button><button aria-label="บันทึก"><svg class="solid"><use href="icons/icons.svg#i-mark"/></svg></button></div>
+        </article>
+
+        <article class="card">
+          <div class="top"><h3>ชื่อบริษัท</h3><span class="mode">work mode</span></div>
+          <div class="line role"><svg><use href="icons/icons.svg#i-case"/></svg>ชื่อตำแหน่งงาน</div>
+          <div class="line pay"><svg><use href="icons/icons.svg#i-coin"/></svg>350 THB/Day</div>
+          <div class="line"><svg><use href="icons/icons.svg#i-code"/></svg><div class="chips"><span class="chip">skill</span><span class="chip">skill</span><span class="chip">skill</span></div></div>
+          <div class="line contains">Contains <span class="chip">3 Interview Questions</span><span class="chip">pros</span></div>
+          <div class="stars"><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><span>4.5</span></div>
+          <div class="who"><span class="avatar"><svg><use href="icons/icons.svg#i-user"/></svg></span><div><b>User - 101</b><small>วัน เดือน ปี</small></div></div>
+          <div class="acts"><button><svg class="solid"><use href="icons/icons.svg#i-up"/></svg>12</button><button><svg><use href="icons/icons.svg#i-chat"/></svg>5</button><button aria-label="บันทึก"><svg class="solid"><use href="icons/icons.svg#i-mark"/></svg></button></div>
+        </article>
+
+        <article class="card">
+          <div class="top"><h3>ชื่อบริษัท</h3><span class="mode">work mode</span></div>
+          <div class="line role"><svg><use href="icons/icons.svg#i-case"/></svg>ชื่อตำแหน่งงาน</div>
+          <div class="line pay"><svg><use href="icons/icons.svg#i-coin"/></svg>350 THB/Day</div>
+          <div class="line"><svg><use href="icons/icons.svg#i-code"/></svg><div class="chips"><span class="chip">skill</span><span class="chip">skill</span><span class="chip">skill</span></div></div>
+          <div class="line contains">Contains <span class="chip">3 Interview Questions</span><span class="chip">pros</span></div>
+          <div class="stars"><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><span>4.5</span></div>
+          <div class="who"><span class="avatar"><svg><use href="icons/icons.svg#i-user"/></svg></span><div><b>User - 101</b><small>วัน เดือน ปี</small></div></div>
+          <div class="acts"><button><svg class="solid"><use href="icons/icons.svg#i-up"/></svg>12</button><button><svg><use href="icons/icons.svg#i-chat"/></svg>5</button><button aria-label="บันทึก"><svg class="solid"><use href="icons/icons.svg#i-mark"/></svg></button></div>
+        </article>
+
+        <article class="card">
+          <div class="top"><h3>ชื่อบริษัท</h3><span class="mode">work mode</span></div>
+          <div class="line role"><svg><use href="icons/icons.svg#i-case"/></svg>ชื่อตำแหน่งงาน</div>
+          <div class="line pay"><svg><use href="icons/icons.svg#i-coin"/></svg>350 THB/Day</div>
+          <div class="line"><svg><use href="icons/icons.svg#i-code"/></svg><div class="chips"><span class="chip">skill</span><span class="chip">skill</span><span class="chip">skill</span></div></div>
+          <div class="line contains">Contains <span class="chip">3 Interview Questions</span><span class="chip">pros</span></div>
+          <div class="stars"><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><span>4.5</span></div>
+          <div class="who"><span class="avatar"><svg><use href="icons/icons.svg#i-user"/></svg></span><div><b>User - 101</b><small>วัน เดือน ปี</small></div></div>
+          <div class="acts"><button><svg class="solid"><use href="icons/icons.svg#i-up"/></svg>12</button><button><svg><use href="icons/icons.svg#i-chat"/></svg>5</button><button aria-label="บันทึก"><svg class="solid"><use href="icons/icons.svg#i-mark"/></svg></button></div>
+        </article>
+
+        <article class="card">
+          <div class="top"><h3>ชื่อบริษัท</h3><span class="mode">work mode</span></div>
+          <div class="line role"><svg><use href="icons/icons.svg#i-case"/></svg>ชื่อตำแหน่งงาน</div>
+          <div class="line pay"><svg><use href="icons/icons.svg#i-coin"/></svg>350 THB/Day</div>
+          <div class="line"><svg><use href="icons/icons.svg#i-code"/></svg><div class="chips"><span class="chip">skill</span><span class="chip">skill</span><span class="chip">skill</span></div></div>
+          <div class="line contains">Contains <span class="chip">3 Interview Questions</span><span class="chip">pros</span></div>
+          <div class="stars"><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><span>4.5</span></div>
+          <div class="who"><span class="avatar"><svg><use href="icons/icons.svg#i-user"/></svg></span><div><b>User - 101</b><small>วัน เดือน ปี</small></div></div>
+          <div class="acts"><button><svg class="solid"><use href="icons/icons.svg#i-up"/></svg>12</button><button><svg><use href="icons/icons.svg#i-chat"/></svg>5</button><button aria-label="บันทึก"><svg class="solid"><use href="icons/icons.svg#i-mark"/></svg></button></div>
+        </article>
+
+        <article class="card">
+          <div class="top"><h3>ชื่อบริษัท</h3><span class="mode">work mode</span></div>
+          <div class="line role"><svg><use href="icons/icons.svg#i-case"/></svg>ชื่อตำแหน่งงาน</div>
+          <div class="line pay"><svg><use href="icons/icons.svg#i-coin"/></svg>350 THB/Day</div>
+          <div class="line"><svg><use href="icons/icons.svg#i-code"/></svg><div class="chips"><span class="chip">skill</span><span class="chip">skill</span><span class="chip">skill</span></div></div>
+          <div class="line contains">Contains <span class="chip">3 Interview Questions</span><span class="chip">pros</span></div>
+          <div class="stars"><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><svg><use href="icons/icons.svg#i-star"/></svg><span>4.5</span></div>
+          <div class="who"><span class="avatar"><svg><use href="icons/icons.svg#i-user"/></svg></span><div><b>User - 101</b><small>วัน เดือน ปี</small></div></div>
+          <div class="acts"><button><svg class="solid"><use href="icons/icons.svg#i-up"/></svg>12</button><button><svg><use href="icons/icons.svg#i-chat"/></svg>5</button><button aria-label="บันทึก"><svg class="solid"><use href="icons/icons.svg#i-mark"/></svg></button></div>
+        </article>
+
+      </div>
+
+      <nav class="pager" aria-label="เลือกหน้า">
+        <a class="nav" href="#" aria-disabled="true"><svg class="flip"><use href="icons/icons.svg#i-arrow"/></svg>ย้อนกลับ</a>
+        <div class="nums">
+          <a href="#" aria-current="page">1</a><a href="#">2</a><a href="#">3</a><span>…</span><a href="#">10</a>
+        </div>
+        <a class="nav" href="#">ถัดไป<svg><use href="icons/icons.svg#i-arrow"/></svg></a>
+      </nav>
+    </section>
+  </div>
+</main>
+
+<button class="fab" aria-label="เขียนรีวิว"><svg><use href="icons/icons.svg#i-edit"/></svg></button>
+</body>
+</html>
