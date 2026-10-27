@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>โพสต์รีวิวฝึกงาน | Internsight</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <link rel="stylesheet" href="css/post-review.css">
+  <script src="js/post-review.js" defer></script>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="topbar">
+    <div class="nav-left">
+      <button type="button" class="menu-btn" aria-label="เปิดเมนู">
+        <i data-lucide="menu"></i>
+      </button>
+      <a href="home.html" class="brand">
+        <div class="brand-icon">
+          <i data-lucide="search"></i>
+        </div>
+        <span>Internsight</span>
+      </a>
+    </div>
+
+    <div class="nav-right">
+      <a href="filter-page.html" class="icon-btn" aria-label="ค้นหาตัวกรอง" title="ค้นหาและตัวกรอง">
+        <i data-lucide="filter"></i>
+      </a>
+      <button type="button" class="icon-btn" aria-label="บุ๊กมาร์ก" title="รายการที่บันทึกไว้">
+        <i data-lucide="bookmark"></i>
+      </button>
+
+      <div class="user-badge" id="userProfileBtn">
+        <span class="user-avatar">
+          <i data-lucide="circle-user-round"></i>
+        </span>
+        <span class="user-name" id="currentUserName">User - 101</span>
+        <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-container">
+
+    <!-- Step Progress Tracker -->
+    <div class="form-stepper">
+      <div class="step-indicator active" id="step1Indicator">
+        <span>1</span> รายละเอียดที่ฝึกงาน
+      </div>
+      <div class="step-sep"></div>
+      <div class="step-indicator" id="step2Indicator">
+        <span>2</span> ความคิดเห็น & รีวิว
+      </div>
+    </div>
+
+    <!-- ==================== STEP 1 CARD (from post review) ==================== -->
+    <section class="form-card" id="step1Card">
+      <!-- Tape decoration at top-left -->
+      <div class="tape tape-top-left" aria-hidden="true"></div>
+
+      <h1 class="card-title">รายละเอียดที่ฝึกงาน</h1>
+
+      <div class="form-grid-2col">
+        <!-- Col Left: ชื่อบริษัท -->
+        <div class="form-group">
+          <label class="form-label" for="companySelect">ชื่อบริษัท</label>
+          <div class="input-wrapper">
+            <select id="companySelect" class="form-control" required>
+              <option value="" disabled selected>ค้นหาและเลือกบริษัท</option>
+              <option value="Agoda">Agoda</option>
+              <option value="SCB / SCBX">SCB / SCBX</option>
+              <option value="KBTG">KBTG (Kasikorn Business-Technology Group)</option>
+              <option value="LINE MAN Wongnai">LINE MAN Wongnai</option>
+              <option value="Shopee Thailand">Shopee Thailand</option>
+              <option value="Bitkub Online">Bitkub Online</option>
+              <option value="True Digital Group">True Digital Group</option>
+              <option value="PTT Digital Solutions">PTT Digital Solutions</option>
+            </select>
+            <span class="select-arrow">
+              <i data-lucide="chevron-down"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- Col Right: ตำแหน่งงานที่ฝึก -->
+        <div class="form-group">
+          <label class="form-label" for="positionInput">ตำแหน่งงานที่ฝึก</label>
+          <div class="input-wrapper input-with-icon">
+            <span class="search-icon">
+              <i data-lucide="search"></i>
+            </span>
+            <input type="text" id="positionInput" class="form-control" placeholder="เช่น Frontend Developer" list="positionsList">
+            <datalist id="positionsList">
+              <option value="Frontend Developer">
+              <option value="Backend Developer">
+              <option value="Full-stack Developer">
+              <option value="UX/UI Designer">
+              <option value="Product Designer">
+              <option value="Data Analyst">
+              <option value="Data Engineer">
+              <option value="QA / Tester">
+            </datalist>
+            <span class="select-arrow">
+              <i data-lucide="chevron-down"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- Col Left: รูปแบบการทำงาน -->
+        <div class="form-group">
+          <label class="form-label">รูปแบบการทำงาน</label>
+          <div class="segmented-control" role="group" aria-label="รูปแบบการทำงาน">
+            <button type="button" class="segment-btn active" data-mode="On-site">On-site</button>
+            <button type="button" class="segment-btn" data-mode="Hybrid">Hybrid</button>
+            <button type="button" class="segment-btn" data-mode="Remote">Remote</button>
+          </div>
+          <input type="hidden" id="workModeInput" value="On-site">
+        </div>
+
+        <!-- Col Right: ค่าตอบแทนต่อวัน -->
+        <div class="form-group">
+          <label class="form-label" for="stipendInput">ค่าตอบแทนต่อวัน</label>
+          <input type="text" id="stipendInput" class="form-control" placeholder="เช่น 300" inputmode="numeric">
+        </div>
+
+        <!-- Col Left: ประเภทของบริษัท -->
+        <div class="form-group">
+          <label class="form-label" for="companyTypeSelect">ประเภทของบริษัท</label>
+          <div class="input-wrapper">
+            <select id="companyTypeSelect" class="form-control">
+              <option value="" disabled selected>เลือกประเภทบริษัท</option>
+              <option value="Start-up">Start-up</option>
+              <option value="Corporate">Corporate</option>
+              <option value="ธนาคาร / การเงิน">ธนาคาร / การเงิน</option>
+              <option value="เทคโนโลยี / ซอฟต์แวร์">เทคโนโลยี / ซอฟต์แวร์</option>
+              <option value="หน่วยงานรัฐ / รัฐวิสาหกิจ">หน่วยงานรัฐ / รัฐวิสาหกิจ</option>
+              <option value="SME">SME</option>
+            </select>
+            <span class="select-arrow">
+              <i data-lucide="chevron-down"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- Col Right: ทักษะและความสามารถ -->
+        <div class="form-group">
+          <label class="form-label" for="skillInput">ทักษะและความสามารถ</label>
+          <div class="skill-input-row">
+            <input type="text" id="skillInput" class="form-control" placeholder="เช่น Javascript">
+            <button type="button" id="addSkillBtn" class="add-skill-btn" aria-label="เพิ่มทักษะ">
+              <i data-lucide="plus"></i>
+            </button>
+          </div>
+          <div class="skills-tags-container" id="skillsContainer">
+            <!-- Dynamically populated tags with Javascript initially -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Rating Section -->
+      <section class="rating-section">
+        <h2 class="rating-header-title">การให้คะแนน</h2>
+
+        <div class="rating-list">
+          <!-- Item 1: พี่เลี้ยง -->
+          <div class="rating-item" data-rating-key="mentor">
+            <div class="rating-info">
+              <span class="rating-title">การดูแลของพี่เลี้ยง</span>
+              <span class="rating-subtitle">คำแนะนำและการสนับสนุน</span>
+            </div>
+            <div class="rating-stars-wrapper">
+              <div class="stars-group" role="radiogroup" aria-label="คะแนนการดูแลของพี่เลี้ยง">
+                <button type="button" class="star-btn filled" data-val="1" aria-label="1 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn filled" data-val="2" aria-label="2 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn filled" data-val="3" aria-label="3 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn filled" data-val="4" aria-label="4 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn" data-val="5" aria-label="5 ดาว"><i data-lucide="star"></i></button>
+              </div>
+              <span class="rating-score-text">4/5</span>
+            </div>
+          </div>
+
+          <!-- Item 2: วัฒนธรรมองค์กร -->
+          <div class="rating-item" data-rating-key="culture">
+            <div class="rating-info">
+              <span class="rating-title">วัฒนธรรมองค์กร</span>
+              <span class="rating-subtitle">บรรยากาศและการทำงานร่วมกัน</span>
+            </div>
+            <div class="rating-stars-wrapper">
+              <div class="stars-group" role="radiogroup" aria-label="คะแนนวัฒนธรรมองค์กร">
+                <button type="button" class="star-btn filled" data-val="1" aria-label="1 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn filled" data-val="2" aria-label="2 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn filled" data-val="3" aria-label="3 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn filled" data-val="4" aria-label="4 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn" data-val="5" aria-label="5 ดาว"><i data-lucide="star"></i></button>
+              </div>
+              <span class="rating-score-text">4/5</span>
+            </div>
+          </div>
+
+          <!-- Item 3: ความเหมาะสมของงาน -->
+          <div class="rating-item" data-rating-key="suitability">
+            <div class="rating-info">
+              <span class="rating-title">ความเหมาะสมของงาน</span>
+              <span class="rating-subtitle">ภาระและขอบเขตงานที่ได้รับมอบหมาย</span>
+            </div>
+            <div class="rating-stars-wrapper">
+              <div class="stars-group" role="radiogroup" aria-label="คะแนนความเหมาะสมของงาน">
+                <button type="button" class="star-btn filled" data-val="1" aria-label="1 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn filled" data-val="2" aria-label="2 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn filled" data-val="3" aria-label="3 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn filled" data-val="4" aria-label="4 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn" data-val="5" aria-label="5 ดาว"><i data-lucide="star"></i></button>
+              </div>
+              <span class="rating-score-text">4/5</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Step 1 Actions -->
+      <div class="card-actions">
+        <a href="home.html" class="btn-secondary">ยกเลิก</a>
+        <button type="button" id="btnNext" class="btn-primary">
+          <span>ถัดไป</span>
+          <i data-lucide="arrow-right"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== STEP 2 CARD (from post review_2 / 3) ==================== -->
+    <section class="form-card" id="step2Card" style="display: none;">
+      <!-- Tape decoration at top-right -->
+      <div class="tape tape-top-right" aria-hidden="true"></div>
+
+      <h1 class="card-title">ความคิดเห็น</h1>
+
+      <div class="step2-layout">
+        <!-- Main Form Area -->
+        <div class="step2-main">
+          <!-- Textarea 1 -->
+          <div class="form-group">
+            <label class="form-label" for="expTextarea">ประสบการณ์การทำงานและรายละเอียดที่เจอ</label>
+            <textarea id="expTextarea" class="form-control form-textarea" rows="3" placeholder="เล่าประสบการณ์การทำงาน บรรยากาศต่างๆ"></textarea>
+          </div>
+
+          <!-- Textarea 2 -->
+          <div class="form-group">
+            <label class="form-label" for="prosTextarea">ข้อดีประทับใจ / ข้อดี (Pros)</label>
+            <textarea id="prosTextarea" class="form-control form-textarea" rows="3" placeholder="สิ่งที่ชอบหรือประทับใจมาก"></textarea>
+          </div>
+
+          <!-- Textarea 3 -->
+          <div class="form-group">
+            <label class="form-label" for="consTextarea">ข้อเสียควร / สิ่งที่อยากให้เปลี่ยนต่างๆ (Cons)</label>
+            <textarea id="consTextarea" class="form-control form-textarea" rows="3" placeholder="สิ่งที่คิดว่าควรปรับปรุงหรืออยากบอกต่อ"></textarea>
+          </div>
+
+          <!-- Interview Questions with Dynamic Add -->
+          <div class="form-group">
+            <div class="interview-section-header">
+              <label class="form-label">คำถามที่โดนถามตอนสัมภาษณ์</label>
+              <button type="button" id="addQuestionBtn" class="icon-add-question" title="เพิ่มคำถามสัมภาษณ์" aria-label="เพิ่มคำถาม">
+                <i data-lucide="plus"></i>
+              </button>
+            </div>
+
+            <div class="questions-container" id="interviewQuestionsList">
+              <!-- Dynamically populated question cards -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Sidebar (Image upload) -->
+        <div class="step2-sidebar">
+          <label class="form-label">รูปภาพเพิ่มเติม</label>
+          <input type="file" id="imageFileInput" accept="image/*" style="display: none;">
+          <div class="image-upload-dropzone" id="imageUploadBox">
+            <div class="upload-placeholder" id="uploadPlaceholder" style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <span class="image-upload-btn">เพิ่มรูปภาพ</span>
+            </div>
+            <div id="imagePreviewContainer"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Step 2 Actions -->
+      <div class="card-actions">
+        <button type="button" id="btnPrev" class="btn-secondary">
+          <i data-lucide="arrow-left"></i>
+          <span>กลับ</span>
+        </button>
+
+        <div class="actions-right">
+          <!-- Anonymous Switch -->
+          <label class="anonymous-group" for="anonymousToggle">
+            <span>โหมดไม่ระบุตัวตน</span>
+            <div class="toggle-switch">
+              <input type="checkbox" id="anonymousToggle">
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
+
+          <!-- Submit Button -->
+          <button type="button" id="btnSubmit" class="btn-primary">
+            <span>รีวิว</span>
+            <i data-lucide="square-pen"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Success Confirmation Modal -->
+  <div class="modal-overlay" id="successModal" role="dialog" aria-modal="true" aria-labelledby="modalSuccessTitle">
+    <div class="modal-box">
+      <div class="modal-icon-wrap">
+        <i data-lucide="check"></i>
+      </div>
+      <h2 class="modal-title" id="modalSuccessTitle">แชร์รีวิวสำเร็จแล้ว!</h2>
+      <p class="modal-desc">ขอบคุณสำหรับการแบ่งปันเรื่องราวและประสบการณ์ฝึกงาน เพื่อเป็นประโยชน์ต่อเพื่อนๆ และรุ่นน้องทุกคน</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="modalCloseBtn">เขียนรีวิวอีกอัน</button>
+        <button type="button" class="btn-primary" id="modalHomeBtn">กลับหน้าหลัก</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
