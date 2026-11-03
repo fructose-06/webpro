@@ -13,42 +13,15 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
+  <link rel="stylesheet" href="css/navbar.css">
   <link rel="stylesheet" href="css/post-review.css">
+  <script src="js/navbar.js" defer></script>
   <script src="js/post-review.js" defer></script>
 </head>
 <body>
 
-  <!-- Top Navigation Bar -->
-  <header class="topbar">
-    <div class="nav-left">
-      <button type="button" class="menu-btn" aria-label="เปิดเมนู">
-        <i data-lucide="menu"></i>
-      </button>
-      <a href="home.html" class="brand">
-        <div class="brand-icon">
-          <i data-lucide="search"></i>
-        </div>
-        <span>Internsight</span>
-      </a>
-    </div>
-
-    <div class="nav-right">
-      <a href="filter-page.html" class="icon-btn" aria-label="ค้นหาตัวกรอง" title="ค้นหาและตัวกรอง">
-        <i data-lucide="filter"></i>
-      </a>
-      <button type="button" class="icon-btn" aria-label="บุ๊กมาร์ก" title="รายการที่บันทึกไว้">
-        <i data-lucide="bookmark"></i>
-      </button>
-
-      <div class="user-badge" id="userProfileBtn">
-        <span class="user-avatar">
-          <i data-lucide="circle-user-round"></i>
-        </span>
-        <span class="user-name" id="currentUserName">User - 101</span>
-        <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
-      </div>
-    </div>
-  </header>
+  <!-- Shared Top Navbar & Sidebar -->
+  <div id="app-navbar"></div>
 
   <main class="page-container">
 
@@ -73,46 +46,33 @@
       <div class="form-grid-2col">
         <!-- Col Left: ชื่อบริษัท -->
         <div class="form-group">
-          <label class="form-label" for="companySelect">ชื่อบริษัท</label>
-          <div class="input-wrapper">
-            <select id="companySelect" class="form-control" required>
-              <option value="" disabled selected>ค้นหาและเลือกบริษัท</option>
-              <option value="Agoda">Agoda</option>
-              <option value="SCB / SCBX">SCB / SCBX</option>
-              <option value="KBTG">KBTG (Kasikorn Business-Technology Group)</option>
-              <option value="LINE MAN Wongnai">LINE MAN Wongnai</option>
-              <option value="Shopee Thailand">Shopee Thailand</option>
-              <option value="Bitkub Online">Bitkub Online</option>
-              <option value="True Digital Group">True Digital Group</option>
-              <option value="PTT Digital Solutions">PTT Digital Solutions</option>
-            </select>
-            <span class="select-arrow">
-              <i data-lucide="chevron-down"></i>
+          <label class="form-label" for="companyInput">ชื่อบริษัท</label>
+          <div class="input-wrapper input-with-icon autocomplete-wrapper" id="companyAutocomplete">
+            <span class="search-icon">
+              <i data-lucide="search"></i>
             </span>
+            <input type="text" id="companyInput" class="form-control" placeholder="ค้นหาหรือพิมพ์ชื่อบริษัท"
+              autocomplete="off" required>
+            <button type="button" class="select-arrow dropdown-toggle-btn" tabindex="-1" aria-label="เปิดรายการบริษัท">
+              <i data-lucide="chevron-down"></i>
+            </button>
+            <ul class="autocomplete-menu" id="companyDropdownList" role="listbox"></ul>
           </div>
         </div>
 
         <!-- Col Right: ตำแหน่งงานที่ฝึก -->
         <div class="form-group">
           <label class="form-label" for="positionInput">ตำแหน่งงานที่ฝึก</label>
-          <div class="input-wrapper input-with-icon">
+          <div class="input-wrapper input-with-icon autocomplete-wrapper" id="positionAutocomplete">
             <span class="search-icon">
               <i data-lucide="search"></i>
             </span>
-            <input type="text" id="positionInput" class="form-control" placeholder="เช่น Frontend Developer" list="positionsList">
-            <datalist id="positionsList">
-              <option value="Frontend Developer">
-              <option value="Backend Developer">
-              <option value="Full-stack Developer">
-              <option value="UX/UI Designer">
-              <option value="Product Designer">
-              <option value="Data Analyst">
-              <option value="Data Engineer">
-              <option value="QA / Tester">
-            </datalist>
-            <span class="select-arrow">
+            <input type="text" id="positionInput" class="form-control" placeholder="เช่น Frontend Developer"
+              autocomplete="off" required>
+            <button type="button" class="select-arrow dropdown-toggle-btn" tabindex="-1" aria-label="เปิดรายการตำแหน่งงาน">
               <i data-lucide="chevron-down"></i>
-            </span>
+            </button>
+            <ul class="autocomplete-menu" id="positionDropdownList" role="listbox"></ul>
           </div>
         </div>
 

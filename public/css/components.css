@@ -1,0 +1,347 @@
+/* =========================================================
+   Shared UI Components: Design Tokens, Buttons, Badges, & Review Cards
+   ========================================================= */
+
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-alt: #f1f2f5;
+  --ink: #16171a;
+  --muted: #6b7280;
+  --line: #e3e5e9;
+  --line-strong: #16171a;
+  --chip: #f1f2f4;
+  --accent: #16171a;
+  --on-accent: #ffffff;
+  --tape-bg: rgba(200, 204, 212, 0.8);
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --radius-pill: 9999px;
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 10px 26px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================================================
+   1. Shared Buttons (.btn-ui)
+   ========================================================= */
+.btn-ui {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: "Prompt", "Noto Sans Thai", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-ui-primary {
+  background-color: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
+}
+
+.btn-ui-primary:hover {
+  background-color: #2c2e33;
+  transform: translateY(-1px);
+}
+
+.btn-ui-outline {
+  background-color: var(--surface);
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+
+.btn-ui-outline:hover {
+  background-color: var(--surface-alt);
+}
+
+.btn-ui-ghost {
+  background-color: var(--chip);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.btn-ui-ghost:hover {
+  background-color: #e5e7eb;
+}
+
+.btn-ui-pill {
+  border-radius: var(--radius-pill);
+}
+
+/* Floating Action Button (Write Review) */
+.fab-write-review {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+  cursor: pointer;
+  text-decoration: none;
+  z-index: 900;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fab-write-review:hover {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+}
+
+.fab-write-review svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* =========================================================
+   2. Shared Review Card (.review-card) & Grid (.cards-grid)
+   ========================================================= */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 32px 24px;
+  padding-top: 14px;
+}
+
+.review-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 18px;
+  padding: 26px 22px 18px;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+  font-family: "Noto Sans Thai", "Prompt", sans-serif;
+}
+
+.review-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: #cfd3dc;
+}
+
+/* Scotch Tape at top center of card */
+.review-card::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 96px;
+  height: 24px;
+  background-color: var(--tape-bg);
+  border-radius: 3px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.review-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.review-card .company-name {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.review-card .mode-badge {
+  border: 1px solid var(--line);
+  background: var(--chip);
+  padding: 3px 11px;
+  border-radius: var(--radius-pill);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #4b5563;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.review-card .card-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 9px;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.review-card .row-icon {
+  width: 17px;
+  height: 17px;
+  color: #374151;
+  flex-shrink: 0;
+}
+
+.review-card .job-title {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.review-card .salary-text {
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.review-card .skill-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.review-card .skill-pill,
+.review-card .info-pill {
+  border: 1px solid var(--line);
+  background: var(--chip);
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.review-card .contains-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 12px;
+  font-size: 12px;
+}
+
+.review-card .contains-label {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.review-card .rating-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 4px;
+  margin-bottom: 14px;
+}
+
+.review-card .stars {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.review-card .star-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--ink);
+}
+
+.review-card .star-icon.filled {
+  fill: var(--ink);
+}
+
+.review-card .rating-num {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.review-card .card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #f0f1f4;
+  padding-top: 12px;
+}
+
+.review-card .author-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.review-card .author-avatar-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--chip);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #374151;
+}
+
+.review-card .author-avatar-wrap svg {
+  width: 18px;
+  height: 18px;
+}
+
+.review-card .author-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.review-card .author-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.review-card .review-date {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.review-card .card-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.review-card .action-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #374151;
+  padding: 4px;
+  border-radius: 6px;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.review-card .action-btn:hover {
+  transform: scale(1.08);
+  color: var(--ink);
+}
+
+.review-card .action-btn svg {
+  width: 16px;
+  height: 16px;
+}

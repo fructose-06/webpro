@@ -364,6 +364,105 @@ select.form-control {
 
 .input-with-icon .form-control {
   padding-left: 42px;
+  padding-right: 40px;
+}
+
+/* Custom Autocomplete Dropdown */
+.autocomplete-wrapper {
+  position: relative;
+}
+
+.dropdown-toggle-btn {
+  pointer-events: auto;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 4px;
+  border-radius: 6px;
+  transition: transform 0.2s ease, background-color 0.15s ease;
+}
+
+.dropdown-toggle-btn:hover {
+  background: var(--surface-alt);
+}
+
+.autocomplete-wrapper.open .dropdown-toggle-btn {
+  transform: rotate(180deg);
+}
+
+.autocomplete-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 210px;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1.5px solid #d4d7de;
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  z-index: 50;
+  display: none;
+}
+
+/* Custom sleek scrollbar for dropdown */
+.autocomplete-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.autocomplete-menu::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 6px 0;
+}
+
+.autocomplete-menu::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 999px;
+}
+
+.autocomplete-menu::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.autocomplete-wrapper.open .autocomplete-menu {
+  display: block;
+}
+
+.autocomplete-item {
+  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--ink);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background-color 0.12s ease;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.highlighted {
+  background: var(--surface-alt);
+}
+
+.autocomplete-item.add-new-item {
+  color: var(--ink);
+  font-weight: 500;
+  border-top: 1px solid var(--line);
+  margin-top: 4px;
+  padding-top: 8px;
+}
+
+.autocomplete-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--surface);
+  font-weight: 500;
 }
 
 /* Segmented Buttons for Work Mode */
