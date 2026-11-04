@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Internsight Filter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Prompt:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/filter.css">
+  <script src="js/filter.js" defer></script>
+  <script src="js/navbar.js" defer></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div id="app-navbar"></div>
+
+  <main>
+    <div class="crumb">
+      <i data-lucide="pin" class="solid pin"></i>หน้าหลัก <i data-lucide="arrow-right"></i><i data-lucide="filter"></i>filter
+    </div>
+
+    <div class="layout">
+      <aside class="left-bar">
+        <h2><i data-lucide="filter"></i>ตัวกรองค้นหา</h2>
+        <div class="grp">
+          <h3>เรียงตาม</h3>
+          <select class="sel" aria-label="เรียงตาม">
+            <option>รีวิวล่าสุด</option>
+            <option>รีวิวที่เก่าที่สุด</option>
+            <option>รีวิวที่มียอดไลค์สูงสุด</option>
+            <option>รีวิวที่มีคะแนนสูงสุด</option>
+          </select>
+        </div>
+
+        <div class="grp">
+          <h3>ค้นหาบริษัทและตำแหน่งงาน</h3>
+          <label class="lbl" for="company">ชื่อบริษัท</label>
+          <div class="field-icon"><i data-lucide="search"></i><input id="company" placeholder="พิมพ์ชื่อบริษัท เช่น AAAA, KB"></div>
+          <div class="row2">
+            <div><label class="lbl" for="ctype">ประเภทของบริษัท</label>
+              <select class="sel" id="ctype">
+                <option>ทั้งหมด</option>
+                <option>Start-up</option>
+                <option>Corporate</option>
+                <option>ธนาคาร/การเงิน</option>
+                <option>หน่วยงานรัฐ/รัฐวิสาหกิจ</option>
+                <option>SME</option>
+              </select></div>
+            <div><label class="lbl" for="role">ตำแหน่งงาน</label>
+              <select class="sel" id="role">
+                <option>ทั้งหมด</option>
+                <option>UX/UI</option>
+                <option>Frontend Developer</option>
+                <option>Backend Developer</option>
+                <option>Full-stack Developer</option>
+                <option>Data Analyst</option>
+              </select></div>
+          </div>
+        </div>
+
+        <div class="grp">
+          <h3>รูปแบบการทำงาน</h3>
+          <div class="pills">
+            <label><input type="radio" name="mode" checked><span>ทั้งหมด</span></label>
+            <label><input type="radio" name="mode"><span>On-site</span></label>
+            <label><input type="radio" name="mode"><span>Remote</span></label>
+            <label><input type="radio" name="mode"><span>Hybrid</span></label>
+          </div>
+        </div>
+
+        <div class="grp">
+          <h3>ค่าตอบแทนต่อวัน</h3>
+          <div class="pills">
+            <label><input type="radio" name="pay" checked><span>ทั้งหมด</span></label>
+            <label><input type="radio" name="pay"><span>ไม่มีเบี้ยเลี้ยง</span></label>
+            <label><input type="radio" name="pay"><span>300-500 ฿</span></label>
+            <label><input type="radio" name="pay"><span>500-800 ฿</span></label>
+            <label><input type="radio" name="pay"><span>800+ ฿</span></label>
+          </div>
+        </div>
+
+        <div class="grp">
+          <h3>ทักษะ</h3>
+          <div class="field-icon"><i data-lucide="search"></i><input placeholder="พิมพ์ค้นหาทักษะ เช่น Python Java" aria-label="ทักษะ"></div>
+          <div class="tags">
+            <span class="tag">Figma <button type="button" aria-label="ลบ Figma"><i data-lucide="X"></i></button></span>
+            <span class="tag">SQL <button type="button" aria-label="ลบ SQL"><i data-lucide="X"></i></button></span>
+          </div>
+        </div>
+
+        <button class="btn primary">นำตัวกรองไปใช้</button>
+        <button class="btn ghost">ล้างค่าตัวกรอง</button>
+      </aside>
+
+
+      <section class="right-bar">
+        <div class="grid" id="cardGrid"></div>
+
+        <nav class="pager" aria-label="เลือกหน้า">
+          <a class="nav" id="prevBtn"><i data-lucide="arrow-left"></i>ย้อนกลับ</a>
+          
+          <div class="nums" id="pageNumbers"></div>
+
+          <a class="nav" id="nextBtn" href="#">ถัดไป<i data-lucide="arrow-right"></i></a>
+        </nav>
+      </section>
+    </div>
+  </main>
+
+  <button class="fab" aria-label="เขียนรีวิว">
+    <i data-lucide="pencil"></i>
+  </button>
+
+</body>
+</html>
