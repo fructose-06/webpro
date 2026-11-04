@@ -8,3 +8,7 @@ Thumbs.db
 # IDE / Editor folders
 .vscode/
 .idea/
+
+#important file
+node_modules/
+.env
