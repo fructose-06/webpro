@@ -117,16 +117,6 @@ svg.lg {
   background: var(--surface);
 }
 
-.sel {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--chip);
-  color: inherit;
-  font: inherit;
-}
-
 .topbar {
   position: sticky;
   top: 0;
@@ -255,16 +245,34 @@ main {
   font: inherit;
 }
 
+.select-wrap {
+  position: relative;
+}
+
+.select-wrap svg {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
 .tools .sel {
   flex: none;
   width: 132px;
+
+  padding: 8px 10px;
+  color: inherit;
+  font: inherit;
+
   border: 1.5px solid var(--ink);
   border-radius: 12px;
   background: var(--surface);
   font-size: 15px;
   font-weight: 500;
+  appearance: none;
+  padding-right: 36px;
 }
-
 
 .list {
   display: grid;
@@ -395,7 +403,7 @@ main {
   align-items: center;
   gap: 14px;
   margin: 12px 0 14px;
-  font-size: 40px;
+  font-size: clamp(28px, 3vw, 40px);
   font-weight: 600;
 }
 
@@ -490,3 +498,63 @@ main {
   font-size: 12px;
 }
 
+@media (max-height: 850px) {
+  .left h1 {
+    font-size: 42px;
+  }
+  .sub {
+    margin-bottom: 12px;
+    font-size: 15px;
+  }
+  .panel {
+    padding: 16px 14px;
+  }
+  .panel h2 {
+    margin-bottom: 10px;
+    font-size: 20px;
+  }
+  .detail {
+    padding: 18px 20px 16px 50px;
+  }
+  .detail::before {
+    top: 24px;
+    bottom: 24px;
+  }
+  .name {
+    margin: 8px 0;
+    gap: 10px;
+  }
+  .mode {
+    padding: 3px 14px;
+    font-size: 13px;
+  }
+  .detail .role {
+    font-size: 22px;
+  }
+  .detail .pay {
+    font-size: 16px;
+  }
+  .detail .line {
+    margin-bottom: 6px;
+  }
+  .scores {
+    gap: 8px;
+    margin: 10px 0;
+  }
+  .score {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  .detail h3 {
+    margin: 10px 0 6px;
+    font-size: 16px;
+  }
+  .box {
+    min-height: 60px;
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  .detail footer {
+    margin-top: 12px;
+  }
+}

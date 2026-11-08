@@ -19,15 +19,21 @@
   <div class="cols">
 
     <section class="left">
-      <a href="#" class="back" aria-label="ย้อนกลับ"><i data-lucide="arrow-left"></i></a>
-      <h1>รีวิวที่บันทึก</h1>
+      <a href="home.html" class="back" aria-label="ย้อนกลับ"><i data-lucide="arrow-left"></i></a>
+      <h1>Bookmarked Reviews</h1>
       <p class="sub">ดูรีวิวที่บันทึกไว้ และอ่านต่อได้ทันที</p>
 
       <div class="panel">
         <h2>รายการที่บันทึกไว้ <span data-field="count">· 6</span></h2>
         <div class="tools">
           <label class="find"><i data-lucide="search"></i><input placeholder="ค้นหาในรายการบันทึก" aria-label="ค้นหาในรายการบันทึก"></label>
-          <select class="sel" aria-label="เรียงตาม"><option>บันทึกล่าสุด</option><option>บันทึกเก่าสุด</option></select>
+          <div class="select-wrap">
+            <select class="sel" aria-label="เรียงตาม">
+              <option>บันทึกล่าสุด</option>
+              <option>บันทึกเก่าสุด</option>
+            </select>
+            <i data-lucide="chevron-down"></i>
+          </div>
         </div>
         <ul class="list"></ul>
       </div>
