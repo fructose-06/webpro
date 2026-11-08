@@ -29,13 +29,13 @@ document.addEventListener("DOMContentLoaded", () => {
       ${
         !hideSearch
           ? `
-      <form class="search-bar" id="globalSearchForm" action="filter-page.html" method="get" role="search">
+      <form class="search-bar" id="globalSearchForm" action="filter.html" method="get" role="search">
         <span class="search-icon">
           <i data-lucide="search"></i>
         </span>
         <input class="search-input" id="globalSearchInput" name="q" type="text" placeholder="พิมพ์คำค้นหา เช่น ชื่อบริษัท, ตำแหน่งงาน">
         <button type="submit" class="search-btn">ค้นหา</button>
-        <a href="filter-page.html" class="filter-btn" title="ตัวกรองค้นหา" aria-label="ตัวกรองค้นหา">
+        <a href="filter.html" class="filter-btn" title="ตัวกรองค้นหา" aria-label="ตัวกรองค้นหา">
           <i data-lucide="filter"></i>
         </a>
       </form>
@@ -47,22 +47,29 @@ document.addEventListener("DOMContentLoaded", () => {
         ${
           hideSearch
             ? `
-        <a href="filter-page.html" class="nav-icon-btn" title="ค้นหาและตัวกรอง" aria-label="ค้นหาตัวกรอง">
+        <a href="filter.html" class="nav-icon-btn" title="ค้นหาและตัวกรอง" aria-label="ค้นหาตัวกรอง">
           <i data-lucide="filter"></i>
         </a>
         `
             : ""
         }
-        <button type="button" class="nav-icon-btn bookmark-btn" title="รายการที่บันทึกไว้" aria-label="บุ๊กมาร์ก">
+        <a href="bookmark.html" class="nav-icon-btn bookmark-btn" title="Bookmarked Reviews" aria-label="Bookmarked Reviews">
           <i data-lucide="bookmark"></i>
-        </button>
+        </a>
 
-        <div class="user-profile" id="userProfileBtn">
-          <span class="user-avatar-badge">
-            <i data-lucide="circle-user-round"></i>
-          </span>
-          <span class="user-name" id="currentUserName">User - 101</span>
-          <i data-lucide="chevron-down" class="chevron-icon"></i>
+        <div class="user-profile-wrap">
+          <div class="user-profile" id="userProfileBtn">
+            <span class="user-avatar-badge">
+              <i data-lucide="circle-user-round"></i>
+            </span>
+            <span class="user-name" id="currentUserName">User - 101</span>
+            <i data-lucide="chevron-down" class="chevron-icon"></i>
+          </div>
+          <div class="profile-dropdown" id="profileDropdown">
+            <a href="user.html"><i data-lucide="user"></i>Profile</a>
+            <a href="setting.html"><i data-lucide="settings"></i>Account Settings</a>
+            <a href="#" class="logout" id="logoutBtn"><i data-lucide="log-out"></i>Log Out</a>
+          </div>
         </div>
       </div>
     </header>
@@ -83,32 +90,34 @@ document.addEventListener("DOMContentLoaded", () => {
       <nav class="sidebar-nav">
         <a href="home.html" class="sidebar-item ${currentPage === "home.html" ? "active" : ""}">
           <i data-lucide="home"></i>
-          <span>หน้าหลัก</span>
+          <span>Home</span>
         </a>
         <a href="post-review.html" class="sidebar-item ${
           currentPage === "post-review.html" || currentPage === "form-post-review.html" ? "active" : ""
         }">
           <i data-lucide="pen-square"></i>
-          <span>เขียนรีวิวฝึกงาน</span>
+          <span>Write a Review</span>
         </a>
-        <a href="filter-page.html" class="sidebar-item ${currentPage === "filter-page.html" ? "active" : ""}">
+        <a href="filter.html" class="sidebar-item ${currentPage === "filter.html" ? "active" : ""}">
           <i data-lucide="filter"></i>
-          <span>ค้นหา & ตัวกรอง</span>
+          <span>Filter Reviews</span>
         </a>
-        <a href="#" class="sidebar-item">
+        <a href="bookmark.html" class="sidebar-item ${currentPage === "bookmark.html" ? "active" : ""}">
           <i data-lucide="bookmark"></i>
-          <span>รายการที่บันทึกไว้</span>
-        </a>
-        <a href="#" class="sidebar-item">
-          <i data-lucide="user"></i>
-          <span>โปรไฟล์ผู้ใช้</span>
-        </a>
-        <a href="#" class="sidebar-item">
-          <i data-lucide="settings"></i>
-          <span>ตั้งค่า</span>
+          <span>Bookmarked Reviews</span>
         </a>
       </nav>
     </aside>
+    <div class="modal-overlay" id="logoutModal">
+      <div class="modal">
+        <h3>Log Out</h3>
+        <p>Are you sure you want to log out?</p>
+        <div class="modal-actions">
+          <button type="button" id="cancelLogout">Cancel</button>
+          <button type="button" id="confirmLogout" class="btn-logout">Log Out</button>
+        </div>
+      </div>
+    </div>
   `;
 
   placeholder.innerHTML = layoutHTML;
@@ -151,15 +160,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  document.getElementById("userProfileBtn")?.addEventListener("click", () => {
-    const newName = prompt(
-      "ลองพิมพ์ชื่อใหม่เพื่อทดสอบระบบจำลอง Login:",
-      localStorage.getItem("currentUser") || "User - 101"
-    );
-    if (newName && newName.trim() !== "") {
-      localStorage.setItem("currentUser", newName.trim());
-      loadUserProfile();
+  //Drop-down Open/close 
+  const profileBtn = document.getElementById("userProfileBtn");
+  const dropdown = document.getElementById("profileDropdown");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const logoutModal = document.getElementById("logoutModal");
+  const cancelLogout = document.getElementById("cancelLogout");
+  const confirmLogout = document.getElementById("confirmLogout");
+
+  profileBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    dropdown?.classList.toggle("show");
+  });
+  document.addEventListener("click", () => {
+    dropdown?.classList.remove("show");
+  });
+  logoutBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    dropdown?.classList.remove("show");
+    logoutModal?.classList.add("show");
+  });
+  cancelLogout?.addEventListener("click", () => {
+    logoutModal?.classList.remove("show");
+  });
+  logoutModal?.addEventListener("click", (e) => {
+    if (e.target === logoutModal) {
+      logoutModal.classList.remove("show");
     }
+  });
+  confirmLogout?.addEventListener("click", () => {
+    window.location.href = "login.html";
   });
 
   loadUserProfile();
