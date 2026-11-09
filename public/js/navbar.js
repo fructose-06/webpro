@@ -100,15 +100,15 @@ document.addEventListener("DOMContentLoaded", () => {
         </a>
         <a href="bookmark.html" class="sidebar-item ${currentPage === "bookmark.html" ? "active" : ""}">
           <i data-lucide="bookmark"></i>
-          <span>รายการที่บันทึกไว้</span>
+          <span>Bookmarks</span>
         </a>
         <a href="user.html" class="sidebar-item ${currentPage === "user.html" ? "active" : ""}">
           <i data-lucide="user"></i>
-          <span>โปรไฟล์ผู้ใช้</span>
+          <span>Profile</span>
         </a>
         <a href="#" class="sidebar-item">
           <i data-lucide="settings"></i>
-          <span>ตั้งค่า</span>
+          <span>settings</span>
         </a>
       </nav>
     </aside>
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  //Drop-down Open/close 
+  //Drop-down Open/close
   const profileBtn = document.getElementById("userProfileBtn");
   const dropdown = document.getElementById("profileDropdown");
   const logoutBtn = document.getElementById("logoutBtn");
