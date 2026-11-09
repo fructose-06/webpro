@@ -100,15 +100,15 @@ document.addEventListener("DOMContentLoaded", () => {
         </a>
         <a href="bookmark.html" class="sidebar-item ${currentPage === "bookmark.html" ? "active" : ""}">
           <i data-lucide="bookmark"></i>
-          <span>Bookmarks</span>
+          <span>รายการที่บันทึกไว้</span>
         </a>
         <a href="user.html" class="sidebar-item ${currentPage === "user.html" ? "active" : ""}">
           <i data-lucide="user"></i>
-          <span>Profile</span>
+          <span>โปรไฟล์ผู้ใช้</span>
         </a>
         <a href="#" class="sidebar-item">
           <i data-lucide="settings"></i>
-          <span>settings</span>
+          <span>ตั้งค่า</span>
         </a>
       </nav>
     </aside>
