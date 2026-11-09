@@ -448,7 +448,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalCloseBtn = document.getElementById("modalCloseBtn");
   const modalHomeBtn = document.getElementById("modalHomeBtn");
 
-  btnSubmit?.addEventListener("click", (e) => {
+  btnSubmit?.addEventListener("click", async (e) => {
     e.preventDefault();
 
     // Collect comments
@@ -458,10 +458,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("Submitted Review Data:", formData);
 
-    // Show Success Modal
-    if (successModal) {
-      successModal.classList.add("open");
-      if (window.lucide) window.lucide.createIcons();
+    const payload = {
+      is_anonymous: formData.anonymous,
+      description: formData.experience,
+      work_mode: formData.workMode,
+      rating_culture: formData.ratings.culture,
+      rating_workload: formData.ratings.suitability,
+      rating_mentor: formData.ratings.mentor,
+      pros: formData.pros,
+      cons: formData.cons,
+      daily_pay: formData.stipend
+    };
+
+    try {
+      const response = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        // Show Success Modal
+        if (successModal) {
+          successModal.classList.add("open");
+          if (window.lucide) window.lucide.createIcons();
+        }
+      } else {
+        alert("เกิดข้อผิดพลาดในการบันทึกรีวิว");
+      }
+    } catch (err) {
+      console.error("Error submitting review:", err);
+      alert("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
     }
   });
 
