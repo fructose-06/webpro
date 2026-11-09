@@ -42,6 +42,9 @@ mongoose
         console.error("MongoDB connection error:", err.message);
     });
 
+const reviewRoutes = require("./routes/reviewRoutes");
+app.use("/api/reviews", reviewRoutes);
+
 // เริ่มรัน Server
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}/login.html`);
