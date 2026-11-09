@@ -70,47 +70,6 @@ svg.pin {
   transform: rotate(45deg);
 }
 
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 24px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap:10px; font-family: "Inter", "Prompt", sans-serif;
-  font-weight: 700;
-  font-size: 21px;
-  letter-spacing: -.01em
-}
-
-.brand svg {
-  width: 30px;
-  height: 30px;
-}
-
-.icon-btn {
-  background: none;
-  border: 0;
-  padding: 6px;
-  display: grid;
-  place-items: center
-}
-
-.user {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 500;
-}
-
 .avatar {
   width: 32px;
   height: 32px;

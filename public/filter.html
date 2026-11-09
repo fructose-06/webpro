@@ -4,7 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Internsight Filter</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Prompt:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/navbar.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/filter.css">
@@ -18,7 +20,8 @@
 
   <main>
     <div class="crumb">
-      <i data-lucide="pin" class="solid pin"></i>หน้าหลัก <i data-lucide="arrow-right"></i><i data-lucide="filter"></i>filter
+      <i data-lucide="pin" class="solid pin"></i><a href="home.html" class="back" aria-label="ย้อนกลับ">Home </a>
+      <i data-lucide="arrow-right"></i><i data-lucide="filter"></i>filter
     </div>
 
     <div class="layout">
@@ -99,19 +102,23 @@
         <div class="grid" id="cardGrid"></div>
 
         <nav class="pager" aria-label="เลือกหน้า">
-          <a class="nav" id="prevBtn"><i data-lucide="arrow-left"></i>ย้อนกลับ</a>
+          <button class="nav" id="prevBtn" type="button">
+            <i data-lucide="arrow-left"></i>ย้อนกลับ
+          </button>
           
           <div class="nums" id="pageNumbers"></div>
 
-          <a class="nav" id="nextBtn" href="#">ถัดไป<i data-lucide="arrow-right"></i></a>
+          <button class="nav" id="nextBtn" type="button">
+            ถัดไป<i data-lucide="arrow-right"></i>
+          </button>
         </nav>
       </section>
     </div>
   </main>
 
-  <button class="fab" aria-label="เขียนรีวิว">
+  <a href="post-review.html" class="fab" aria-label="เขียนรีวิว" title="เขียนรีวิว">
     <i data-lucide="pencil"></i>
-  </button>
+  </a>
 
 </body>
 </html>

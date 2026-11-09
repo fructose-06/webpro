@@ -389,13 +389,17 @@ function renderPages(){
 
     for(let page = 1; page <= totalPages; page++){
 
-        const pageLink = document.createElement("a");
+        const pageLink = document.createElement("button");
 
         pageLink.textContent = page;
 
         if(page === currentPage){
             pageLink.setAttribute("aria-current", "page");
         }
+        pageLink.addEventListener("click", () => {
+            currentPage = page;
+            render();
+        });
         pageNumbers.appendChild(pageLink);
     }
 }
