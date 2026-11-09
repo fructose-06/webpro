@@ -1,70 +1,87 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Internsight bookmark</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Prompt:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/bookmark.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/bookmark.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="js/bookmark.js" defer></script>
   <script src="js/navbar.js" defer></script>
 </head>
+
 <body>
 
-<div id="app-navbar"></div>
+  <div id="app-navbar"></div>
 
-<main>
-  <div class="cols">
+  <main>
+    <div class="cols">
 
-    <section class="left">
-      <a href="home.html" class="back" aria-label="ย้อนกลับ"><i data-lucide="arrow-left"></i></a>
-      <h1>Bookmarked Reviews</h1>
-      <p class="sub">ดูรีวิวที่บันทึกไว้ และอ่านต่อได้ทันที</p>
+      <section class="left">
+        <a href="home.html" class="back" aria-label="ย้อนกลับ"><i data-lucide="arrow-left"></i></a>
+        <h1>รีวิวที่บันทึก</h1>
+        <p class="sub">ดูรีวิวที่บันทึกไว้ และอ่านต่อได้ทันที</p>
 
-      <div class="panel">
-        <h2>รายการที่บันทึกไว้ <span data-field="count">· 6</span></h2>
-        <div class="tools">
-          <label class="find"><i data-lucide="search"></i><input placeholder="ค้นหาในรายการบันทึก" aria-label="ค้นหาในรายการบันทึก"></label>
-          <div class="select-wrap">
-            <select class="sel" aria-label="เรียงตาม">
-              <option>บันทึกล่าสุด</option>
-              <option>บันทึกเก่าสุด</option>
-            </select>
-            <i data-lucide="chevron-down"></i>
+        <div class="panel">
+          <h2>รายการที่บันทึกไว้ <span data-field="count">· 6</span></h2>
+          <div class="tools">
+            <label class="find"><i data-lucide="search"></i><input placeholder="ค้นหาในรายการบันทึก"
+                aria-label="ค้นหาในรายการบันทึก"></label>
+            <div class="select-wrap">
+              <select class="sel" aria-label="เรียงตาม">
+                <option>บันทึกล่าสุด</option>
+                <option>บันทึกเก่าสุด</option>
+              </select>
+              <i data-lucide="chevron-down"></i>
+            </div>
+          </div>
+          <ul class="list"></ul>
+        </div>
+      </section>
+
+      <article class="detail">
+        <small class="eg">ตัวอย่างรีวิว</small>
+        <button class="btn-out"><i data-lucide="bookmark" class="solid"></i>เลิกบันทึก</button>
+
+        <h2 class="name"><span data-field="company">ชื่อบริษัท</span> <span class="mode" data-field="mode">work
+            mode</span></h2>
+        <div class="line role"><i data-lucide="briefcase-business"></i><span data-field="role">ชื่อตำแหน่งงาน</span>
+        </div>
+        <div class="line pay"><i data-lucide="circle-dollar-sign"></i><span data-field="pay">350 THB/Day</span></div>
+        <div class="line"><i data-lucide="code-xml"></i>
+          <div class="chips" data-field="skills"><span class="chip">skill</span><span class="chip">skill</span><span
+              class="chip">skill</span></div>
+        </div>
+
+        <div class="scores">
+          <div class="score"><i data-lucide="users"></i><b>วัฒนธรรม</b><span data-field="culture">4 / 5</span></div>
+          <div class="score"><i data-lucide="chart-no-axes-column"></i><b>ภาระงาน</b><span data-field="workload">4 /
+              5</span></div>
+          <div class="score"><i data-lucide="headphones"></i><b>พี่เลี้ยง</b><span data-field="mentor">4 / 5</span>
           </div>
         </div>
-        <ul class="list"></ul>
-      </div>
-    </section>
 
-    <article class="detail">
-      <small class="eg">ตัวอย่างรีวิว</small>
-      <button class="btn-out"><i data-lucide="bookmark" class="solid"></i>เลิกบันทึก</button>
+        <h3>ข้อดี</h3>
+        <div class="box" data-field="pros"></div>
+        <h3>ข้อเสีย</h3>
+        <div class="box" data-field="cons"></div>
 
-      <h2 class="name"><span data-field="company">ชื่อบริษัท</span> <span class="mode" data-field="mode">work mode</span></h2>
-      <div class="line role"><i data-lucide="briefcase-business"></i><span data-field="role">ชื่อตำแหน่งงาน</span></div>
-      <div class="line pay"><i data-lucide="circle-dollar-sign"></i><span data-field="pay">350 THB/Day</span></div>
-      <div class="line"><i data-lucide="code-xml"></i><div class="chips" data-field="skills"><span class="chip">skill</span><span class="chip">skill</span><span class="chip">skill</span></div></div>
+        <footer>
+          <span class="avatar"><i data-lucide="user-round"></i></span>
+          <b data-field="user">User - 101</b><small data-field="date">วัน เดือน ปี</small>
+          <button class="btn-dark push">ดูรีวิวฉบับเต็ม <i data-lucide="arrow-right"></i></button>
+        </footer>
+      </article>
 
-      <div class="scores">
-        <div class="score"><i data-lucide="users"></i><b>วัฒนธรรม</b><span data-field="culture">4 / 5</span></div>
-        <div class="score"><i data-lucide="chart-no-axes-column"></i><b>ภาระงาน</b><span data-field="workload">4 / 5</span></div>
-        <div class="score"><i data-lucide="headphones"></i><b>พี่เลี้ยง</b><span data-field="mentor">4 / 5</span></div>
-      </div>
-
-      <h3>ข้อดี</h3><div class="box" data-field="pros"></div>
-      <h3>ข้อเสีย</h3><div class="box" data-field="cons"></div>
-
-      <footer>
-        <span class="avatar"><i data-lucide="user-round"></i></span>
-        <b data-field="user">User - 101</b><small data-field="date">วัน เดือน ปี</small>
-        <button class="btn-dark push">ดูรีวิวฉบับเต็ม <i data-lucide="arrow-right"></i></button>
-      </footer>
-    </article>
-
-  </div>
-</main>
+    </div>
+  </main>
 </body>
+
 </html>

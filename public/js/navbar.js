@@ -1,6 +1,6 @@
 /**
  * Shared Layout Script: Renders consistent Top Navbar, Search Bar, and Left Sidebar
- * across all pages (home.html, filter-page.html, post-review.html, form-post-review.html).
+ * across all pages (home.html, filter-page.html, post-review.html, bookmark.html, user.html).
  */
 document.addEventListener("DOMContentLoaded", () => {
   const placeholder = document.getElementById("app-navbar");
@@ -53,24 +53,17 @@ document.addEventListener("DOMContentLoaded", () => {
         `
             : ""
         }
-        <a href="bookmark.html" class="nav-icon-btn bookmark-btn" title="Bookmarked Reviews" aria-label="Bookmarked Reviews">
+        <a href="bookmark.html" class="nav-icon-btn bookmark-btn" title="รายการที่บันทึกไว้" aria-label="บุ๊กมาร์ก">
           <i data-lucide="bookmark"></i>
         </a>
 
-        <div class="user-profile-wrap">
-          <div class="user-profile" id="userProfileBtn">
-            <span class="user-avatar-badge">
-              <i data-lucide="circle-user-round"></i>
-            </span>
-            <span class="user-name" id="currentUserName">User - 101</span>
-            <i data-lucide="chevron-down" class="chevron-icon"></i>
-          </div>
-          <div class="profile-dropdown" id="profileDropdown">
-            <a href="user.html"><i data-lucide="user"></i>Profile</a>
-            <a href="setting.html"><i data-lucide="settings"></i>Account Settings</a>
-            <a href="#" class="logout" id="logoutBtn"><i data-lucide="log-out"></i>Log Out</a>
-          </div>
-        </div>
+        <a href="user.html" class="user-profile" id="userProfileBtn" title="ไปหน้าโปรไฟล์ผู้ใช้">
+          <span class="user-avatar-badge">
+            <i data-lucide="circle-user-round"></i>
+          </span>
+          <span class="user-name" id="currentUserName">User - 101</span>
+          <i data-lucide="chevron-down" class="chevron-icon"></i>
+        </a>
       </div>
     </header>
 
@@ -79,7 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
     <aside class="sidebar" id="sidebar" aria-label="เมนูหลัก">
       <div class="sidebar-header">
         <a href="home.html" class="sidebar-logo">
-          <i data-lucide="search"></i>
+          <span class="brand-icon">
+            <i data-lucide="search"></i>
+          </span>
           <span class="logo-text">Internsight</span>
         </a>
         <button type="button" class="close-btn" id="closeMenuBtn" aria-label="ปิดเมนู">
@@ -92,9 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <i data-lucide="home"></i>
           <span>Home</span>
         </a>
-        <a href="post-review.html" class="sidebar-item ${
-          currentPage === "post-review.html" || currentPage === "form-post-review.html" ? "active" : ""
-        }">
+        <a href="post-review.html" class="sidebar-item ${currentPage === "post-review.html" ? "active" : ""}">
           <i data-lucide="pen-square"></i>
           <span>Write a Review</span>
         </a>
@@ -104,7 +97,15 @@ document.addEventListener("DOMContentLoaded", () => {
         </a>
         <a href="bookmark.html" class="sidebar-item ${currentPage === "bookmark.html" ? "active" : ""}">
           <i data-lucide="bookmark"></i>
-          <span>Bookmarked Reviews</span>
+          <span>รายการที่บันทึกไว้</span>
+        </a>
+        <a href="user.html" class="sidebar-item ${currentPage === "user.html" ? "active" : ""}">
+          <i data-lucide="user"></i>
+          <span>โปรไฟล์ผู้ใช้</span>
+        </a>
+        <a href="#" class="sidebar-item">
+          <i data-lucide="settings"></i>
+          <span>ตั้งค่า</span>
         </a>
       </nav>
     </aside>
