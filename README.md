@@ -44,13 +44,14 @@ npm install
 3. คลิกขวาที่ `internsight_db` -> เลือก **`Query Tool`** แล้วรันคำสั่ง SQL ด้านล่างนี้ (กด `F5` หรือปุ่ม `▶`):
 
 ```sql
-CREATE TABLE IF NOT EXISTS users (
-  id SERIAL PRIMARY KEY,
-  student_id VARCHAR(20) NOT NULL UNIQUE,
-  admission_year INT NOT NULL,
+CREATE TABLE public.users (
+  user_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  student_code VARCHAR(20) NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
   email VARCHAR(100) NOT NULL UNIQUE,
-  password VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  admission_year INTEGER NOT NULL,
+  user_name TEXT,
+  profile_image TEXT
 );
 ```
 

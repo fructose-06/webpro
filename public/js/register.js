@@ -1,4 +1,3 @@
-// แบบฟอร์ม Frontend เท่านั้น ยังไม่สร้างบัญชีจริงหรือเก็บรหัสผ่าน
 const form = document.querySelector("#register-form");
 const password = document.querySelector("#new-password");
 const confirmation = document.querySelector("#confirm-password");
@@ -37,12 +36,40 @@ function validateConfirmation() {
 password.addEventListener("input", validateConfirmation);
 confirmation.addEventListener("input", validateConfirmation);
 
-form.addEventListener("submit", (event) => {
+form.addEventListener("submit", async (event) => {
 	event.preventDefault();
 	validateConfirmation();
 	if (!form.reportValidity()) return;
-	message.textContent =
-		"ข้อมูลผ่านการตรวจเบื้องต้นแล้ว แต่ยังไม่ได้สร้างบัญชี เนื่องจากหน้านี้ยังไม่ได้เชื่อม Backend";
+	const submit = form.querySelector('button[type="submit"]');
+	if (submit.disabled) return;
+	submit.disabled = true;
+	try {
+		const fields = new FormData(form);
+		const response = await fetch("/api/auth/register", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				studentId: fields.get("studentId"),
+				admissionYear: Number(fields.get("admissionYear")),
+				email: fields.get("email"),
+				password: password.value
+			})
+		});
+		if (response.status === 201) {
+			form.reset();
+			message.textContent = "สร้างบัญชีสำเร็จ กดปิดเพื่อไปหน้าเข้าสู่ระบบ";
+			dialog.addEventListener("close", () => location.assign("login.html"), { once: true });
+		} else {
+			message.textContent = response.headers.get("content-type")?.includes("application/json")
+				? (await response.json()).message
+				: "เซิร์ฟเวอร์รับคำขอสมัครไม่ได้ กรุณาลองอีกครั้ง";
+		}
+	} catch (error) {
+		console.error({ event: "registration_request_failed", type: error.name });
+		message.textContent = "ติดต่อเซิร์ฟเวอร์ไม่ได้ กรุณาลองอีกครั้ง";
+	} finally {
+		submit.disabled = false;
+	}
 	dialog.showModal();
 });
 

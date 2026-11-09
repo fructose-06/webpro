@@ -1,4 +1,3 @@
-// ตัวอย่าง Frontend: ยังไม่ส่งข้อมูลไปยัง server และไม่เก็บรหัสผ่าน
 const form = document.querySelector("#login-form");
 const password = document.querySelector("#password");
 const togglePassword = document.querySelector("#toggle-password");
@@ -20,13 +19,27 @@ togglePassword.addEventListener("click", () => {
 	);
 });
 
-form.addEventListener("submit", (event) => {
+form.addEventListener("submit", async (event) => {
 	event.preventDefault();
-	// Browser ตรวจ required และ pattern ก่อนมาถึงจุดนี้
-	showMessage(
-		"กรอกข้อมูลครบแล้ว หน้านี้เป็นตัวอย่าง Frontend ยังไม่ได้ตรวจสอบบัญชีกับระบบจริง",
-	);
-	// เมื่อมี Backend ให้นำ studentId และ password ส่งไปยัง Login API ผ่าน HTTPS
+	const submit = form.querySelector('[type="submit"]');
+	if (submit.disabled) return;
+	submit.disabled = true;
+	try {
+		const response = await fetch("/api/auth/login", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ studentId: new FormData(form).get("studentId"), password: password.value })
+		});
+		if (response.status === 204) {
+			location.replace("home.html");
+			return;
+		}
+		showMessage((await response.json()).message);
+	} catch {
+		showMessage("ติดต่อระบบเข้าสู่ระบบไม่ได้ กรุณาลองอีกครั้ง");
+	} finally {
+		submit.disabled = false;
+	}
 });
 
 const demoMessages = {

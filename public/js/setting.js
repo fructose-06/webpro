@@ -1,4 +1,4 @@
-lucide.createIcons();
+window.lucide?.createIcons();
 
 const tabs = document.querySelectorAll('[data-tab]');
 const panels = document.querySelectorAll('[data-panel]');
@@ -67,26 +67,57 @@ const showToast = (message) => {
 
 const profileForm = document.querySelector('#profile-form');
 const nameInput = document.querySelector('#display-name');
-const modeRadios = document.querySelectorAll('input[name="mode"]');
 const profileSave = document.querySelector('#profile-save');
 const profileCancel = document.querySelector('#profile-cancel');
 
 const readProfile = () => ({
   name: nameInput.value.trim(),
-  mode: [...modeRadios].find((radio) => radio.checked).value,
 });
-
-const modeLabel = (value) =>
-  document.querySelector(`input[name="mode"][value="${value}"]`).parentElement.textContent.trim();
 
 let savedProfile = readProfile(); 
 
 const refreshProfileButtons = () => {
   const now = readProfile();
-  const changed = now.name !== savedProfile.name || now.mode !== savedProfile.mode;
-  profileSave.disabled = !changed || now.name === ''; 
+  const changed = now.name !== savedProfile.name;
+  profileSave.disabled = !changed; 
   profileCancel.disabled = !changed;
 };
+
+async function settingsRequest(path, method, body) {
+  const options = { method, cache: 'no-store' };
+  if (body !== undefined) {
+    options.headers = { 'Content-Type': 'application/json' };
+    options.body = JSON.stringify(body);
+  }
+  const response = await fetch(path, options);
+  if (response.status === 401) location.replace('login.html');
+  if (!response.ok) {
+    const details = response.headers.get('content-type')?.includes('application/json') ? await response.json() : {};
+    throw new Error(details.message || 'ติดต่อระบบตั้งค่าไม่ได้');
+  }
+  if (response.status !== 204) return response.json();
+}
+
+async function loadSettings() {
+  try {
+    const account = await settingsRequest('/api/settings', 'GET', undefined);
+    nameInput.value = account.user_name || '';
+    nameInput.placeholder = account.student_code;
+    document.querySelector('#student-id').value = account.student_code;
+    document.querySelector('#email').value = account.email;
+    document.querySelector('.account-name').textContent = account.user_name || account.student_code;
+    savedProfile = readProfile();
+    refreshProfileButtons();
+    profileForm.inert = false;
+  } catch (error) {
+    showToast(error.message);
+  }
+}
+loadSettings();
+document.querySelector('.menu-item.logout').addEventListener('click', (event) => {
+  event.preventDefault();
+  document.getElementById('logoutBtn').click();
+});
 
 ['input', 'change'].forEach((type) => profileForm.addEventListener(type, refreshProfileButtons));
 
@@ -95,9 +126,6 @@ profileForm.addEventListener('submit', async (event) => {
   const now = readProfile();
   const items = [];
   if (now.name !== savedProfile.name) items.push(`ชื่อที่แสดง: ${savedProfile.name} → ${now.name}`);
-  if (now.mode !== savedProfile.mode) {
-    items.push(`โหมดเริ่มต้น: ${modeLabel(savedProfile.mode)} → ${modeLabel(now.mode)}`);
-  }
 
   const ok = await confirmDialog({
     title: 'บันทึกการเปลี่ยนแปลง?',
@@ -107,6 +135,18 @@ profileForm.addEventListener('submit', async (event) => {
   });
   if (!ok) return;
 
+  profileForm.inert = true;
+  try {
+    await settingsRequest('/api/settings/profile', 'PUT', { name: now.name });
+  } catch (error) {
+    showToast(error.message);
+    return;
+  } finally {
+    profileForm.inert = false;
+  }
+  const label = now.name || document.querySelector('#student-id').value;
+  document.querySelector('.account-name').textContent = label;
+  document.getElementById('currentUserName').textContent = label;
   savedProfile = now; 
   nameInput.value = now.name;
   refreshProfileButtons();
@@ -123,7 +163,6 @@ profileCancel.addEventListener('click', async () => {
   if (!ok) return;
 
   nameInput.value = savedProfile.name;
-  document.querySelector(`input[name="mode"][value="${savedProfile.mode}"]`).checked = true;
   refreshProfileButtons();
 });
 
@@ -145,7 +184,7 @@ const setPasswordVisible = (button, visible) => {
   button.setAttribute('aria-pressed', visible);
   button.setAttribute('aria-label', visible ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน');
   button.innerHTML = `<i data-lucide="${visible ? 'eye-off' : 'eye'}"></i>`;
-  lucide.createIcons(); 
+  window.lucide?.createIcons(); 
 };
 
 eyeButtons.forEach((button) => {
@@ -203,9 +242,6 @@ const closePasswordForm = () => {
   setPasswordForm(false);
 };
 
-const changePasswordRequest = async (current) =>
-  current === 'demo1234' ? { ok: true } : { ok: false, reason: 'wrong-current' };
-
 pwButton.addEventListener('click', () => setPasswordForm(true));
 
 pwForm.addEventListener('input', (event) => {
@@ -223,11 +259,10 @@ pwForm.addEventListener('submit', async (event) => {
   if (!ok) return;
 
   pwSave.disabled = true; 
-  const result = await changePasswordRequest(currentPw.value, newPw.value);
-
-  if (!result.ok) {
-    setError(currentPw, 'รหัสผ่านปัจจุบันไม่ถูกต้อง');
-    currentPw.focus();
+  try {
+    await settingsRequest('/api/settings/password', 'PUT', { current: currentPw.value, replacement: newPw.value });
+  } catch (error) {
+    setError(currentPw, error.message);
     refreshPwForm();
     return;
   }
