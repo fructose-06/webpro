@@ -100,7 +100,7 @@ Connected to MongoDB (internsight_nosql)
 - หน้าสมัครสมาชิก: `http://localhost:3000/register.html`
 - หน้าหลัก: `http://localhost:3000/home.html`
 - หน้าค้นหาและตัวกรอง: `http://localhost:3000/filter-page.html`
-- หน้าเขียนรีวิว: `http://localhost:3000/form-post-review.html`
+- หน้าเขียนรีวิว: `http://localhost:3000/post-review.html`
 
 ---
 

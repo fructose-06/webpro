@@ -4,9 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Internsight User</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Prompt:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/user.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/user.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="js/user.js" defer></script>
   <script src="js/navbar.js" defer></script>
@@ -26,7 +28,7 @@
   <section class="banner">
     <span class="ico"><i data-lucide="heart"></i></span>
     <p>มีประสบการณ์ฝึกงานล่าสุดอยากแบ่งปันมั้ย ?</p>
-    <button class="btn-dark push"><i data-lucide="square-pen"></i>เขียนรีวิว</button>
+    <a href="post-review.html" class="btn-dark push" style="text-decoration:none;"><i data-lucide="square-pen"></i>เขียนรีวิว</a>
   </section>
 
   <div class="list-head">
@@ -130,7 +132,7 @@
   </div>
 </main>
 
-<button class="fab" aria-label="เขียนรีวิว"><i data-lucide="pencil"></i></button>
+<a href="post-review.html" class="fab" aria-label="เขียนรีวิว" title="เขียนรีวิว" style="text-decoration:none;"><i data-lucide="pencil"></i></a>
 
 </body>
 </html>
