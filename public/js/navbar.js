@@ -1,6 +1,6 @@
 /**
  * Shared Layout Script: Renders consistent Top Navbar, Search Bar, and Left Sidebar
- * across all pages (home.html, filter-page.html, post-review.html, form-post-review.html).
+ * across all pages (home.html, filter-page.html, post-review.html, bookmark.html, user.html).
  */
 document.addEventListener("DOMContentLoaded", () => {
   const placeholder = document.getElementById("app-navbar");
@@ -29,13 +29,13 @@ document.addEventListener("DOMContentLoaded", () => {
       ${
         !hideSearch
           ? `
-      <form class="search-bar" id="globalSearchForm" action="filter-page.html" method="get" role="search">
+      <form class="search-bar" id="globalSearchForm" action="filter.html" method="get" role="search">
         <span class="search-icon">
           <i data-lucide="search"></i>
         </span>
         <input class="search-input" id="globalSearchInput" name="q" type="text" placeholder="พิมพ์คำค้นหา เช่น ชื่อบริษัท, ตำแหน่งงาน">
         <button type="submit" class="search-btn">ค้นหา</button>
-        <a href="filter-page.html" class="filter-btn" title="ตัวกรองค้นหา" aria-label="ตัวกรองค้นหา">
+        <a href="filter.html" class="filter-btn" title="ตัวกรองค้นหา" aria-label="ตัวกรองค้นหา">
           <i data-lucide="filter"></i>
         </a>
       </form>
@@ -47,23 +47,23 @@ document.addEventListener("DOMContentLoaded", () => {
         ${
           hideSearch
             ? `
-        <a href="filter-page.html" class="nav-icon-btn" title="ค้นหาและตัวกรอง" aria-label="ค้นหาตัวกรอง">
+        <a href="filter.html" class="nav-icon-btn" title="ค้นหาและตัวกรอง" aria-label="ค้นหาตัวกรอง">
           <i data-lucide="filter"></i>
         </a>
         `
             : ""
         }
-        <button type="button" class="nav-icon-btn bookmark-btn" title="รายการที่บันทึกไว้" aria-label="บุ๊กมาร์ก">
+        <a href="bookmark.html" class="nav-icon-btn bookmark-btn" title="รายการที่บันทึกไว้" aria-label="บุ๊กมาร์ก">
           <i data-lucide="bookmark"></i>
-        </button>
+        </a>
 
-        <div class="user-profile" id="userProfileBtn">
+        <a href="user.html" class="user-profile" id="userProfileBtn" title="ไปหน้าโปรไฟล์ผู้ใช้">
           <span class="user-avatar-badge">
             <i data-lucide="circle-user-round"></i>
           </span>
           <span class="user-name" id="currentUserName">User - 101</span>
           <i data-lucide="chevron-down" class="chevron-icon"></i>
-        </div>
+        </a>
       </div>
     </header>
 
@@ -72,7 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
     <aside class="sidebar" id="sidebar" aria-label="เมนูหลัก">
       <div class="sidebar-header">
         <a href="home.html" class="sidebar-logo">
-          <i data-lucide="search"></i>
+          <span class="brand-icon">
+            <i data-lucide="search"></i>
+          </span>
           <span class="logo-text">Internsight</span>
         </a>
         <button type="button" class="close-btn" id="closeMenuBtn" aria-label="ปิดเมนู">
@@ -85,21 +87,19 @@ document.addEventListener("DOMContentLoaded", () => {
           <i data-lucide="home"></i>
           <span>หน้าหลัก</span>
         </a>
-        <a href="post-review.html" class="sidebar-item ${
-          currentPage === "post-review.html" || currentPage === "form-post-review.html" ? "active" : ""
-        }">
+        <a href="post-review.html" class="sidebar-item ${currentPage === "post-review.html" ? "active" : ""}">
           <i data-lucide="pen-square"></i>
           <span>เขียนรีวิวฝึกงาน</span>
         </a>
-        <a href="filter-page.html" class="sidebar-item ${currentPage === "filter-page.html" ? "active" : ""}">
+        <a href="filter.html" class="sidebar-item ${currentPage === "filter.html" ? "active" : ""}">
           <i data-lucide="filter"></i>
           <span>ค้นหา & ตัวกรอง</span>
         </a>
-        <a href="#" class="sidebar-item">
+        <a href="bookmark.html" class="sidebar-item ${currentPage === "bookmark.html" ? "active" : ""}">
           <i data-lucide="bookmark"></i>
           <span>รายการที่บันทึกไว้</span>
         </a>
-        <a href="#" class="sidebar-item">
+        <a href="user.html" class="sidebar-item ${currentPage === "user.html" ? "active" : ""}">
           <i data-lucide="user"></i>
           <span>โปรไฟล์ผู้ใช้</span>
         </a>
