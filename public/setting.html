@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Internsight – ตั้งค่า</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Prompt:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/setting.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="js/navbar.js" defer></script>
+  <script src="js/setting.js" defer></script>
+</head>
+<body>
+
+<div id="app-navbar"></div>
+
+<main class="settings">
+
+  <aside aria-label="เมนูตั้งค่า">
+    <div class="account-card">
+      <span class="avatar-lg"><i data-lucide="user-round"></i></span>
+      <div>
+        <p class="account-name">User <small>(680905004XX)</small></p>
+        <span class="account-sub">บัญชีของคุณ</span>
+      </div>
+    </div>
+
+    <nav class="menu-card" aria-label="ตั้งค่าบัญชี">
+      <a href="#profile" class="menu-item active" data-tab="profile"><i data-lucide="user-round"></i>โปรไฟล์สาธารณะ</a>
+      <a href="#account" class="menu-item" data-tab="account"><i data-lucide="settings"></i>บัญชีผู้ใช้</a>
+      <hr>
+      <a href="#" class="menu-item logout"><i data-lucide="log-out"></i>ออกจากระบบ</a>
+    </nav>
+  </aside>
+
+  <section class="panel" data-panel="profile">
+    <header class="panel-head">
+      <span class="bar"></span>
+      <div>
+        <h1>โปรไฟล์สาธารณะ</h1>
+        <p>ข้อมูลในส่วนนี้จะแสดงให้ผู้อื่นเห็นเมื่อคุณแสดงความคิดเห็นหรือโพสต์รีวิวสถานที่ฝึกงาน</p>
+      </div>
+    </header>
+    <hr class="rule">
+
+    <form class="profile-cols" id="profile-form">
+      <div>
+        <label class="label" for="display-name">ชื่อที่แสดง (Name)</label>
+        <div class="input"><input id="display-name" value="User"></div>
+        <p class="hint">ชื่อของคุณจะแสดงในรีวิวคอมเมนต์บนแพลตฟอร์ม Internsight สามารถปรับเปลี่ยนได้ตลอดเวลา</p>
+
+        <fieldset class="mode-box">
+          <h2>โหมดแสดงตนเริ่มต้นเมื่อโพสต์รีวิว (Default review mode)</h2>
+          <label class="radio"><input type="radio" name="mode" value="public" checked>เปิดเผยชื่อผู้ใช้ (Public)</label>
+          <label class="radio"><input type="radio" name="mode" value="anonymous">ไม่ระบุตัวตน (Anonymous)</label>
+        </fieldset>
+
+        <hr class="rule rule-tight">
+        <div class="actions">
+          <button type="submit" class="btn-pill primary" id="profile-save" disabled>บันทึกการเปลี่ยนแปลง (Update profile)</button>
+          <button type="button" class="btn-pill secondary" id="profile-cancel" disabled>ยกเลิก (Cancel)</button>
+        </div>
+      </div>
+
+      <div>
+        <span class="label">รูปโปรไฟล์ (Profile picture)</span>
+        <div class="pic">
+          <i data-lucide="image"></i>
+          <button type="button" class="edit"><i data-lucide="pencil"></i>Edit</button>
+        </div>
+        <p class="pic-note">แนะนำภาพสัดส่วนสี่เหลี่ยมจัตุรัส ไฟล์ JPG หรือ PNG ขนาดไม่เกิน 2MB</p>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel" data-panel="account" hidden>
+    <header class="panel-head">
+      <span class="bar"></span>
+      <div>
+        <h1>บัญชีผู้ใช้</h1>
+        <p>จัดการข้อมูลบัญชี</p>
+      </div>
+    </header>
+    <hr class="rule">
+
+    <div class="form">
+      <label class="label" for="student-id">รหัสนักศึกษา (Student ID)</label>
+      <div class="input"><i data-lucide="lock-keyhole"></i><input id="student-id" value="680905004XX" readonly></div>
+    </div>
+    <hr class="rule">
+
+    <div class="form">
+      <label class="label" for="email">อีเมล (Email)</label>
+      <div class="input"><i data-lucide="lock-keyhole"></i><input id="email" value="user101@kmutt.ac.th" readonly></div>
+    </div>
+    <hr class="rule">
+
+    <div class="pw-head">
+      <div>
+        <h2 class="section-title"><i data-lucide="key-round"></i>เปลี่ยนรหัสผ่าน (Change Password)</h2>
+        <p class="section-sub">สำหรับผู้ใช้ที่ต้องการตั้งรหัสผ่านสำหรับเข้าสู่ระบบ</p>
+      </div>
+      <button type="button" class="btn-change" aria-expanded="false" aria-controls="pw-form">เปลี่ยนรหัสผ่าน (Change Password)</button>
+    </div>
+
+    <form class="form pw-form" id="pw-form" hidden>
+
+      <div class="label-row">
+        <label class="label" for="current-pw">รหัสผ่านปัจจุบัน (Current password)</label>
+        <a href="#" class="link-forgot">ลืมรหัสผ่าน ?</a>
+      </div>
+      <div class="input">
+        <i data-lucide="lock-keyhole"></i>
+        <input id="current-pw" type="password">
+        <button type="button" class="eye" aria-label="แสดงรหัสผ่าน"><i data-lucide="eye"></i></button>
+      </div>
+
+      <div class="two">
+        <div>
+          <label class="label" for="new-pw">รหัสผ่านใหม่ (New password)</label>
+          <div class="input">
+            <i data-lucide="key-round"></i>
+            <input id="new-pw" type="password" placeholder="อย่างน้อย 8 ตัวอักษร">
+            <button type="button" class="eye" aria-label="แสดงรหัสผ่าน"><i data-lucide="eye"></i></button>
+          </div>
+        </div>
+        <div>
+          <label class="label" for="confirm-pw">ยืนยันรหัสผ่านใหม่ (Confirm)</label>
+          <div class="input">
+            <i data-lucide="key-round"></i>
+            <input id="confirm-pw" type="password" placeholder="ยืนยันรหัสผ่านอีกครั้ง">
+            <button type="button" class="eye" aria-label="แสดงรหัสผ่าน"><i data-lucide="eye"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <ul class="rules">
+        <li><i data-lucide="circle-check"></i>มีความยาวอย่างน้อย 8 ตัวอักษร (Minimum 8 characters)</li>
+        <li><i data-lucide="circle-check"></i>ประกอบด้วยตัวอักษรภาษาอังกฤษ (A-Z, a-z) และตัวเลข (0-9)</li>
+      </ul>
+
+      <div class="actions">
+        <button type="submit" class="btn-pill primary" id="pw-save" disabled>อัปเดตรหัสผ่าน (Update password)</button>
+        <button type="button" class="btn-pill secondary" id="pw-cancel">ยกเลิก (Cancel)</button>
+      </div>
+    </form>
+  </section>
+</main>
+
+<!-- กล่องยืนยัน-->
+<dialog class="confirm" id="confirm-dialog" aria-labelledby="confirm-title">
+  <h2 id="confirm-title"></h2>
+  <p id="confirm-text"></p>
+  <ul id="confirm-list"></ul>
+  <div class="actions">
+    <button type="button" class="btn-pill primary" id="confirm-ok"></button>
+    <button type="button" class="btn-pill secondary" id="confirm-back"></button>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+</body>
+</html>
