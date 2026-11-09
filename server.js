@@ -53,6 +53,31 @@ pgPool
         console.error("PostgreSQL connection error:", err.message);
     });
 
+async function hashPassword(password) {
+    const salt = randomBytes(16);
+    const digest = await deriveKey("argon2id", {
+        message: Buffer.from(password), nonce: salt, memory: 19456,
+        passes: 2, parallelism: 1, tagLength: 32
+    });
+    const encode = (bytes) => bytes.toString("base64").replace(/=+$/, "");
+    return `$argon2id$v=19$m=19456,t=2,p=1$${encode(salt)}$${encode(digest)}`;
+}
+
+async function matchesPassword(password, storedHash) {
+    const parts = storedHash?.split("$");
+    if (storedHash && (parts.length !== 6 || parts[1] !== "argon2id" ||
+        parts[2] !== "v=19" || parts[3] !== "m=19456,t=2,p=1")) {
+        throw new Error("unsupported_password_hash");
+    }
+    const salt = storedHash ? Buffer.from(parts[4], "base64") : Buffer.alloc(16);
+    const expected = storedHash ? Buffer.from(parts[5], "base64") : Buffer.alloc(32);
+    const actual = await deriveKey("argon2id", {
+        message: Buffer.from(password), nonce: salt, memory: 19456,
+        passes: 2, parallelism: 1, tagLength: 32
+    });
+    return expected.length === actual.length && timingSafeEqual(expected, actual);
+}
+
 app.post("/api/auth/register", async (req, res) => {
     const { studentId, email, admissionYear, password } = req.body || {};
     const address = typeof email === "string" ? email.trim().toLowerCase() : "";
@@ -65,13 +90,7 @@ app.post("/api/auth/register", async (req, res) => {
     }
 
     try {
-        const salt = randomBytes(16);
-        const digest = await deriveKey("argon2id", {
-            message: Buffer.from(password), nonce: salt, memory: 19456,
-            passes: 2, parallelism: 1, tagLength: 32
-        });
-        const encode = (bytes) => bytes.toString("base64").replace(/=+$/, "");
-        const hash = `$argon2id$v=19$m=19456,t=2,p=1$${encode(salt)}$${encode(digest)}`;
+        const hash = await hashPassword(password);
         await pgPool.query(
             "INSERT INTO public.users (student_code, admission_year, email, password_hash) VALUES ($1, $2, $3, $4)",
             [studentId, admissionYear, address, hash]
@@ -124,18 +143,7 @@ app.post("/api/auth/login", async (req, res) => {
             [studentId]
         );
         const user = rows[0];
-        const parts = user?.password_hash.split("$");
-        if (user && (parts.length !== 6 || parts[1] !== "argon2id" ||
-            parts[2] !== "v=19" || parts[3] !== "m=19456,t=2,p=1")) {
-            throw new Error("unsupported_password_hash");
-        }
-        const salt = user ? Buffer.from(parts[4], "base64") : Buffer.alloc(16);
-        const expected = user ? Buffer.from(parts[5], "base64") : Buffer.alloc(32);
-        const actual = await deriveKey("argon2id", {
-            message: Buffer.from(password), nonce: salt, memory: 19456,
-            passes: 2, parallelism: 1, tagLength: 32
-        });
-        if (expected.length !== actual.length || !timingSafeEqual(expected, actual) || !user) {
+        if (!await matchesPassword(password, user?.password_hash) || !user) {
             return res.status(401).json({ message: "รหัสนักศึกษาหรือรหัสผ่านไม่ถูกต้อง" });
         }
         sessions.delete(sessionKey(req));
@@ -154,6 +162,62 @@ app.get("/api/auth/me", (req, res) => {
     const session = activeSession(req);
     if (!session) return res.sendStatus(401);
     return res.json(session.profile);
+});
+
+app.get("/api/settings", async (req, res) => {
+    const { userId } = activeSession(req).profile;
+    const result = await pgPool.query(
+        "SELECT student_code, email, user_name FROM public.users WHERE user_id = $1", [userId]
+    );
+    if (!result.rowCount) return res.sendStatus(401);
+    return res.json(result.rows[0]);
+});
+
+app.put("/api/settings/profile", async (req, res) => {
+    const { name } = req.body || {};
+    if (typeof name !== "string" || name.trim().length > 100) {
+        return res.status(400).json({ message: "กรุณาตรวจชื่อที่แสดง" });
+    }
+    const { userId } = activeSession(req).profile;
+    const userName = name.trim() || null;
+    const result = await pgPool.query(
+        "UPDATE public.users SET user_name = $1 WHERE user_id = $2",
+        [userName, userId]
+    );
+    if (!result.rowCount) return res.sendStatus(401);
+    for (const session of sessions.values()) {
+        if (session.profile.userId === userId) session.profile.userName = userName;
+    }
+    return res.sendStatus(204);
+});
+
+app.put("/api/settings/password", async (req, res) => {
+    const { current, replacement } = req.body || {};
+    if (typeof current !== "string" || !current.length || current.length > 1024 ||
+        typeof replacement !== "string" || replacement.length < 8 || replacement.length > 1024 ||
+        !/[a-z]/i.test(replacement) || !/[0-9]/.test(replacement) || current === replacement) {
+        return res.status(400).json({ message: "ตรวจรหัสผ่านใหม่ตามเงื่อนไขบนฟอร์ม" });
+    }
+    const { userId } = activeSession(req).profile;
+    const result = await pgPool.query("SELECT password_hash FROM public.users WHERE user_id = $1", [userId]);
+    const previous = result.rows[0]?.password_hash;
+    if (!previous || !await matchesPassword(current, previous)) {
+        return res.status(403).json({ message: "รหัสผ่านปัจจุบันไม่ถูกต้อง" });
+    }
+    const updated = await pgPool.query(
+        "UPDATE public.users SET password_hash = $1 WHERE user_id = $2 AND password_hash = $3",
+        [await hashPassword(replacement), userId, previous]
+    );
+    if (!updated.rowCount) return res.status(409).json({ message: "ข้อมูลบัญชีเปลี่ยนแล้ว กรุณาลองใหม่" });
+    for (const [key, session] of sessions) {
+        if (session.profile.userId === userId && key !== sessionKey(req)) sessions.delete(key);
+    }
+    return res.sendStatus(204);
+});
+
+app.use("/api/settings", (error, req, res, next) => {
+    console.error({ event: "settings_failed", code: error.code || error.name });
+    res.status(500).json({ message: "ติดต่อฐานข้อมูลไม่ได้ กรุณาตรวจการตั้งค่าฐานข้อมูล" });
 });
 
 app.post("/api/auth/logout", (req, res) => {

@@ -22,7 +22,7 @@
     <div class="account-card">
       <span class="avatar-lg"><i data-lucide="user-round"></i></span>
       <div>
-        <p class="account-name">User <small>(680905004XX)</small></p>
+        <p class="account-name">กำลังโหลดบัญชี</p>
         <span class="account-sub">บัญชีของคุณ</span>
       </div>
     </div>
@@ -45,17 +45,11 @@
     </header>
     <hr class="rule">
 
-    <form class="profile-cols" id="profile-form">
+    <form inert class="profile-cols" id="profile-form">
       <div>
         <label class="label" for="display-name">ชื่อที่แสดง (Name)</label>
-        <div class="input"><input id="display-name" value="User"></div>
+        <div class="input"><input id="display-name" maxlength="100"></div>
         <p class="hint">ชื่อของคุณจะแสดงในรีวิวคอมเมนต์บนแพลตฟอร์ม Internsight สามารถปรับเปลี่ยนได้ตลอดเวลา</p>
-
-        <fieldset class="mode-box">
-          <h2>โหมดแสดงตนเริ่มต้นเมื่อโพสต์รีวิว (Default review mode)</h2>
-          <label class="radio"><input type="radio" name="mode" value="public" checked>เปิดเผยชื่อผู้ใช้ (Public)</label>
-          <label class="radio"><input type="radio" name="mode" value="anonymous">ไม่ระบุตัวตน (Anonymous)</label>
-        </fieldset>
 
         <hr class="rule rule-tight">
         <div class="actions">
@@ -68,9 +62,9 @@
         <span class="label">รูปโปรไฟล์ (Profile picture)</span>
         <div class="pic">
           <i data-lucide="image"></i>
-          <button type="button" class="edit"><i data-lucide="pencil"></i>Edit</button>
+          <button type="button" class="edit" disabled><i data-lucide="pencil"></i>Edit</button>
         </div>
-        <p class="pic-note">แนะนำภาพสัดส่วนสี่เหลี่ยมจัตุรัส ไฟล์ JPG หรือ PNG ขนาดไม่เกิน 2MB</p>
+        <p class="pic-note">ยังไม่เปิดให้แก้รูปโปรไฟล์</p>
       </div>
     </form>
   </section>
@@ -87,13 +81,13 @@
 
     <div class="form">
       <label class="label" for="student-id">รหัสนักศึกษา (Student ID)</label>
-      <div class="input"><i data-lucide="lock-keyhole"></i><input id="student-id" value="680905004XX" readonly></div>
+      <div class="input"><i data-lucide="lock-keyhole"></i><input id="student-id"  readonly></div>
     </div>
     <hr class="rule">
 
     <div class="form">
       <label class="label" for="email">อีเมล (Email)</label>
-      <div class="input"><i data-lucide="lock-keyhole"></i><input id="email" value="user101@kmutt.ac.th" readonly></div>
+      <div class="input"><i data-lucide="lock-keyhole"></i><input id="email"  readonly></div>
     </div>
     <hr class="rule">
 
@@ -109,13 +103,13 @@
 
       <div class="label-row">
         <label class="label" for="current-pw">รหัสผ่านปัจจุบัน (Current password)</label>
-        <a href="#" class="link-forgot">ลืมรหัสผ่าน ?</a>
+        
       </div>
       <div class="input">
         <i data-lucide="lock-keyhole"></i>
         <input id="current-pw" type="password">
         <button type="button" class="eye" aria-label="แสดงรหัสผ่าน"><i data-lucide="eye"></i></button>
-      </div>
+      </div><small id="current-pw-error" role="alert" hidden></small>
 
       <div class="two">
         <div>
@@ -124,7 +118,7 @@
             <i data-lucide="key-round"></i>
             <input id="new-pw" type="password" placeholder="อย่างน้อย 8 ตัวอักษร">
             <button type="button" class="eye" aria-label="แสดงรหัสผ่าน"><i data-lucide="eye"></i></button>
-          </div>
+          </div><small id="new-pw-error" role="alert" hidden></small>
         </div>
         <div>
           <label class="label" for="confirm-pw">ยืนยันรหัสผ่านใหม่ (Confirm)</label>
@@ -132,13 +126,13 @@
             <i data-lucide="key-round"></i>
             <input id="confirm-pw" type="password" placeholder="ยืนยันรหัสผ่านอีกครั้ง">
             <button type="button" class="eye" aria-label="แสดงรหัสผ่าน"><i data-lucide="eye"></i></button>
-          </div>
+          </div><small id="confirm-pw-error" role="alert" hidden></small>
         </div>
       </div>
 
       <ul class="rules">
-        <li><i data-lucide="circle-check"></i>มีความยาวอย่างน้อย 8 ตัวอักษร (Minimum 8 characters)</li>
-        <li><i data-lucide="circle-check"></i>ประกอบด้วยตัวอักษรภาษาอังกฤษ (A-Z, a-z) และตัวเลข (0-9)</li>
+        <li data-rule="length"><i data-lucide="circle-check"></i>มีความยาวอย่างน้อย 8 ตัวอักษร (Minimum 8 characters)</li>
+        <li data-rule="mix"><i data-lucide="circle-check"></i>ประกอบด้วยตัวอักษรภาษาอังกฤษ (A-Z, a-z) และตัวเลข (0-9)</li>
       </ul>
 
       <div class="actions">

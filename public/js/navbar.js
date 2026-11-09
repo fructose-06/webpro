@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
           </button>
           <div class="profile-dropdown" id="profileDropdown">
             <a href="user.html"><i data-lucide="user"></i>Profile</a>
-            <a aria-disabled="true" title="Coming soon"><i data-lucide="settings"></i>Account Settings</a>
+            <a href="setting.html"><i data-lucide="settings"></i>Account Settings</a>
             <a href="#" class="logout" id="logoutBtn"><i data-lucide="log-out"></i>Log Out</a>
           </div>
         </div>
