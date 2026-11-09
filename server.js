@@ -13,8 +13,26 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware พื้นฐาน
 app.use(cors());
+const guestFiles = new Set([
+    "/login.html", "/register.html",
+    "/css/login.css", "/css/register.css", "/js/login.js", "/js/register.js"
+]);
+
+app.use((req, res, next) => {
+    const readsFile = req.method === "GET" || req.method === "HEAD";
+    if (readsFile && guestFiles.has(req.path)) return next();
+
+    res.set("Cache-Control", "private, no-store");
+    if (req.method === "POST" &&
+        (req.path === "/api/auth/register" || req.path === "/api/auth/login")) return next();
+    if (activeSession(req)) return next();
+    if (readsFile && !/^\/api(?:\/|$)/i.test(req.path)) return res.redirect("/login.html");
+    return res.sendStatus(401);
+});
+
+app.get("/", (req, res) => res.redirect("/home.html"));
+
 app.use(express.json({ limit: "10mb" })); // ให้อ่านข้อมูล JSON ที่ส่งมาจากหน้าเว็บได้
-app.use(express.static(path.join(__dirname, "public"))); // ให้เปิดไฟล์ HTML ในโฟลเดอร์ public ได้
 
 // 1. เชื่อมต่อ PostgreSQL (SQL)
 const pgPool = new Pool({
@@ -74,6 +92,15 @@ const sessionLimitMs = 24 * 60 * 60 * 1000;
 function sessionKey(req) {
     return /(?:^|; *)internsight_sid=([a-f0-9]{64})(?:;|$)/.exec(req.headers.cookie || "")?.[1];
 }
+function activeSession(req) {
+    const session = sessions.get(sessionKey(req));
+    return session && session.until > Date.now() ? session : null;
+}
+
+app.use(express.static(path.join(__dirname, "private"), { cacheControl: false, index: false }));
+
+app.use(express.static(path.join(__dirname, "public"))); // ให้เปิดไฟล์ HTML ในโฟลเดอร์ public ได้
+
 setInterval(() => {
     for (const [key, session] of sessions) {
         if (session.until <= Date.now()) sessions.delete(key);
@@ -124,8 +151,8 @@ app.post("/api/auth/login", async (req, res) => {
 });
 
 app.get("/api/auth/me", (req, res) => {
-    const session = sessions.get(sessionKey(req));
-    if (!session || session.until <= Date.now()) return res.sendStatus(401);
+    const session = activeSession(req);
+    if (!session) return res.sendStatus(401);
     return res.json(session.profile);
 });
 
