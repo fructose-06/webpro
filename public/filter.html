@@ -20,7 +20,8 @@
 
   <main>
     <div class="crumb">
-      <i data-lucide="pin" class="solid pin"></i>หน้าหลัก <i data-lucide="arrow-right"></i><i data-lucide="filter"></i>filter
+      <i data-lucide="pin" class="solid pin"></i><a href="home.html" class="back" aria-label="ย้อนกลับ">Home </a>
+      <i data-lucide="arrow-right"></i><i data-lucide="filter"></i>filter
     </div>
 
     <div class="layout">
@@ -101,11 +102,15 @@
         <div class="grid" id="cardGrid"></div>
 
         <nav class="pager" aria-label="เลือกหน้า">
-          <a class="nav" id="prevBtn"><i data-lucide="arrow-left"></i>ย้อนกลับ</a>
+          <button class="nav" id="prevBtn" type="button">
+            <i data-lucide="arrow-left"></i>ย้อนกลับ
+          </button>
           
           <div class="nums" id="pageNumbers"></div>
 
-          <a class="nav" id="nextBtn" href="#">ถัดไป<i data-lucide="arrow-right"></i></a>
+          <button class="nav" id="nextBtn" type="button">
+            ถัดไป<i data-lucide="arrow-right"></i>
+          </button>
         </nav>
       </section>
     </div>

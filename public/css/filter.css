@@ -248,6 +248,14 @@ main {
   container-type: inline-size;
   cursor: pointer;
   min-height: 250px;
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
+  border-color: #cfd3dc;
 }
 .card::before {
   content: "";
@@ -425,7 +433,9 @@ main {
 .pager {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 12px;
+
   margin-top: auto;
   padding-top: 18px;
   border-top: 1px solid var(--line);
@@ -439,29 +449,47 @@ main {
   border-radius: 8px;
   padding: 8px 14px;
   font-weight: 500;
+  
 }
 .nav[aria-disabled="true"] {
   opacity: .4;
   pointer-events: none;
+  transition: border-color .15s ease;
 }
 .nums {
   display: flex;
   align-items: center;
   gap: 6px;
 }
-.nums a {
+.nums button {
   display: grid;
   place-items: center;
   min-width: 36px;
   height: 36px;
+
+  border: 0;
+  background: transparent;
+  appearance: none;
+
   border-radius: 8px;
+  font: inherit;
+  color: inherit;
+
   font-weight: 500;
+  cursor: pointer;
 }
-.nums a[aria-current="page"] {
+.nums button[aria-current="page"] {
   background: var(--accent);
   color: var(--on-accent);
+  border: 1px solid transparent;
+  transition: border-color .15s ease;
 }
-
+.nav:hover:not([aria-disabled="true"]) {
+  border-color: var(--ink);
+}
+.nums button:hover:not([aria-current="page"]) {
+  border-color: var(--ink);
+}
 .fab{
   position: fixed;
   right:28px;bottom: 28px;
