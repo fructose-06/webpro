@@ -85,15 +85,15 @@ document.addEventListener("DOMContentLoaded", () => {
       <nav class="sidebar-nav">
         <a href="home.html" class="sidebar-item ${currentPage === "home.html" ? "active" : ""}">
           <i data-lucide="home"></i>
-          <span>หน้าหลัก</span>
+          <span>Home</span>
         </a>
         <a href="post-review.html" class="sidebar-item ${currentPage === "post-review.html" ? "active" : ""}">
           <i data-lucide="pen-square"></i>
-          <span>เขียนรีวิวฝึกงาน</span>
+          <span>Write a Review</span>
         </a>
         <a href="filter.html" class="sidebar-item ${currentPage === "filter.html" ? "active" : ""}">
           <i data-lucide="filter"></i>
-          <span>ค้นหา & ตัวกรอง</span>
+          <span>Filter Reviews</span>
         </a>
         <a href="bookmark.html" class="sidebar-item ${currentPage === "bookmark.html" ? "active" : ""}">
           <i data-lucide="bookmark"></i>
@@ -109,6 +109,16 @@ document.addEventListener("DOMContentLoaded", () => {
         </a>
       </nav>
     </aside>
+    <div class="modal-overlay" id="logoutModal">
+      <div class="modal">
+        <h3>Log Out</h3>
+        <p>Are you sure you want to log out?</p>
+        <div class="modal-actions">
+          <button type="button" id="cancelLogout">Cancel</button>
+          <button type="button" id="confirmLogout" class="btn-logout">Log Out</button>
+        </div>
+      </div>
+    </div>
   `;
 
   placeholder.innerHTML = layoutHTML;
@@ -151,15 +161,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  document.getElementById("userProfileBtn")?.addEventListener("click", () => {
-    const newName = prompt(
-      "ลองพิมพ์ชื่อใหม่เพื่อทดสอบระบบจำลอง Login:",
-      localStorage.getItem("currentUser") || "User - 101"
-    );
-    if (newName && newName.trim() !== "") {
-      localStorage.setItem("currentUser", newName.trim());
-      loadUserProfile();
+  //Drop-down Open/close 
+  const profileBtn = document.getElementById("userProfileBtn");
+  const dropdown = document.getElementById("profileDropdown");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const logoutModal = document.getElementById("logoutModal");
+  const cancelLogout = document.getElementById("cancelLogout");
+  const confirmLogout = document.getElementById("confirmLogout");
+
+  profileBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    dropdown?.classList.toggle("show");
+  });
+  document.addEventListener("click", () => {
+    dropdown?.classList.remove("show");
+  });
+  logoutBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    dropdown?.classList.remove("show");
+    logoutModal?.classList.add("show");
+  });
+  cancelLogout?.addEventListener("click", () => {
+    logoutModal?.classList.remove("show");
+  });
+  logoutModal?.addEventListener("click", (e) => {
+    if (e.target === logoutModal) {
+      logoutModal.classList.remove("show");
     }
+  });
+  confirmLogout?.addEventListener("click", () => {
+    window.location.href = "login.html";
   });
 
   loadUserProfile();
