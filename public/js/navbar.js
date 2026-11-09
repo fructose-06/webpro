@@ -53,20 +53,23 @@ document.addEventListener("DOMContentLoaded", () => {
         `
             : ""
         }
-        <a href="bookmark.html" class="nav-icon-btn bookmark-btn" title="รายการที่บันทึกไว้" aria-label="บุ๊กมาร์ก">
+        <a href="bookmark.html" class="nav-icon-btn bookmark-btn" title="Bookmarked Reviews" aria-label="Bookmarked Reviews">
           <i data-lucide="bookmark"></i>
         </a>
-
-        <div class="user-profile-wrap"><button type="button" class="user-profile" id="userProfileBtn" aria-expanded="false" aria-controls="profileDropdown">
-          <span class="user-avatar-badge">
-            <i data-lucide="circle-user-round"></i>
-          </span>
-          <span class="user-name" id="currentUserName">บัญชีผู้ใช้</span>
+        <div class="user-profile-wrap">
+          <button type="button" class="user-profile" id="userProfileBtn" aria-expanded="false" aria-controls="profileDropdown">
+            <span class="user-avatar-badge">
+              <i data-lucide="circle-user-round"></i>
+            </span>
+            <span class="user-name" id="currentUserName">Account</span>
+            <i data-lucide="chevron-down" class="chevron-icon"></i>
           </button>
           <div class="profile-dropdown" id="profileDropdown">
-            <a href="user.html">โปรไฟล์ผู้ใช้</a>
-            <a href="#logoutModal" class="logout" id="logoutBtn">ออกจากระบบ</a>
-          </div></div>
+            <a href="user.html"><i data-lucide="user"></i>Profile</a>
+            <a aria-disabled="true" title="Coming soon"><i data-lucide="settings"></i>Account Settings</a>
+            <a href="#" class="logout" id="logoutBtn"><i data-lucide="log-out"></i>Log Out</a>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -100,20 +103,12 @@ document.addEventListener("DOMContentLoaded", () => {
         </a>
         <a href="bookmark.html" class="sidebar-item ${currentPage === "bookmark.html" ? "active" : ""}">
           <i data-lucide="bookmark"></i>
-          <span>รายการที่บันทึกไว้</span>
-        </a>
-        <a href="user.html" class="sidebar-item ${currentPage === "user.html" ? "active" : ""}">
-          <i data-lucide="user"></i>
-          <span>โปรไฟล์ผู้ใช้</span>
-        </a>
-        <a href="#" class="sidebar-item">
-          <i data-lucide="settings"></i>
-          <span>ตั้งค่า</span>
+          <span>Bookmarked Reviews</span>
         </a>
       </nav>
     </aside>
-    <div class="modal-overlay" id="logoutModal">
-      <div class="modal">
+    <div class="logout-modal-overlay" id="logoutModal">
+      <div class="logout-modal">
         <h3>Log Out</h3>
         <p>Are you sure you want to log out?</p>
         <div class="modal-actions">

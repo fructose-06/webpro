@@ -37,12 +37,6 @@
   transition: background-color 0.2s;
 }
 
-.app-navbar .menu-btn svg {
-  width: 20px;
-  height: 20px;
-  stroke-width: 2.2;
-}
-
 .app-navbar .menu-btn:hover {
   background-color: #f1f2f5;
 }
@@ -53,34 +47,21 @@
   gap: 10px;
   text-decoration: none;
   color: #16171a;
-  line-height: 1;
-}
-
-.app-navbar .brand-link span {
   font-family: "Inter", "Prompt", sans-serif;
   font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: #16171a;
-  line-height: 1;
 }
 
-.app-navbar .brand-icon,
-.sidebar-logo .brand-icon {
+.app-navbar .brand-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border: 2px solid #16171a;
-  border-radius: 6px;
-  flex-shrink: 0;
 }
 
-.app-navbar .brand-icon svg,
-.sidebar-logo .brand-icon svg {
-  width: 16px;
-  height: 16px;
+.app-navbar .brand-icon svg {
+  width: 22px;
+  height: 22px;
   stroke-width: 2.5;
 }
 
@@ -196,11 +177,6 @@
   transition: background-color 0.2s;
 }
 
-.app-navbar .nav-icon-btn svg {
-  width: 18px;
-  height: 18px;
-}
-
 .app-navbar .nav-icon-btn:hover {
   background-color: #f1f2f5;
 }
@@ -218,7 +194,6 @@
   color: #16171a;
   cursor: pointer;
   user-select: none;
-  text-decoration: none;
   transition: background-color 0.2s;
 }
 
@@ -414,7 +389,7 @@
 }
 
 /* Logout Modal */
-.modal-overlay {
+.logout-modal-overlay {
   position: fixed;
   inset: 0;
   display: flex;
@@ -426,11 +401,11 @@
   transition: .2s ease;
   z-index: 3000;
 }
-.modal-overlay.show {
+.logout-modal-overlay.show {
   opacity: 1;
   visibility: visible;
 }
-.modal {
+.logout-modal {
   width: 100%;
   max-width: 400px;
   background: #fff;
@@ -438,11 +413,11 @@
   padding: 24px;
   box-shadow: 0 16px 40px rgba(0,0,0,.18);
 }
-.modal h3 {
+.logout-modal h3 {
   margin: 0 0 8px;
   font-size: 20px;
 }
-.modal p {
+.logout-modal p {
   margin: 0;
   color: #6b7280;
 }
