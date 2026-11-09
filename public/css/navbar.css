@@ -414,7 +414,7 @@
 }
 
 /* Logout Modal */
-.modal-overlay {
+.logout-modal-overlay {
   position: fixed;
   inset: 0;
   display: flex;
@@ -426,11 +426,11 @@
   transition: .2s ease;
   z-index: 3000;
 }
-.modal-overlay.show {
+.logout-modal-overlay.show {
   opacity: 1;
   visibility: visible;
 }
-.modal {
+.logout-modal {
   width: 100%;
   max-width: 400px;
   background: #fff;
@@ -438,11 +438,11 @@
   padding: 24px;
   box-shadow: 0 16px 40px rgba(0,0,0,.18);
 }
-.modal h3 {
+.logout-modal h3 {
   margin: 0 0 8px;
   font-size: 20px;
 }
-.modal p {
+.logout-modal p {
   margin: 0;
   color: #6b7280;
 }

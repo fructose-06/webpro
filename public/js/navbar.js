@@ -109,8 +109,8 @@ document.addEventListener("DOMContentLoaded", () => {
         </a>
       </nav>
     </aside>
-    <div class="modal-overlay" id="logoutModal">
-      <div class="modal">
+    <div class="logout-modal-overlay" id="logoutModal">
+      <div class="logout-modal">
         <h3>Log Out</h3>
         <p>Are you sure you want to log out?</p>
         <div class="modal-actions">
