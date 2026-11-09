@@ -53,17 +53,23 @@ document.addEventListener("DOMContentLoaded", () => {
         `
             : ""
         }
-        <a href="bookmark.html" class="nav-icon-btn bookmark-btn" title="รายการที่บันทึกไว้" aria-label="บุ๊กมาร์ก">
+        <a href="bookmark.html" class="nav-icon-btn bookmark-btn" title="Bookmarked Reviews" aria-label="Bookmarked Reviews">
           <i data-lucide="bookmark"></i>
         </a>
-
-        <a href="user.html" class="user-profile" id="userProfileBtn" title="ไปหน้าโปรไฟล์ผู้ใช้">
-          <span class="user-avatar-badge">
-            <i data-lucide="circle-user-round"></i>
-          </span>
-          <span class="user-name" id="currentUserName">User - 101</span>
-          <i data-lucide="chevron-down" class="chevron-icon"></i>
-        </a>
+        <div class="user-profile-wrap">
+          <div class="user-profile" id="userProfileBtn">
+            <span class="user-avatar-badge">
+              <i data-lucide="circle-user-round"></i>
+            </span>
+            <span class="user-name" id="currentUserName">User - 101</span>
+            <i data-lucide="chevron-down" class="chevron-icon"></i>
+          </div>
+          <div class="profile-dropdown" id="profileDropdown">
+            <a href="user.html"><i data-lucide="user"></i>Profile</a>
+            <a href="setting.html"><i data-lucide="settings"></i>Account Settings</a>
+            <a href="#" class="logout" id="logoutBtn"><i data-lucide="log-out"></i>Log Out</a>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -97,15 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </a>
         <a href="bookmark.html" class="sidebar-item ${currentPage === "bookmark.html" ? "active" : ""}">
           <i data-lucide="bookmark"></i>
-          <span>รายการที่บันทึกไว้</span>
-        </a>
-        <a href="user.html" class="sidebar-item ${currentPage === "user.html" ? "active" : ""}">
-          <i data-lucide="user"></i>
-          <span>โปรไฟล์ผู้ใช้</span>
-        </a>
-        <a href="#" class="sidebar-item">
-          <i data-lucide="settings"></i>
-          <span>ตั้งค่า</span>
+          <span>Bookmarked Reviews</span>
         </a>
       </nav>
     </aside>
@@ -195,4 +193,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadUserProfile();
 });
-
