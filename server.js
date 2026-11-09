@@ -4,6 +4,9 @@ const cors = require("cors");
 const path = require("path");
 const { Pool } = require("pg");
 const mongoose = require("mongoose");
+const { argon2, randomBytes, timingSafeEqual } = require("node:crypto");
+const { promisify } = require("node:util");
+const deriveKey = promisify(argon2);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,6 +34,106 @@ pgPool
     .catch((err) => {
         console.error("PostgreSQL connection error:", err.message);
     });
+
+app.post("/api/auth/register", async (req, res) => {
+    const { studentId, email, admissionYear, password } = req.body || {};
+    const address = typeof email === "string" ? email.trim().toLowerCase() : "";
+    if (typeof studentId !== "string" || !/^[0-9]{1,20}$/.test(studentId) ||
+        !Number.isInteger(admissionYear) || admissionYear < 2503 ||
+        admissionYear > new Date().getFullYear() + 543 ||
+        !/^[^\s@]+@[^\s@]+$/.test(address) || address.length > 100 ||
+        typeof password !== "string" || !password.length || password.length > 1024) {
+        return res.status(400).json({ message: "กรุณาตรวจรหัสนักศึกษา ปีที่เข้า อีเมล และรหัสผ่าน" });
+    }
+
+    try {
+        const salt = randomBytes(16);
+        const digest = await deriveKey("argon2id", {
+            message: Buffer.from(password), nonce: salt, memory: 19456,
+            passes: 2, parallelism: 1, tagLength: 32
+        });
+        const encode = (bytes) => bytes.toString("base64").replace(/=+$/, "");
+        const hash = `$argon2id$v=19$m=19456,t=2,p=1$${encode(salt)}$${encode(digest)}`;
+        await pgPool.query(
+            "INSERT INTO public.users (student_code, admission_year, email, password_hash) VALUES ($1, $2, $3, $4)",
+            [studentId, admissionYear, address, hash]
+        );
+        return res.status(201).json({ message: "สร้างบัญชีสำเร็จ" });
+    } catch (error) {
+        if (error.code === "23505") {
+            return res.status(409).json({ message: "รหัสนักศึกษาหรืออีเมลนี้สมัครบัญชีแล้ว" });
+        }
+        console.error({ event: "registration_failed", code: error.code || error.name });
+        return res.status(500).json({ message: "บันทึกบัญชีไม่ได้ กรุณาลองอีกครั้ง" });
+    }
+});
+
+// เก็บสถานะการเข้าสู่ระบบเฉพาะช่วงที่เซิร์ฟเวอร์ทำงาน
+const sessions = new Map();
+const sessionLimitMs = 24 * 60 * 60 * 1000;
+function sessionKey(req) {
+    return /(?:^|; *)internsight_sid=([a-f0-9]{64})(?:;|$)/.exec(req.headers.cookie || "")?.[1];
+}
+setInterval(() => {
+    for (const [key, session] of sessions) {
+        if (session.until <= Date.now()) sessions.delete(key);
+    }
+}, 60000).unref();
+
+app.use("/api/auth", (req, res, next) => {
+    res.set("Cache-Control", "no-store");
+    next();
+});
+
+app.post("/api/auth/login", async (req, res) => {
+    const { studentId, password } = req.body || {};
+    if (typeof studentId !== "string" || !/^[0-9]{1,20}$/.test(studentId) ||
+        typeof password !== "string" || !password.length || password.length > 1024) {
+        return res.status(400).json({ message: "กรุณาตรวจรหัสนักศึกษาและรหัสผ่าน" });
+    }
+    try {
+        const { rows } = await pgPool.query(
+            "SELECT user_id, student_code, user_name, password_hash FROM public.users WHERE student_code = $1",
+            [studentId]
+        );
+        const user = rows[0];
+        const parts = user?.password_hash.split("$");
+        if (user && (parts.length !== 6 || parts[1] !== "argon2id" ||
+            parts[2] !== "v=19" || parts[3] !== "m=19456,t=2,p=1")) {
+            throw new Error("unsupported_password_hash");
+        }
+        const salt = user ? Buffer.from(parts[4], "base64") : Buffer.alloc(16);
+        const expected = user ? Buffer.from(parts[5], "base64") : Buffer.alloc(32);
+        const actual = await deriveKey("argon2id", {
+            message: Buffer.from(password), nonce: salt, memory: 19456,
+            passes: 2, parallelism: 1, tagLength: 32
+        });
+        if (expected.length !== actual.length || !timingSafeEqual(expected, actual) || !user) {
+            return res.status(401).json({ message: "รหัสนักศึกษาหรือรหัสผ่านไม่ถูกต้อง" });
+        }
+        sessions.delete(sessionKey(req));
+        const key = randomBytes(32).toString("hex");
+        const profile = { userId: user.user_id, studentCode: user.student_code, userName: user.user_name };
+        sessions.set(key, { profile, until: Date.now() + sessionLimitMs });
+        res.cookie("internsight_sid", key, { httpOnly: true, sameSite: "lax", secure: req.secure, path: "/" });
+        return res.sendStatus(204);
+    } catch (error) {
+        console.error({ event: "login_failed", code: error.code || error.name });
+        return res.status(500).json({ message: "เข้าสู่ระบบไม่ได้ กรุณาลองอีกครั้ง" });
+    }
+});
+
+app.get("/api/auth/me", (req, res) => {
+    const session = sessions.get(sessionKey(req));
+    if (!session || session.until <= Date.now()) return res.sendStatus(401);
+    return res.json(session.profile);
+});
+
+app.post("/api/auth/logout", (req, res) => {
+    sessions.delete(sessionKey(req));
+    res.clearCookie("internsight_sid", { path: "/", httpOnly: true, sameSite: "lax", secure: req.secure });
+    return res.sendStatus(204);
+});
 
 // 2. เชื่อมต่อ MongoDB (NoSQL)
 mongoose

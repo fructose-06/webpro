@@ -57,13 +57,12 @@ document.addEventListener("DOMContentLoaded", () => {
           <i data-lucide="bookmark"></i>
         </button>
 
-        <div class="user-profile" id="userProfileBtn">
+        <a class="user-profile" id="userProfileBtn" href="login.html">
           <span class="user-avatar-badge">
             <i data-lucide="circle-user-round"></i>
           </span>
-          <span class="user-name" id="currentUserName">User - 101</span>
-          <i data-lucide="chevron-down" class="chevron-icon"></i>
-        </div>
+          <span class="user-name" id="currentUserName">เข้าสู่ระบบ</span>
+          </a>
       </div>
     </header>
 
@@ -107,6 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <i data-lucide="settings"></i>
           <span>ตั้งค่า</span>
         </a>
+        <button type="button" class="sidebar-item" id="logoutBtn" style="display:none">ออกจากระบบ</button>
       </nav>
     </aside>
   `;
@@ -138,30 +138,32 @@ document.addEventListener("DOMContentLoaded", () => {
   closeMenuBtn?.addEventListener("click", closeSidebar);
   sidebarOverlay?.addEventListener("click", closeSidebar);
 
-  // User Profile Name Sync via localStorage
-  function loadUserProfile() {
-    let savedUser = localStorage.getItem("currentUser");
-    if (!savedUser) {
-      savedUser = "User - 101";
-      localStorage.setItem("currentUser", savedUser);
-    }
-    const userNameElement = document.getElementById("currentUserName");
-    if (userNameElement) {
-      userNameElement.textContent = savedUser;
+  const logout = document.getElementById("logoutBtn");
+  async function loadProfile() {
+    try {
+      const response = await fetch("/api/auth/me", { cache: "no-store" });
+      if (response.status === 401) return;
+      if (!response.ok) throw new Error(String(response.status));
+      const profile = await response.json();
+      document.getElementById("currentUserName").textContent = profile.userName || profile.studentCode;
+      document.getElementById("userProfileBtn").href = "user.html";
+      logout.style.display = "";
+    } catch (error) {
+      document.getElementById("currentUserName").textContent = "โหลดบัญชีไม่ได้";
+      console.error({ event: "profile_load_failed", type: error.name });
     }
   }
-
-  document.getElementById("userProfileBtn")?.addEventListener("click", () => {
-    const newName = prompt(
-      "ลองพิมพ์ชื่อใหม่เพื่อทดสอบระบบจำลอง Login:",
-      localStorage.getItem("currentUser") || "User - 101"
-    );
-    if (newName && newName.trim() !== "") {
-      localStorage.setItem("currentUser", newName.trim());
-      loadUserProfile();
+  logout.addEventListener("click", async () => {
+    try {
+      const response = await fetch("/api/auth/logout", { method: "POST" });
+      if (!response.ok) throw new Error(String(response.status));
+      location.replace("login.html");
+    } catch {
+      alert("ออกจากระบบไม่ได้ กรุณาลองอีกครั้ง");
     }
   });
-
-  loadUserProfile();
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) location.reload();
+  });
+  loadProfile();
 });
-
