@@ -57,12 +57,16 @@ document.addEventListener("DOMContentLoaded", () => {
           <i data-lucide="bookmark"></i>
         </a>
 
-        <a class="user-profile" id="userProfileBtn" href="login.html">
+        <div class="user-profile-wrap"><button type="button" class="user-profile" id="userProfileBtn" aria-expanded="false" aria-controls="profileDropdown">
           <span class="user-avatar-badge">
             <i data-lucide="circle-user-round"></i>
           </span>
-          <span class="user-name" id="currentUserName">เข้าสู่ระบบ</span>
-          </a>
+          <span class="user-name" id="currentUserName">บัญชีผู้ใช้</span>
+          </button>
+          <div class="profile-dropdown" id="profileDropdown">
+            <a href="user.html">โปรไฟล์ผู้ใช้</a>
+            <a href="#logoutModal" class="logout" id="logoutBtn">ออกจากระบบ</a>
+          </div></div>
       </div>
     </header>
 
@@ -84,15 +88,15 @@ document.addEventListener("DOMContentLoaded", () => {
       <nav class="sidebar-nav">
         <a href="home.html" class="sidebar-item ${currentPage === "home.html" ? "active" : ""}">
           <i data-lucide="home"></i>
-          <span>หน้าหลัก</span>
+          <span>Home</span>
         </a>
         <a href="post-review.html" class="sidebar-item ${currentPage === "post-review.html" ? "active" : ""}">
           <i data-lucide="pen-square"></i>
-          <span>เขียนรีวิวฝึกงาน</span>
+          <span>Write a Review</span>
         </a>
         <a href="filter.html" class="sidebar-item ${currentPage === "filter.html" ? "active" : ""}">
           <i data-lucide="filter"></i>
-          <span>ค้นหา & ตัวกรอง</span>
+          <span>Filter Reviews</span>
         </a>
         <a href="bookmark.html" class="sidebar-item ${currentPage === "bookmark.html" ? "active" : ""}">
           <i data-lucide="bookmark"></i>
@@ -106,9 +110,18 @@ document.addEventListener("DOMContentLoaded", () => {
           <i data-lucide="settings"></i>
           <span>ตั้งค่า</span>
         </a>
-        <button type="button" class="sidebar-item" id="logoutBtn" style="display:none">ออกจากระบบ</button>
       </nav>
     </aside>
+    <div class="modal-overlay" id="logoutModal">
+      <div class="modal">
+        <h3>Log Out</h3>
+        <p>Are you sure you want to log out?</p>
+        <div class="modal-actions">
+          <button type="button" id="cancelLogout">Cancel</button>
+          <button type="button" id="confirmLogout" class="btn-logout">Log Out</button>
+        </div>
+      </div>
+    </div>
   `;
 
   placeholder.innerHTML = layoutHTML;
@@ -138,25 +151,53 @@ document.addEventListener("DOMContentLoaded", () => {
   closeMenuBtn?.addEventListener("click", closeSidebar);
   sidebarOverlay?.addEventListener("click", closeSidebar);
 
-  const logout = document.getElementById("logoutBtn");
   async function loadProfile() {
     try {
       const response = await fetch("/api/auth/me", { cache: "no-store" });
-      if (response.status === 401) return;
+      if (response.status === 401) return location.replace("login.html");
       if (!response.ok) throw new Error(String(response.status));
       const profile = await response.json();
       document.getElementById("currentUserName").textContent = profile.userName || profile.studentCode;
-      document.getElementById("userProfileBtn").href = "user.html";
-      logout.style.display = "";
     } catch (error) {
       document.getElementById("currentUserName").textContent = "โหลดบัญชีไม่ได้";
       console.error({ event: "profile_load_failed", type: error.name });
     }
   }
-  logout.addEventListener("click", async () => {
+
+  //Drop-down Open/close 
+  const profileBtn = document.getElementById("userProfileBtn");
+  const dropdown = document.getElementById("profileDropdown");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const logoutModal = document.getElementById("logoutModal");
+  const cancelLogout = document.getElementById("cancelLogout");
+  const confirmLogout = document.getElementById("confirmLogout");
+
+  profileBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    profileBtn.setAttribute("aria-expanded", String(dropdown.classList.toggle("show")));
+  });
+  document.addEventListener("click", () => {
+    dropdown.classList.remove("show");
+    profileBtn.setAttribute("aria-expanded", "false");
+  });
+  logoutBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    dropdown.classList.remove("show");
+    profileBtn.setAttribute("aria-expanded", "false");
+    logoutModal?.classList.add("show");
+  });
+  cancelLogout?.addEventListener("click", () => {
+    logoutModal?.classList.remove("show");
+  });
+  logoutModal?.addEventListener("click", (e) => {
+    if (e.target === logoutModal) {
+      logoutModal.classList.remove("show");
+    }
+  });
+  confirmLogout.addEventListener("click", async () => {
     try {
       const response = await fetch("/api/auth/logout", { method: "POST" });
-      if (!response.ok) throw new Error(String(response.status));
+      if (!response.ok && response.status !== 401) throw new Error(String(response.status));
       location.replace("login.html");
     } catch {
       alert("ออกจากระบบไม่ได้ กรุณาลองอีกครั้ง");
