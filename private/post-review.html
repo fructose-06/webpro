@@ -241,16 +241,17 @@
           </div>
         </div>
 
-        <!-- Right Sidebar (Image upload) -->
+        <!-- Right Sidebar (Image upload - multiple up to 4 images) -->
         <div class="step2-sidebar">
-          <label class="form-label">รูปภาพเพิ่มเติม</label>
-          <input type="file" id="imageFileInput" accept="image/*" style="display: none;">
+          <label class="form-label">รูปภาพเพิ่มเติม <span id="imageCountLabel" style="font-weight:400; color:#666; font-size:13px;">(0/4 รูป)</span></label>
+          <input type="file" id="imageFileInput" accept="image/*" multiple style="display: none;">
           <div class="image-upload-dropzone" id="imageUploadBox">
             <div class="upload-placeholder" id="uploadPlaceholder" style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-              <span class="image-upload-btn">เพิ่มรูปภาพ</span>
+              <span class="image-upload-btn">+ เพิ่มรูปภาพ</span>
+              <span style="font-size: 12px; color: #64748b;">เลือกได้สูงสุด 4 รูป</span>
             </div>
-            <div id="imagePreviewContainer"></div>
           </div>
+          <div class="multi-image-preview-grid" id="imagePreviewContainer"></div>
         </div>
       </div>
 

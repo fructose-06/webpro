@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
       { text: "", difficulty: "ง่าย" }
     ],
     anonymous: false,
-    image: null
+    images: []
   };
 
   // Mock Database Lists (ต่อไปสามารถดึงจาก API / Database มาแทนที่ได้)
@@ -398,43 +398,79 @@ document.addEventListener("DOMContentLoaded", () => {
 
   renderQuestions();
 
-  // 6. Image Upload & Preview
+  // 6. Multi-Image Upload & Preview (Up to 4 images matching Figma)
+  const MAX_IMAGES = 4;
   const imageUploadBox = document.getElementById("imageUploadBox");
   const imageFileInput = document.getElementById("imageFileInput");
   const imagePreviewContainer = document.getElementById("imagePreviewContainer");
-  const uploadPlaceholder = document.getElementById("uploadPlaceholder");
+  const imageCountLabel = document.getElementById("imageCountLabel");
+
+  function renderImagePreviews() {
+    if (!imagePreviewContainer) return;
+
+    if (imageCountLabel) {
+      imageCountLabel.textContent = `(${formData.images.length}/${MAX_IMAGES} รูป)`;
+    }
+
+    if (imageUploadBox) {
+      imageUploadBox.style.display = formData.images.length >= MAX_IMAGES ? "none" : "flex";
+    }
+
+    imagePreviewContainer.innerHTML = formData.images
+      .map(
+        (imgSrc, idx) => `
+          <div class="preview-thumb-item">
+            <img src="${imgSrc}" alt="Preview ${idx + 1}" class="image-preview-thumb">
+            <button type="button" class="clear-image-btn" data-img-idx="${idx}" title="ลบรูปภาพนี้">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+        `
+      )
+      .join("");
+
+    if (window.lucide) window.lucide.createIcons();
+
+    imagePreviewContainer.querySelectorAll(".clear-image-btn").forEach((btn) => {
+      btn.addEventListener("click", (evt) => {
+        evt.stopPropagation();
+        const removeIdx = Number(btn.getAttribute("data-img-idx"));
+        formData.images.splice(removeIdx, 1);
+        renderImagePreviews();
+      });
+    });
+  }
 
   imageUploadBox?.addEventListener("click", () => {
+    if (formData.images.length >= MAX_IMAGES) {
+      alert(`สามารถอัปโหลดรูปภาพได้สูงสุด ${MAX_IMAGES} รูปครับ`);
+      return;
+    }
     imageFileInput?.click();
   });
 
   imageFileInput?.addEventListener("change", (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      formData.image = event.target.result;
-      if (imagePreviewContainer && uploadPlaceholder) {
-        uploadPlaceholder.style.display = "none";
-        imagePreviewContainer.innerHTML = `
-          <img src="${formData.image}" alt="Preview" class="image-preview-thumb">
-          <button type="button" class="clear-image-btn" id="clearImageBtn" title="ลบรูปภาพ">
-            <i data-lucide="x"></i>
-          </button>
-        `;
-        if (window.lucide) window.lucide.createIcons();
+    const remainingSlots = MAX_IMAGES - formData.images.length;
+    if (files.length > remainingSlots) {
+      alert(`คุณสามารถเพิ่มได้อีก ${remainingSlots} รูป (สูงสุด ${MAX_IMAGES} รูป)`);
+    }
 
-        document.getElementById("clearImageBtn")?.addEventListener("click", (evt) => {
-          evt.stopPropagation();
-          formData.image = null;
-          imageFileInput.value = "";
-          imagePreviewContainer.innerHTML = "";
-          uploadPlaceholder.style.display = "flex";
-        });
-      }
-    };
-    reader.readAsDataURL(file);
+    const filesToRead = files.slice(0, remainingSlots);
+    filesToRead.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result && formData.images.length < MAX_IMAGES) {
+          formData.images.push(event.target.result);
+          renderImagePreviews();
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    imageFileInput.value = "";
   });
 
   // 7. Anonymous Mode Toggle
@@ -458,7 +494,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("Submitted Review Data:", formData);
 
+    let authorName = "ผู้ไม่ประสงค์ออกนาม";
+    let currentUserId = null;
+    try {
+      const meRes = await fetch("/api/auth/me");
+      if (meRes.ok) {
+        const me = await meRes.json();
+        currentUserId = me.userId || null;
+        if (!formData.anonymous) {
+          authorName = me.userName || `User - ${me.studentCode || me.userId}`;
+        }
+      }
+    } catch {
+      if (!formData.anonymous) authorName = "นักศึกษาฝึกงาน";
+    }
+
     const payload = {
+      user_id: currentUserId,
+      company_name: formData.company || "ไม่ระบุชื่อบริษัท",
+      industry_type: formData.companyType || "",
+      job_name: formData.position || "ไม่ระบุตำแหน่ง",
+      skills: formData.skills,
+      interview_questions: formData.interviewQuestions
+        .filter((q) => q.text && q.text.trim() !== "")
+        .map((q, idx) => ({
+          question_no: idx + 1,
+          question_title: q.text.trim(),
+          difficulty: q.difficulty
+        })),
+      ...(formData.images.length > 0
+        ? {
+            images: formData.images.map((img, idx) => ({
+              image_id: idx + 1,
+              image: img
+            }))
+          }
+        : {}),
+      author_name: authorName,
       is_anonymous: formData.anonymous,
       description: formData.experience,
       work_mode: formData.workMode,

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>รายละเอียดรีวิวฝึกงาน | Internsight</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/review-detail.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="js/navbar.js" defer></script>
+  <script src="js/components.js" defer></script>
+  <script src="js/review-detail.js" defer></script>
+</head>
+<body>
+  <!-- Shared Top Navbar & Sidebar -->
+  <div id="app-navbar"></div>
+
+  <main class="post-review-page">
+    <!-- Top Back Arrow (←) matching Figma #99:928 -->
+    <div class="back-row">
+      <a href="home.html" class="back-arrow-link" aria-label="ย้อนกลับ">←</a>
+    </div>
+
+    <!-- 1. Main Header Box (matching Figma #228:48) -->
+    <section class="figma-header-card">
+      <div class="header-top-row">
+        <div class="header-left">
+          <div class="company-subtitle" id="detailCompany">Bidkub</div>
+          <h1 class="role-main-title" id="detailJobName">Frontend Developer intern</h1>
+
+          <div class="header-badges-row">
+            <span class="gray-info-badge">
+              <i data-lucide="monitor"></i>
+              <span id="detailWorkMode">Hybrid</span>
+            </span>
+            <span class="gray-info-badge">
+              <i data-lucide="circle-dollar-sign"></i>
+              <span id="detailDailyPay">500บาท/วัน</span>
+            </span>
+            <span class="gray-info-badge">
+              <i data-lucide="building-2"></i>
+              <span id="detailIndustry">start up</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="overall-rating-box">
+          <div class="overall-title">Overall Rating</div>
+          <div class="overall-score-row">
+            <i data-lucide="star" class="filled-black-star"></i>
+            <span class="avg-big" id="detailAvgRating">4.5</span><span class="avg-slash">/5</span>
+          </div>
+          <div class="overall-sub">คะแนนเฉลี่ยรวม</div>
+        </div>
+      </div>
+
+      <hr class="header-divider">
+
+      <div class="header-bottom-row">
+        <div class="header-author">
+          <span class="user-circle-icon">
+            <i data-lucide="user-round"></i>
+          </span>
+          <strong class="author-label" id="detailAuthor">User - 101</strong>
+          <span class="dot-date" id="detailDate">• โพสต์เมื่อ 24 ก.ย. 2026</span>
+        </div>
+
+        <div class="header-icon-actions">
+          <button type="button" class="icon-action-btn" id="btnLikePost" aria-label="ถูกใจ">
+            <i data-lucide="thumbs-up" class="filled-icon"></i>
+            <span id="detailLikesCount">12</span>
+          </button>
+          <button type="button" class="icon-action-btn" id="btnBookmarkPost" aria-label="บันทึก">
+            <i data-lucide="bookmark" class="filled-icon"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Two-Column Section: คะแนนประสบการณ์ (Left) & ทักษะที่ใช้ (Right) -->
+    <section class="score-and-skills-grid">
+      <div class="exp-score-col">
+        <h2 class="figma-sec-title">
+          <i data-lucide="star" class="filled-black-star"></i>
+          <span>คะแนนประสบการณ์</span>
+        </h2>
+
+        <div class="exp-rating-rows">
+          <div class="exp-rating-row">
+            <span class="exp-label">การดูแลของพี่เลี้ยง</span>
+            <div class="five-stars" id="starsMentor"></div>
+            <span class="score-fraction" id="valMentor">4/5</span>
+          </div>
+
+          <div class="exp-rating-row">
+            <span class="exp-label">วัฒนธรรมองค์กร</span>
+            <div class="five-stars" id="starsCulture"></div>
+            <span class="score-fraction" id="valCulture">4/5</span>
+          </div>
+
+          <div class="exp-rating-row">
+            <span class="exp-label">ความเหมาะสมของงาน</span>
+            <div class="five-stars" id="starsWorkload"></div>
+            <span class="score-fraction" id="valWorkload">4/5</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="skills-used-col">
+        <h2 class="figma-sec-title">
+          <i data-lucide="code-xml"></i>
+          <span>ทักษะที่ใช้</span>
+        </h2>
+        <div class="black-skills-wrap" id="detailSkillsList"></div>
+      </div>
+    </section>
+
+    <!-- 3. Content Sections (matching Figma "post review_2" #99:1399) -->
+    <section class="figma-text-section">
+      <h2 class="figma-block-title">ประสบการณ์ฝึกงาน</h2>
+      <p class="figma-paragraph" id="detailDescription">-</p>
+    </section>
+
+    <section class="figma-text-section">
+      <h2 class="figma-block-title">สิ่งที่ประทับใจ / ข้อดี (Pros)</h2>
+      <p class="figma-paragraph" id="detailPros">-</p>
+    </section>
+
+    <section class="figma-text-section">
+      <h2 class="figma-block-title">ข้อสังเกต / สิ่งที่อยากเตือนน้องๆ (Cons)</h2>
+      <p class="figma-paragraph" id="detailCons">-</p>
+    </section>
+
+    <!-- 4. Interview Questions Section -->
+    <section class="figma-text-section">
+      <h2 class="figma-block-title">
+        คำถามสัมภาษณ์ <span class="q-count-label" id="detailQuestionCount">(0 ข้อ)</span>
+      </h2>
+      <div class="figma-questions-list" id="detailQuestionsList"></div>
+    </section>
+
+    <!-- 5. Images Section (แสดงเฉพาะเมื่อมีรูปภาพตาม ER: HAS_IMAGE (0, N)) -->
+    <section class="figma-text-section" id="detailImageSection" style="display: none;">
+      <h2 class="figma-block-title">รูปภาพ</h2>
+      <div class="figma-images-grid" id="detailImagesGrid"></div>
+    </section>
+
+    <!-- 6. Write Comment Section (แสดงความคิดเห็น) -->
+    <section class="figma-comment-section" id="commentsSection">
+      <h2 class="figma-comment-heading">
+        <i data-lucide="message-circle"></i>
+        <span>แสดงความคิดเห็น</span>
+      </h2>
+
+      <div class="comment-compose-row">
+        <span class="user-circle-icon lg">
+          <i data-lucide="user-round"></i>
+        </span>
+
+        <form class="figma-comment-form" id="commentForm">
+          <textarea
+            id="commentInput"
+            placeholder="แสดงความคิดเห็น..."
+            required
+          ></textarea>
+          <div class="comment-submit-row">
+            <button type="submit" class="btn-post-comment" id="btnSubmitComment">โพสต์</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- 7. Comments List Section (ความคิดเห็น (N)) -->
+    <section class="figma-comment-section">
+      <h2 class="figma-comment-heading">
+        <i data-lucide="message-circle"></i>
+        <span>ความคิดเห็น (<span id="commentHeaderCount">0</span>)</span>
+      </h2>
+
+      <div class="figma-comments-list" id="commentsList"></div>
+    </section>
+  </main>
+</body>
+</html>

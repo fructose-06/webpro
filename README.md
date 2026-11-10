@@ -30,15 +30,19 @@
 เมื่อดึงโค้ด (`git pull` หรือ `git clone`) ลงเครื่องแล้ว ให้ทำตามขั้นตอนนี้เพื่อรันโปรเจกต์และเชื่อมต่อ Database:
 
 ### 1. ติดตั้งไลบรารีทั้งหมด
+
 เปิด Terminal ในโฟลเดอร์โปรเจกต์แล้วรันคำสั่ง:
+
 ```bash
 npm install
 ```
+
 *(หากต้องการติดตั้งแยกเอง: `npm install express pg mongoose dotenv cors`)*
 
 ---
 
 ### 2. ตั้งค่าฐานข้อมูล PostgreSQL (ผ่าน pgAdmin 4)
+
 1. เปิดโปรแกรม **pgAdmin 4** -> กางเมนู `Servers` -> คลิกขวาที่ **`Databases`** -> เลือก **`Create` > `Database...`**
 2. ตั้งชื่อ Database ว่า **`internsight_db`** แล้วกด **Save**
 3. คลิกขวาที่ `internsight_db` -> เลือก **`Query Tool`** แล้วรันคำสั่ง SQL ด้านล่างนี้ (กด `F5` หรือปุ่ม `▶`):
@@ -58,13 +62,16 @@ CREATE TABLE public.users (
 ---
 
 ### 3. ตั้งค่าฐานข้อมูล MongoDB (ผ่าน MongoDB Compass)
+
 1. เปิดโปรแกรม **MongoDB Compass**
 2. กด **Add new connection** (หรือใช้ค่าเริ่มต้น `mongodb://localhost:27017/`) แล้วกด **Save & Connect**
    > **หมายเหตุ:** MongoDB จะยังไม่แสดงชื่อ Database `internsight_nosql` จนกว่าจะมีข้อมูลชิ้นแรกถูกบันทึกลงไป (Lazy Creation)
+   >
 
 ---
 
 ### 4. สร้างไฟล์ `.env`
+
 สร้างไฟล์ชื่อ **`.env`** ไว้ที่โฟลเดอร์นอกสุดของโปรเจกต์ (ระดับเดียวกับ `package.json` และ `server.js`) แล้วใส่ค่าตามนี้:
 
 ```env
@@ -84,12 +91,15 @@ MONGO_URI=mongodb://127.0.0.1:27017/internsight_nosql
 ---
 
 ### 5. รันเซิร์ฟเวอร์และทดสอบ
+
 พิมพ์คำสั่งใน Terminal:
+
 ```bash
 node server.js
 ```
 
 หากเชื่อมต่อสำเร็จ ใน Terminal จะแสดงข้อความ:
+
 ```text
 Server running at http://localhost:3000/login.html
 Connected to PostgreSQL (internsight_db)
@@ -97,6 +107,7 @@ Connected to MongoDB (internsight_nosql)
 ```
 
 สามารถเปิดใช้งานหน้าเว็บผ่านเบราว์เซอร์ได้ที่:
+
 - หน้าเข้าสู่ระบบ: `http://localhost:3000/login.html`
 - หน้าสมัครสมาชิก: `http://localhost:3000/register.html`
 - หน้าหลัก: `http://localhost:3000/home.html`
@@ -116,5 +127,6 @@ git fetch origin
 # 2. เช็คแบบจำลองว่าถ้า Merge กับ origin/main จะติด Conflict หรือไม่
 git merge-tree --write-tree HEAD origin/main
 ```
+
 - หากแสดงเฉพาะรหัส Commit Hash บรรทัดเดียว = **ไม่มี Conflict**
 - หากแสดงข้อความ `CONFLICT` = **มีไฟล์ที่ชนกัน**

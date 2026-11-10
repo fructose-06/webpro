@@ -1,0 +1,573 @@
+/* =========================================================
+   Review Detail Page Styles
+   Matches Figma "post review" (#99:928) & "post review_2" (#99:1399)
+   ========================================================= */
+
+body {
+  background-color: #f6f6f6;
+  color: #000000;
+  font-family: "Inter", "Prompt", "Noto Sans Thai", sans-serif;
+  margin: 0;
+}
+
+.post-review-page {
+  max-width: 1280px;
+  margin: 14px auto 80px;
+  padding: 0 40px;
+}
+
+/* Back Arrow */
+.back-row {
+  margin-bottom: 6px;
+}
+
+.back-arrow-link {
+  display: inline-block;
+  font-size: 26px;
+  font-weight: 600;
+  color: #000000;
+  text-decoration: none;
+  line-height: 1;
+  padding: 4px 8px 4px 0;
+  transition: transform 0.15s ease;
+}
+
+.back-arrow-link:hover {
+  transform: translateX(-3px);
+}
+
+/* 1. Top Header Box (Figma #153:46) */
+.figma-header-card {
+  background: #fbfbfb;
+  border: 2px solid #000000;
+  border-radius: 10px;
+  padding: 28px 38px 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 44px;
+}
+
+.header-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.company-subtitle {
+  font-size: 28px;
+  font-weight: 400;
+  color: #000000;
+  margin-bottom: 6px;
+}
+
+.role-main-title {
+  font-size: 50px;
+  font-weight: 700;
+  color: #000000;
+  margin: 0 0 28px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.header-badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.gray-info-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #d9d9d9;
+  border-radius: 10px;
+  padding: 9px 22px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.gray-info-badge svg {
+  width: 22px;
+  height: 22px;
+  color: #000000;
+}
+
+/* Overall Rating Right Box (Figma #153:51) */
+.overall-rating-box {
+  background: #d9d9d9;
+  border-radius: 10px;
+  padding: 16px 28px;
+  text-align: center;
+  min-width: 175px;
+}
+
+.overall-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 6px;
+}
+
+.overall-score-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.filled-black-star {
+  width: 34px;
+  height: 34px;
+  color: #000000;
+  fill: #000000;
+}
+
+.avg-big {
+  font-size: 28px;
+  font-weight: 800;
+  color: #000000;
+}
+
+.avg-slash {
+  font-size: 22px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.overall-sub {
+  font-size: 15px;
+  font-weight: 400;
+  color: #1e1e1e;
+}
+
+/* Divider inside Header Card */
+.header-divider {
+  border: none;
+  border-top: 3px solid #d8d8d8;
+  margin: 32px 0 16px;
+}
+
+.header-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.header-author {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 14px;
+}
+
+.user-circle-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2.2px solid #000000;
+  background: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.user-circle-icon svg {
+  width: 22px;
+  height: 22px;
+  color: #000000;
+  fill: #000000;
+}
+
+.user-circle-icon.lg {
+  width: 44px;
+  height: 44px;
+}
+
+.author-label {
+  font-weight: 700;
+  font-size: 14.5px;
+}
+
+.dot-date {
+  font-weight: 700;
+  font-size: 14px;
+  color: #000000;
+}
+
+.header-icon-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.icon-action-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: #000000;
+  padding: 4px;
+  transition: transform 0.15s ease;
+}
+
+.icon-action-btn:hover {
+  transform: scale(1.1);
+}
+
+.icon-action-btn svg {
+  width: 22px;
+  height: 22px;
+  color: #000000;
+}
+
+.icon-action-btn svg.filled-icon {
+  fill: #000000;
+}
+
+/* 2. Two-Column Section: คะแนนประสบการณ์ & ทักษะที่ใช้ */
+.score-and-skills-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 48px;
+  padding: 0 38px;
+  margin-bottom: 52px;
+}
+
+@media (max-width: 900px) {
+  .score-and-skills-grid {
+    grid-template-columns: 1fr;
+    padding: 0 12px;
+  }
+}
+
+.figma-sec-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 26px;
+}
+
+.figma-sec-title svg {
+  width: 30px;
+  height: 30px;
+}
+
+.exp-rating-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.exp-rating-row {
+  display: grid;
+  grid-template-columns: 220px auto 50px;
+  align-items: center;
+  gap: 24px;
+}
+
+@media (max-width: 600px) {
+  .exp-rating-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+.exp-label {
+  font-size: 20px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.five-stars {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.five-stars svg {
+  width: 28px;
+  height: 28px;
+  color: #000000;
+  stroke-width: 1.8px;
+}
+
+.five-stars svg.filled {
+  fill: #000000;
+}
+
+.score-fraction {
+  font-size: 20px;
+  font-weight: 700;
+  color: #000000;
+}
+
+.black-skills-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.black-skill-pill {
+  background: #000000;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 9px 28px;
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-block;
+}
+
+/* 3. Text Content Sections (Figma "post review_2" #99:1399) */
+.figma-text-section {
+  padding: 0 38px;
+  margin-bottom: 38px;
+}
+
+.figma-block-title {
+  font-size: 25px;
+  font-weight: 700;
+  color: #000000;
+  margin: 0 0 16px;
+}
+
+.figma-paragraph {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.75;
+  color: #000000;
+  margin: 0;
+  text-indent: 2em;
+  white-space: pre-wrap;
+}
+
+/* 4. Interview Questions */
+.q-count-label {
+  font-size: 18px;
+  font-weight: 400;
+  margin-left: 10px;
+}
+
+.figma-questions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.figma-q-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.q-index {
+  font-size: 18px;
+  font-weight: 700;
+  width: 28px;
+}
+
+.q-box {
+  border: 1.5px solid #484848;
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 11px 22px;
+  font-size: 16px;
+  min-width: 320px;
+  width: 480px;
+  max-width: 100%;
+  min-height: 22px;
+}
+
+.q-diff-pill {
+  background: #000000;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 4px 22px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* 5. Images Grid (4 Rounded Boxes matching Figma) */
+.figma-images-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  margin-top: 18px;
+}
+
+@media (max-width: 900px) {
+  .figma-images-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.figma-img-box {
+  height: 200px;
+  background: #ffffff;
+  border: 1.5px solid #333333;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.figma-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 6. Write Comment & Comments List */
+.figma-comment-section {
+  padding: 0 38px;
+  margin-bottom: 36px;
+}
+
+.figma-comment-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 20px;
+}
+
+.figma-comment-heading svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 2.2px;
+}
+
+.comment-compose-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.figma-comment-form {
+  flex: 1;
+}
+
+.figma-comment-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 190px;
+  border: 2px solid #000000;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 18px 22px;
+  font-family: inherit;
+  font-size: 16px;
+  resize: vertical;
+}
+
+.figma-comment-form textarea:focus {
+  outline: none;
+}
+
+.comment-submit-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+.btn-post-comment {
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 40px;
+  padding: 10px 48px;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.btn-post-comment:hover {
+  transform: translateY(-1px);
+  opacity: 0.92;
+}
+
+/* 7. Comment Card (matching Figma #228:300) */
+.figma-comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.figma-comment-card {
+  background: #ffffff;
+  border: 1.5px solid #333333;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.comment-card-body {
+  padding: 18px 22px 20px;
+}
+
+.comment-user-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.comment-author-name {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.comment-time {
+  font-size: 13px;
+  color: #484848;
+}
+
+.comment-text {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.comment-card-footer {
+  background: #efefef;
+  border-top: 1px solid #8b8b8b;
+  padding: 9px 22px;
+  display: flex;
+  gap: 24px;
+}
+
+.comment-act-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: #7a7a7a;
+  cursor: pointer;
+}
+
+.comment-act-link:hover {
+  color: #000000;
+}
