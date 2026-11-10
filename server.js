@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 
 app.get("/", (req, res) => res.redirect("/home.html"));
 
-app.use(express.json({ limit: "10mb" })); // ให้อ่านข้อมูล JSON ที่ส่งมาจากหน้าเว็บได้
+app.use(express.json({ limit: "25mb" })); // ให้อ่านข้อมูล JSON และรูปภาพหลายรูปที่ส่งมาจากหน้าเว็บได้
 
 // 1. เชื่อมต่อ PostgreSQL (SQL)
 const pgPool = new Pool({
