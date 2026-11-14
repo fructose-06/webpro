@@ -64,6 +64,7 @@ async function seedDatabase() {
         const sampleUsers = [
             {
                 student_code: "67090500400",
+                email: "67090500400@st.sit.kmutt.ac.th",
                 admission_year: 2567,
                 user_name: "สมชาย สายโค้ด",
                 profile_image: null
@@ -90,7 +91,7 @@ async function seedDatabase() {
                 `INSERT INTO public.users (student_code, password_hash, email, admission_year, user_name, profile_image)
                  VALUES ($1, $2, $3, $4, $5, $6)
                  ON CONFLICT (student_code) DO UPDATE
-                 SET user_name = EXCLUDED.user_name
+                 SET user_name = EXCLUDED.user_name,
                      email = EXCLUDED.email
                  RETURNING user_id, student_code, user_name`,
                 [u.student_code, defaultPasswordHash, u.email, u.admission_year, u.user_name, u.profile_image]
