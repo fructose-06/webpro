@@ -77,6 +77,34 @@ router.get("/", async (req, res) => {
     }
 });
 
+router.get("/bookmarks", async (req, res) => {
+    try {
+        const session = req.app.locals.activeSession(req);
+        if (!session) {
+            return res.sendStatus(401);
+        }
+        const userId = session.profile.userId;
+        let reviews = await InternshipReview.find({"bookmarked_by.user_id": userId});
+        reviews.sort((a, b) => {
+            const aBookmark = a.bookmarked_by.find(
+                x => x.user_id === userId
+            );
+            const bBookmark = b.bookmarked_by.find(
+                x => x.user_id === userId
+            );
+            return (
+                new Date(bBookmark?.created_at || 0) -
+                new Date(aBookmark?.created_at || 0)
+            );
+        });
+
+        res.json(reviews);
+    } catch (err) {
+        res.status(500).json({
+            message: err.message
+        });
+    }
+});
 // 3. ดึงรีวิวรายตัวตาม review_id หรือ _id (GET /api/reviews/:id)
 router.get("/:id", async (req, res) => {
     try {
@@ -102,6 +130,38 @@ router.post("/:id/like", async (req, res) => {
         res.json(review);
     } catch (err) {
         res.status(500).json({ message: err.message });
+    }
+});
+
+router.post("/:id/bookmark", async (req, res) => {
+    try {
+        const session = req.app.locals.activeSession(req);
+        if (!session) {
+            return res.sendStatus(401);
+        }
+        const userId = session.profile.userId;
+        const review = await findReviewByIdParam(req.params.id);
+        if (!review) {
+            return res.status(404).json({
+                message: "ไม่พบข้อมูลรีวิวนี้"
+            });
+        }
+        const index = review.bookmarked_by.findIndex((b) => b.user_id === userId);
+        if (index >= 0) {
+            review.bookmarked_by.splice(index, 1);
+        } else {
+            review.bookmarked_by.push({
+                user_id: userId,
+                created_at: new Date()
+            });
+        }
+        await review.save();
+        res.json(review);
+
+    } catch (err) {
+        res.status(500).json({
+            message: err.message
+        });
     }
 });
 

@@ -368,3 +368,9 @@
 .review-card .action-btn svg.filled-action-icon {
   fill: #000000;
 }
+
+.review-card .action-btn svg.active-bookmark {
+  color: #000000;
+  stroke: #000000;
+  fill: #000000;
+}

@@ -3,6 +3,15 @@
  * Matches Figma "Homepage(Main)" (#20:3) Review Card Design
  */
 (function () {
+  let currentUserId = null;
+  async function loadCurrentUser() {
+    const res = await fetch("/api/auth/me");
+
+    if (!res.ok) return;
+
+    const user = await res.json();
+    currentUserId = user.userId;
+  }
   function formatThaiDate(dateStr) {
     if (!dateStr) return "วันนี้";
     const d = new Date(dateStr);
@@ -42,7 +51,8 @@
       author: doc.is_anonymous ? "ผู้ไม่ประสงค์ออกนาม" : (doc.author_name || "นักศึกษาฝึกงาน"),
       date: formatThaiDate(doc.created_at),
       likes: Number(doc.likes || 0),
-      comments: Array.isArray(doc.comments) ? doc.comments.length : 0
+      comments: Array.isArray(doc.comments) ? doc.comments.length : 0,
+      bookmarked: Array.isArray(doc.bookmarked_by) && doc.bookmarked_by.some((b) => b.user_id === currentUserId)
     };
   }
 
@@ -115,7 +125,7 @@
             <span>${escapeHtml(item.comments)}</span>
           </button>
           <button type="button" class="action-btn js-bookmark-btn" data-id="${cardId}" aria-label="บันทึก">
-            <i data-lucide="bookmark" class="filled-action-icon"></i>
+            <i data-lucide="bookmark" class="${item.bookmarked ? 'active-bookmark' : ''}"></i>
           </button>
         </div>
       </article>
@@ -171,6 +181,27 @@
       });
     });
 
+    //bookmark
+    container.querySelectorAll(".js-bookmark-btn").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute("data-id");
+        if (!id) return;
+        try {
+          const res = await fetch(`/api/reviews/${encodeURIComponent(id)}/bookmark`, { method: "POST" });
+          if (res.ok) {
+            const updated = await res.json();
+            const icon = btn.querySelector("svg");
+            const isBookmarked = updated.bookmarked_by.some((b) => b.user_id === currentUserId);
+
+            icon.classList.toggle("active-bookmark", isBookmarked);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    });
+
     // ปุ่มความคิดเห็น
     container.querySelectorAll(".js-comment-btn").forEach((btn) => {
       btn.addEventListener("click", (e) => {
@@ -184,6 +215,7 @@
   }
 
   window.InternsightUI = {
+    loadCurrentUser,
     mapDbReviewToCard,
     createReviewCard,
     renderReviewCards

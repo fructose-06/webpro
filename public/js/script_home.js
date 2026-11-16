@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
     if (!window.InternsightUI) return;
-
+        await window.InternsightUI.loadCurrentUser();
     try {
         const res = await fetch("/api/reviews");
         if (res.ok) {
