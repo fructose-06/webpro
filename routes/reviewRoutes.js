@@ -55,7 +55,9 @@ router.post("/", async (req, res) => {
         const newReview = new InternshipReview({
             ...reviewPayload,
             user_id: req.user.userId,
-            author_name: req.user.userName || "สมาชิก Internsight",
+            author_name: reviewPayload.is_anonymous
+                ? "ผู้ไม่ประสงค์ออกนาม"
+                : (req.user.userName || "สมาชิก Internsight"),
             review_id: nextId,
             interview_questions: numberedQuestions,
             images: numberedImages
@@ -105,6 +107,47 @@ router.get("/bookmarks", async (req, res) => {
         });
     }
 });
+
+// 2.2 ดึงตัวเลือกที่มีอยู่ใน Database สำหรับหน้าเขียนรีวิว (GET /api/reviews/options)
+router.get("/options", async (req, res) => {
+    try {
+        const [rawCompanies, rawPositions, rawIndustries, rawSkills, companyIndustryDocs] = await Promise.all([
+            InternshipReview.distinct("company_name"),
+            InternshipReview.distinct("job_name"),
+            InternshipReview.distinct("industry_type"),
+            InternshipReview.distinct("skills"),
+            InternshipReview.find(
+                { company_name: { $ne: "" }, industry_type: { $ne: "" } },
+                { company_name: 1, industry_type: 1, _id: 0 }
+            ).sort({ created_at: -1 })
+        ]);
+
+        const cleanSort = (arr) =>
+            [...new Set((arr || []).map((v) => String(v || "").trim()).filter(Boolean))].sort((a, b) =>
+                a.localeCompare(b, "th")
+            );
+
+        const companyIndustries = {};
+        for (const doc of companyIndustryDocs) {
+            const cName = String(doc.company_name || "").trim();
+            const ind = String(doc.industry_type || "").trim();
+            if (cName && ind && !companyIndustries[cName]) {
+                companyIndustries[cName] = ind;
+            }
+        }
+
+        res.json({
+            companies: cleanSort(rawCompanies),
+            positions: cleanSort(rawPositions),
+            industries: cleanSort(rawIndustries),
+            skills: cleanSort(rawSkills),
+            companyIndustries
+        });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 // 3. ดึงรีวิวรายตัวตาม review_id หรือ _id (GET /api/reviews/:id)
 router.get("/:id", async (req, res) => {
     try {

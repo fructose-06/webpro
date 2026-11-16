@@ -29,7 +29,7 @@
     const rMentor = Number(doc.rating_mentor || 0);
     const rCulture = Number(doc.rating_culture || 0);
     const rWorkload = Number(doc.rating_workload || 0);
-    const avg = ((rMentor + rCulture + rWorkload) / 3) || 5.0;
+    const avg = (rMentor + rCulture + rWorkload) / 3;
 
     const payText = doc.daily_pay && String(doc.daily_pay).trim() !== ""
       ? (String(doc.daily_pay).includes("THB") || String(doc.daily_pay).includes("฿") || String(doc.daily_pay).includes("ไม่มี")
@@ -65,7 +65,7 @@
   }
 
   function createReviewCard(item, currentUserId = null) {
-    const filledCount = Math.round(item.rating || 5);
+    const filledCount = Math.floor(Number(item.rating) || 0);
     const starsHTML = Array.from({ length: 5 }, (_, idx) => {
       const filledClass = idx < filledCount ? "filled" : "";
       return `<i data-lucide="star" class="star-icon ${filledClass}"></i>`;

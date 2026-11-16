@@ -95,20 +95,14 @@
 
         <!-- Col Left: ประเภทของบริษัท -->
         <div class="form-group">
-          <label class="form-label" for="companyTypeSelect">ประเภทของบริษัท</label>
-          <div class="input-wrapper">
-            <select id="companyTypeSelect" class="form-control">
-              <option value="" disabled selected>เลือกประเภทบริษัท</option>
-              <option value="Start-up">Start-up</option>
-              <option value="Corporate">Corporate</option>
-              <option value="ธนาคาร / การเงิน">ธนาคาร / การเงิน</option>
-              <option value="เทคโนโลยี / ซอฟต์แวร์">เทคโนโลยี / ซอฟต์แวร์</option>
-              <option value="หน่วยงานรัฐ / รัฐวิสาหกิจ">หน่วยงานรัฐ / รัฐวิสาหกิจ</option>
-              <option value="SME">SME</option>
-            </select>
-            <span class="select-arrow">
+          <label class="form-label" for="companyTypeInput">ประเภทของบริษัท</label>
+          <div class="input-wrapper autocomplete-wrapper" id="companyTypeAutocomplete">
+            <input type="text" id="companyTypeInput" class="form-control" placeholder="เลือกหรือพิมพ์ประเภทบริษัท"
+              autocomplete="off">
+            <button type="button" class="select-arrow dropdown-toggle-btn" tabindex="-1" aria-label="เปิดรายการประเภทบริษัท">
               <i data-lucide="chevron-down"></i>
-            </span>
+            </button>
+            <ul class="autocomplete-menu" id="companyTypeDropdownList" role="listbox"></ul>
           </div>
         </div>
 
@@ -116,7 +110,10 @@
         <div class="form-group">
           <label class="form-label" for="skillInput">ทักษะและความสามารถ</label>
           <div class="skill-input-row">
-            <input type="text" id="skillInput" class="form-control" placeholder="เช่น Javascript">
+            <div class="input-wrapper autocomplete-wrapper" id="skillAutocomplete" style="flex: 1;">
+              <input type="text" id="skillInput" class="form-control" placeholder="เช่น Javascript" autocomplete="off">
+              <ul class="autocomplete-menu" id="skillDropdownList" role="listbox"></ul>
+            </div>
             <button type="button" id="addSkillBtn" class="add-skill-btn" aria-label="เพิ่มทักษะ">
               <i data-lucide="plus"></i>
             </button>
@@ -140,13 +137,13 @@
             </div>
             <div class="rating-stars-wrapper">
               <div class="stars-group" role="radiogroup" aria-label="คะแนนการดูแลของพี่เลี้ยง">
-                <button type="button" class="star-btn filled" data-val="1" aria-label="1 ดาว"><i data-lucide="star"></i></button>
-                <button type="button" class="star-btn filled" data-val="2" aria-label="2 ดาว"><i data-lucide="star"></i></button>
-                <button type="button" class="star-btn filled" data-val="3" aria-label="3 ดาว"><i data-lucide="star"></i></button>
-                <button type="button" class="star-btn filled" data-val="4" aria-label="4 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn" data-val="1" aria-label="1 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn" data-val="2" aria-label="2 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn" data-val="3" aria-label="3 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn" data-val="4" aria-label="4 ดาว"><i data-lucide="star"></i></button>
                 <button type="button" class="star-btn" data-val="5" aria-label="5 ดาว"><i data-lucide="star"></i></button>
               </div>
-              <span class="rating-score-text">4/5</span>
+              <span class="rating-score-text">0/5</span>
             </div>
           </div>
 
@@ -158,13 +155,13 @@
             </div>
             <div class="rating-stars-wrapper">
               <div class="stars-group" role="radiogroup" aria-label="คะแนนวัฒนธรรมองค์กร">
-                <button type="button" class="star-btn filled" data-val="1" aria-label="1 ดาว"><i data-lucide="star"></i></button>
-                <button type="button" class="star-btn filled" data-val="2" aria-label="2 ดาว"><i data-lucide="star"></i></button>
-                <button type="button" class="star-btn filled" data-val="3" aria-label="3 ดาว"><i data-lucide="star"></i></button>
-                <button type="button" class="star-btn filled" data-val="4" aria-label="4 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn" data-val="1" aria-label="1 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn" data-val="2" aria-label="2 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn" data-val="3" aria-label="3 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn" data-val="4" aria-label="4 ดาว"><i data-lucide="star"></i></button>
                 <button type="button" class="star-btn" data-val="5" aria-label="5 ดาว"><i data-lucide="star"></i></button>
               </div>
-              <span class="rating-score-text">4/5</span>
+              <span class="rating-score-text">0/5</span>
             </div>
           </div>
 
@@ -176,13 +173,13 @@
             </div>
             <div class="rating-stars-wrapper">
               <div class="stars-group" role="radiogroup" aria-label="คะแนนความเหมาะสมของงาน">
-                <button type="button" class="star-btn filled" data-val="1" aria-label="1 ดาว"><i data-lucide="star"></i></button>
-                <button type="button" class="star-btn filled" data-val="2" aria-label="2 ดาว"><i data-lucide="star"></i></button>
-                <button type="button" class="star-btn filled" data-val="3" aria-label="3 ดาว"><i data-lucide="star"></i></button>
-                <button type="button" class="star-btn filled" data-val="4" aria-label="4 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn" data-val="1" aria-label="1 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn" data-val="2" aria-label="2 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn" data-val="3" aria-label="3 ดาว"><i data-lucide="star"></i></button>
+                <button type="button" class="star-btn" data-val="4" aria-label="4 ดาว"><i data-lucide="star"></i></button>
                 <button type="button" class="star-btn" data-val="5" aria-label="5 ดาว"><i data-lucide="star"></i></button>
               </div>
-              <span class="rating-score-text">4/5</span>
+              <span class="rating-score-text">0/5</span>
             </div>
           </div>
         </div>
