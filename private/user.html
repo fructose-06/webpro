@@ -41,8 +41,14 @@
   </div>
 
   <p id="reviewStatus" role="status">กำลังโหลดรีวิว…</p>
-  <a id="firstReview" href="post-review.html" hidden>เขียนรีวิวแรก</a>
   <div class="cards-grid" id="myReviews"></div>
+  <dialog id="deleteReview" aria-labelledby="deleteTitle">
+    <strong id="deleteIcon" aria-hidden="true">!</strong>
+    <h2 id="deleteTitle">ลบรีวิวนี้หรือไม่?</h2>
+    <p id="deleteMessage"></p>
+    <button id="cancelDelete" class="btn-sm" autofocus>ยกเลิก</button>
+    <button id="confirmDelete" class="btn-dark">ลบรีวิว</button>
+  </dialog>
 </main>
 
 <a href="post-review.html" class="fab" aria-label="เขียนรีวิว" title="เขียนรีวิว" style="text-decoration:none;"><i data-lucide="pencil"></i></a>
