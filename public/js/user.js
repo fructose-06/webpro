@@ -63,18 +63,18 @@ async function loadProfile() {
     statusText.textContent = reviews.length ? "" : "ยังไม่มีรีวิว";
     order.disabled = reviews.length < 2;
     await window.InternsightUI.loadCurrentUser();
-    function render() {
+    async function render() {
       const sorted = order.value === "oldest" ? [...reviews].reverse() : reviews;
       if (sorted.length) {
         const ui = window.InternsightUI;
-        ui.renderReviewCards(list.id, sorted.map(ui.mapDbReviewToCard));
+        await ui.renderReviewCards(list.id, sorted.map(ui.mapDbReviewToCard));
         list.querySelectorAll(".review-card").forEach((card, index) => addOwnerActions(card, sorted[index]));
       } else {
         list.replaceChildren();
       }
     }
     order.addEventListener("change", render);
-    render();
+    await render();
   } catch (error) {
     console.error({ event: "profile_load_failed", type: error.name });
     statusText.textContent = "โหลดข้อมูลโปรไฟล์ไม่ได้ กรุณารีเฟรชเพื่อลองอีกครั้ง";
