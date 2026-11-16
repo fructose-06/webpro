@@ -29,7 +29,7 @@
         <h2><i data-lucide="filter"></i>ตัวกรองค้นหา</h2>
         <div class="grp">
           <h3>เรียงตาม</h3>
-          <select class="sel" aria-label="เรียงตาม">
+          <select class="sel" id="sortSelect" aria-label="เรียงตาม">
             <option>รีวิวล่าสุด</option>
             <option>รีวิวที่เก่าที่สุด</option>
             <option>รีวิวที่มียอดไลค์สูงสุด</option>
@@ -40,25 +40,22 @@
         <div class="grp">
           <h3>ค้นหาบริษัทและตำแหน่งงาน</h3>
           <label class="lbl" for="company">ชื่อบริษัท</label>
-          <div class="field-icon"><i data-lucide="search"></i><input id="company" placeholder="พิมพ์ชื่อบริษัท เช่น AAAA, KB"></div>
+          <div class="company-wrap">
+            <div class="field-icon">
+              <i data-lucide="search"></i>
+              <input id="company" placeholder="พิมพ์ชื่อบริษัท เช่น AAAA, KB">
+            </div>
+            <div id="companySuggestions"></div>
+          </div>
+      
           <div class="row2">
             <div><label class="lbl" for="ctype">ประเภทของบริษัท</label>
               <select class="sel" id="ctype">
                 <option>ทั้งหมด</option>
-                <option>Start-up</option>
-                <option>Corporate</option>
-                <option>ธนาคาร/การเงิน</option>
-                <option>หน่วยงานรัฐ/รัฐวิสาหกิจ</option>
-                <option>SME</option>
               </select></div>
             <div><label class="lbl" for="role">ตำแหน่งงาน</label>
               <select class="sel" id="role">
                 <option>ทั้งหมด</option>
-                <option>UX/UI</option>
-                <option>Frontend Developer</option>
-                <option>Backend Developer</option>
-                <option>Full-stack Developer</option>
-                <option>Data Analyst</option>
               </select></div>
           </div>
         </div>
@@ -79,22 +76,22 @@
             <label><input type="radio" name="pay" checked><span>ทั้งหมด</span></label>
             <label><input type="radio" name="pay"><span>ไม่มีเบี้ยเลี้ยง</span></label>
             <label><input type="radio" name="pay"><span>300-500 ฿</span></label>
-            <label><input type="radio" name="pay"><span>500-800 ฿</span></label>
-            <label><input type="radio" name="pay"><span>800+ ฿</span></label>
+            <label><input type="radio" name="pay"><span>501-800 ฿</span></label>
+            <label><input type="radio" name="pay"><span>801+ ฿</span></label>
           </div>
         </div>
 
         <div class="grp">
           <h3>ทักษะ</h3>
-          <div class="field-icon"><i data-lucide="search"></i><input placeholder="พิมพ์ค้นหาทักษะ เช่น Python Java" aria-label="ทักษะ"></div>
-          <div class="tags">
-            <span class="tag">Figma <button type="button" aria-label="ลบ Figma"><i data-lucide="X"></i></button></span>
-            <span class="tag">SQL <button type="button" aria-label="ลบ SQL"><i data-lucide="X"></i></button></span>
+          <div class="skill-wrap">
+            <div class="field-icon"><i data-lucide="search"></i><input id="skillInput" placeholder="พิมพ์ค้นหาทักษะ เช่น Python Java" aria-label="ทักษะ"></div>
+            <div id="skillSuggestions" class="suggestions"></div>
+            <div id="skillTags" class="tags"></div>
           </div>
         </div>
 
-        <button class="btn primary">นำตัวกรองไปใช้</button>
-        <button class="btn ghost">ล้างค่าตัวกรอง</button>
+        <button class="btn primary" id="applyFilterBtn">นำตัวกรองไปใช้</button>
+        <button class="btn ghost" id="resetFilterBtn">ล้างค่าตัวกรอง</button>
       </aside>
 
 

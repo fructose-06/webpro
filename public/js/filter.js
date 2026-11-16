@@ -6,8 +6,25 @@ const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 const cardGrid = document.getElementById("cardGrid");
 
+const sortSelect = document.getElementById("sortSelect");
+const companyInput = document.getElementById("company");
+const companySuggestions = document.getElementById("companySuggestions");
+const roleSelect = document.getElementById("role");
+const companyTypeSelect = document.getElementById("ctype");
+const modeRadios = document.querySelectorAll('input[name="mode"]');
+const payRadios = document.querySelectorAll('input[name="pay"]');
+const skillInput = document.getElementById("skillInput");
+const skillTags = document.getElementById("skillTags");
+const skillSuggestions = document.getElementById("skillSuggestions");
+const applyFilterBtn = document.getElementById("applyFilterBtn");
+const resetFilterBtn = document.getElementById("resetFilterBtn");
+
 // เก็บเฉพาะข้อมูลจริงจาก MongoDB (ไม่มี Mock Data)
 const reviews = [];
+let filteredReviews = [];
+let selectedSkills = [];
+let activeSuggestionIndex = -1;
+let activeCompanyIndex = -1;
 
 let currentPage = 1;
 const cardsPerPage = 6;
@@ -36,6 +53,7 @@ async function loadDatabaseReviews() {
             return {
                 id: doc.review_id || doc._id,
                 company: doc.company_name || "ไม่ระบุชื่อบริษัท",
+                industryType: doc.industry_type || "",
                 workMode: doc.work_mode || "On-site",
                 role: doc.job_name || "นักศึกษาฝึกงาน",
                 salary: doc.daily_pay ? `${doc.daily_pay} THB/Day` : "ไม่ระบุเบี้ยเลี้ยง",
@@ -44,17 +62,125 @@ async function loadDatabaseReviews() {
                 rating: Number(avg.toFixed(1)),
                 author: doc.is_anonymous ? "ผู้ไม่ประสงค์ออกนาม" : (doc.author_name || "นักศึกษาฝึกงาน"),
                 date: dateStr,
+                createdAt: d,
                 likes: Number(doc.likes || 0),
                 comments: Array.isArray(doc.comments) ? doc.comments.length : 0
             };
         });
 
         reviews.splice(0, reviews.length, ...mapped);
-        totalPages = Math.max(1, Math.ceil(reviews.length / cardsPerPage));
+        filteredReviews = [...reviews];
+        populateRoles();
+        populateCompanyTypes();
+        totalPages = Math.max(1, Math.ceil(filteredReviews.length / cardsPerPage));
         render();
     } catch (err) {
         console.error("Failed to load DB reviews on filter page:", err);
     }
+}
+
+function populateRoles() {
+    const roles = [...new Set(reviews.map(review => review.role))];
+
+    roleSelect.innerHTML =`<option>ทั้งหมด</option>`;
+    roles.forEach((role) => {
+        const option = document.createElement("option");
+        option.value = role;
+        option.textContent = role;
+
+        roleSelect.appendChild(option);
+    });
+}
+function populateCompanyTypes() {
+    const types = [...new Set(reviews.map(review => review.industryType))];
+
+    companyTypeSelect.innerHTML =`<option>ทั้งหมด</option>`;
+    types.forEach((type) => {
+        const option = document.createElement("option");
+        option.value = type;
+        option.textContent = type;
+
+        companyTypeSelect.appendChild(option);
+    });
+}
+function getAllCompanies() {
+    return [...new Set(reviews.map(review => review.company))];
+}
+function getAllSkills() {
+    return [...new Set(reviews.flatMap(review => review.skills))];
+}
+
+function renderCompanySuggestions(keyword) {
+    companySuggestions.innerHTML = "";
+    if (!keyword) return;
+    const matches = getAllCompanies().filter(
+        company => company.toLowerCase().includes(keyword.toLowerCase())
+    );
+    if (matches.length === 0) {
+        companySuggestions.innerHTML =
+            `<div class="suggestion-item">
+                ไม่พบบริษัท
+            </div>`;
+        return;
+    }
+    matches.slice(0, 5).forEach((company, index) => {
+        const item = document.createElement("div");
+        item.className = `suggestion-item ${
+            index === activeCompanyIndex? "active": ""
+        }`;
+        item.textContent = company;
+        item.addEventListener("click", () => {
+            companyInput.value = company;
+            companySuggestions.innerHTML = "";
+            activeCompanyIndex = -1;
+        });
+        companySuggestions.appendChild(item);
+    });
+}
+function renderSkillSuggestions(keyword) {
+    skillSuggestions.innerHTML = "";
+    if (!keyword) return;
+    const matches = getAllSkills()
+        .filter(skill =>skill.toLowerCase().includes(keyword.toLowerCase()))
+        .filter(skill =>!selectedSkills.includes(skill));
+
+    matches.slice(0, 5).forEach((skill, index) => {
+        const item = document.createElement("div");
+        item.className =`suggestion-item ${
+            index === activeSuggestionIndex? "active": ""
+        }`;
+        item.textContent = skill;
+
+        item.addEventListener("click", () => {
+            selectedSkills.push(skill);
+            skillInput.value = "";
+            skillSuggestions.innerHTML = "";
+            activeSuggestionIndex = -1;
+            renderSkillTags();
+        });
+
+        skillSuggestions.appendChild(item);
+    });
+}
+function renderSkillTags() {
+    skillTags.innerHTML = "";
+    selectedSkills.forEach((skill) => {
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.innerHTML = `
+            ${skill}
+            <button type="button" aria-label="ลบ ${skill}"><i data-lucide="x"></i></button>
+        `;
+        tag.querySelector("button")
+            .addEventListener("click", () => {
+                selectedSkills =selectedSkills.filter(s => s !== skill);
+                renderSkillTags();
+                renderSkillSuggestions(skillInput.value.trim());
+            });
+
+        skillTags.appendChild(tag);
+    });
+    lucide.createIcons();
 }
 
 function renderPages() {
@@ -76,7 +202,7 @@ function renderPages() {
 function renderCards() {
     const start = (currentPage - 1) * cardsPerPage;
     const end = start + cardsPerPage;
-    const pageData = reviews.slice(start, end);
+    const pageData = filteredReviews.slice(start, end);
 
     cardGrid.innerHTML = "";
 
@@ -285,5 +411,187 @@ function showPop(btn, hiddenItems) {
 
 document.addEventListener("click", () => (pop.hidden = true));
 window.addEventListener("scroll", () => (pop.hidden = true));
+
+companyInput.addEventListener("input", () => {
+    activeCompanyIndex = -1;
+    renderCompanySuggestions(companyInput.value.trim());
+});
+skillInput.addEventListener("input", () => {
+    activeSuggestionIndex = -1;
+    renderSkillSuggestions(skillInput.value.trim());
+});
+
+function sortReviews() {
+    const sortType = sortSelect.value;
+    if (sortType === "รีวิวล่าสุด") {
+        filteredReviews.sort(
+            (a, b) => b.createdAt - a.createdAt
+        );
+    }
+    else if (sortType === "รีวิวที่เก่าที่สุด") {
+        filteredReviews.sort(
+            (a, b) => a.createdAt - b.createdAt
+        );
+    }
+    else if (
+        sortType === "รีวิวที่มียอดไลก์สูงสุด"
+    ) {
+        filteredReviews.sort(
+            (a, b) => b.likes - a.likes
+        );
+    }
+    else if (
+        sortType === "รีวิวที่มีคะแนนสูงสุด"
+    ) {
+        filteredReviews.sort(
+            (a, b) => b.rating - a.rating
+        );
+    }
+}
+
+function applyFilters() {
+    const keyword = companyInput.value.trim().toLowerCase();
+    const selectedRole = roleSelect.value;
+    const selectedType = companyTypeSelect.value;
+    const selectedMode =document.querySelector('input[name="mode"]:checked')?.nextElementSibling?.textContent;
+    const selectedPay = Array.from(payRadios).find(radio => radio.checked)?.nextElementSibling?.textContent;
+    filteredReviews = reviews.filter((review) => {
+        const companyMatch = !keyword || review.company.toLowerCase().includes(keyword);
+        const roleMatch = selectedRole === "ทั้งหมด" || review.role.includes(selectedRole);
+        const typeMatch = selectedType === "ทั้งหมด" || review.industryType === selectedType;
+        const modeMatch = selectedMode === "ทั้งหมด" || review.workMode === selectedMode;
+        const payValue = Number(review.salary.replace(/\D/g, "") || 0);
+
+        let payMatch = true;
+        if (selectedPay === "ไม่มีเบี้ยเลี้ยง") {
+            payMatch = payValue === 0;
+        }
+        else if (selectedPay === "300-500 ฿") {
+            payMatch = payValue >= 300 && payValue <= 500;
+        }
+        else if (selectedPay === "501-800 ฿") {
+            payMatch = payValue >= 501 && payValue <= 800;
+        }
+        else if (selectedPay === "801+ ฿") {
+            payMatch = payValue >= 801;
+        }
+
+        const skillMatch = selectedSkills.length === 0 || selectedSkills.some(skill => review.skills.includes(skill));
+
+        return companyMatch && roleMatch && typeMatch && modeMatch && payMatch && skillMatch;
+    });
+    sortReviews();
+    currentPage = 1;
+    totalPages = Math.max(1,Math.ceil(filteredReviews.length / cardsPerPage));
+    
+    render();
+}
+applyFilterBtn.addEventListener("click",applyFilters);
+
+companyInput.addEventListener("keydown", (e) => {
+    const matches = getAllCompanies()
+        .filter(company => company.toLowerCase().includes(companyInput.value.trim().toLowerCase()));
+
+    if (e.key === "ArrowDown") {
+        e.preventDefault();
+        activeCompanyIndex = Math.min(activeCompanyIndex + 1, matches.length - 1);
+
+        renderCompanySuggestions(
+            companyInput.value.trim()
+        );
+    }
+
+    if (e.key === "ArrowUp") {
+        e.preventDefault();
+        activeCompanyIndex = Math.max(activeCompanyIndex - 1, -1);
+
+        renderCompanySuggestions(
+            companyInput.value.trim()
+        );
+    }
+
+    if (e.key === "Enter") {
+        e.preventDefault();
+        if (activeCompanyIndex >= 0 && matches[activeCompanyIndex]) {
+            companyInput.value = matches[activeCompanyIndex];
+            companySuggestions.innerHTML = "";
+            activeCompanyIndex = -1;
+        }
+    }
+});
+skillInput.addEventListener("keydown", (e) => {
+    const matches = getAllSkills()
+        .filter(skill =>skill.toLowerCase().includes(skillInput.value.trim().toLowerCase()))
+        .filter(skill =>!selectedSkills.includes(skill));
+
+    if (e.key === "ArrowDown") {
+        e.preventDefault();
+        activeSuggestionIndex =Math.min(activeSuggestionIndex + 1,matches.length - 1);
+
+        renderSkillSuggestions(
+            skillInput.value.trim()
+        );
+    }
+    if (e.key === "ArrowUp") {
+        e.preventDefault();
+        activeSuggestionIndex =Math.max(activeSuggestionIndex - 1,-1);
+
+        renderSkillSuggestions(
+            skillInput.value.trim()
+        );
+    }
+
+    if (e.key === "Enter") {
+        e.preventDefault();
+        if (activeSuggestionIndex >= 0 && matches[activeSuggestionIndex]) {
+            const skill = matches[activeSuggestionIndex];
+            if (!selectedSkills.includes(skill)) {
+                selectedSkills.push(skill);
+            }
+            skillInput.value = "";
+            skillSuggestions.innerHTML = "";
+            activeSuggestionIndex = -1;
+            renderSkillTags();
+        }
+    }
+});
+
+document.addEventListener("click",(e) => {
+    if (!skillInput.contains(e.target) && !skillSuggestions.contains(e.target)) {
+        skillSuggestions.innerHTML = "";
+    }
+    if (!companyInput.contains(e.target) && !companySuggestions.contains(e.target)) {
+        companySuggestions.innerHTML = "";
+    }
+});
+
+resetFilterBtn.addEventListener("click", () => {
+    companyInput.value = "";
+    roleSelect.value = "ทั้งหมด";
+    companyTypeSelect.value = "ทั้งหมด";
+
+    document.querySelector(
+        'input[name="mode"]'
+    ).checked = true;
+
+    document.querySelector(
+        'input[name="pay"]'
+    ).checked = true;
+
+    selectedSkills = [];
+
+    skillInput.value = "";
+    skillTags.innerHTML = "";
+    skillSuggestions.innerHTML = "";
+    companySuggestions.innerHTML = "";
+
+    activeSuggestionIndex = -1;
+    filteredReviews = [...reviews];
+    currentPage = 1;
+    totalPages = Math.max(1,Math.ceil(filteredReviews.length /cardsPerPage));
+
+    render();
+});
+
 
 loadDatabaseReviews();
