@@ -244,7 +244,7 @@ mongoose
 app.get("/api/me/reviews", async (req, res) => {
     try {
         const reviews = await InternshipReview.find({ user_id: req.user.userId })
-            .select("_id review_id company_name job_name work_mode daily_pay description is_anonymous created_at")
+            .select("_id review_id company_name job_name work_mode daily_pay description is_anonymous created_at author_name skills rating_culture rating_workload rating_mentor interview_questions.question_no comments.comment_no likes")
             .sort({ created_at: -1, _id: -1 }).lean();
         return res.json({ reviews });
     } catch (error) {

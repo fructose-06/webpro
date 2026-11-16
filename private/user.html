@@ -8,8 +8,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/user.css">
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="js/components.js" defer></script>
   <script src="js/user.js" defer></script>
   <script src="js/navbar.js" defer></script>
 </head>
@@ -40,7 +42,7 @@
 
   <p id="reviewStatus" role="status">กำลังโหลดรีวิว…</p>
   <a id="firstReview" href="post-review.html" hidden>เขียนรีวิวแรก</a>
-  <div class="grid" id="myReviews"></div>
+  <div class="cards-grid" id="myReviews"></div>
 </main>
 
 <a href="post-review.html" class="fab" aria-label="เขียนรีวิว" title="เขียนรีวิว" style="text-decoration:none;"><i data-lucide="pencil"></i></a>

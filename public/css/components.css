@@ -181,6 +181,11 @@
   line-height: 1.25;
 }
 
+.review-card .company-name a {
+  color: inherit;
+  text-decoration: none;
+}
+
 .review-card .mode-badge {
   border: 1px solid #d0d4dc;
   background: #ffffff;
