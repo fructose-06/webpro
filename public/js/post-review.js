@@ -77,28 +77,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Mock Database Lists (ต่อไปสามารถดึงจาก API / Database มาแทนที่ได้)
-  const companyDatabase = [
-    "Agoda",
-    "SCB / SCBX",
-    "KBTG (Kasikorn Business-Technology Group)",
-    "LINE MAN Wongnai",
-    "Shopee Thailand",
-    "Bitkub Online",
-    "True Digital Group",
-    "PTT Digital Solutions"
-  ];
+  // ดึงรายชื่อบริษัทและตำแหน่งงานจริงจาก MongoDB (ไม่มี Mock Data)
+  const companyDatabase = [];
+  const positionDatabase = [];
 
-  const positionDatabase = [
-    "Frontend Developer",
-    "Backend Developer",
-    "Full-stack Developer",
-    "UX/UI Designer",
-    "Product Designer",
-    "Data Analyst",
-    "Data Engineer",
-    "QA / Tester"
-  ];
+  fetch("/api/reviews")
+    .then((res) => (res.ok ? res.json() : []))
+    .then((docs) => {
+      if (!Array.isArray(docs)) return;
+      const companies = new Set();
+      const positions = new Set();
+      docs.forEach((d) => {
+        if (d.company_name && String(d.company_name).trim()) companies.add(String(d.company_name).trim());
+        if (d.job_name && String(d.job_name).trim()) positions.add(String(d.job_name).trim());
+      });
+      companyDatabase.push(...[...companies].sort());
+      positionDatabase.push(...[...positions].sort());
+    })
+    .catch(() => {});
 
   // Reusable Custom Autocomplete Combobox Setup
   function setupAutocomplete({ wrapperId, inputId, listId, dataList, fieldKey, newLabel }) {

@@ -3,15 +3,17 @@
  * Matches Figma "Homepage(Main)" (#20:3) Review Card Design
  */
 (function () {
-  let currentUserId = null;
-  async function loadCurrentUser() {
-    const res = await fetch("/api/auth/me");
-
-    if (!res.ok) return;
-
-    const user = await res.json();
-    currentUserId = user.userId;
+  let cachedUserPromise = null;
+  function getCurrentUserId() {
+    if (!cachedUserPromise) {
+      cachedUserPromise = fetch("/api/auth/me")
+        .then((r) => (r.ok ? r.json() : null))
+        .then((u) => (u && u.userId ? Number(u.userId) : null))
+        .catch(() => null);
+    }
+    return cachedUserPromise;
   }
+  getCurrentUserId();
   function formatThaiDate(dateStr) {
     if (!dateStr) return "วันนี้";
     const d = new Date(dateStr);
@@ -51,8 +53,9 @@
       author: doc.is_anonymous ? "ผู้ไม่ประสงค์ออกนาม" : (doc.author_name || "นักศึกษาฝึกงาน"),
       date: formatThaiDate(doc.created_at),
       likes: Number(doc.likes || 0),
-      comments: Array.isArray(doc.comments) ? doc.comments.length : 0,
-      bookmarked: Array.isArray(doc.bookmarked_by) && doc.bookmarked_by.some((b) => b.user_id === currentUserId)
+      upvoted_by: Array.isArray(doc.upvoted_by) ? doc.upvoted_by : [],
+      bookmarked_by: Array.isArray(doc.bookmarked_by) ? doc.bookmarked_by : [],
+      comments: Array.isArray(doc.comments) ? doc.comments.length : 0
     };
   }
 
@@ -61,7 +64,7 @@
       .replaceAll(">", "&gt;").replaceAll('"', "&quot;");
   }
 
-  function createReviewCard(item) {
+  function createReviewCard(item, currentUserId = null) {
     const filledCount = Math.round(item.rating || 5);
     const starsHTML = Array.from({ length: 5 }, (_, idx) => {
       const filledClass = idx < filledCount ? "filled" : "";
@@ -116,23 +119,23 @@
         </div>
 
         <div class="card-actions">
-          <button type="button" class="action-btn js-like-btn" data-id="${cardId}" aria-label="ถูกใจ">
-            <i data-lucide="thumbs-up" class="filled-action-icon"></i>
+          <button type="button" class="action-btn js-like-btn ${currentUserId && Array.isArray(item.upvoted_by) && item.upvoted_by.includes(currentUserId) ? "active" : ""}" data-id="${cardId}" aria-label="ถูกใจ">
+            <i data-lucide="thumbs-up"></i>
             <span>${escapeHtml(item.likes)}</span>
           </button>
           <button type="button" class="action-btn js-comment-btn" data-id="${cardId}" aria-label="ความคิดเห็น">
             <i data-lucide="message-square"></i>
             <span>${escapeHtml(item.comments)}</span>
           </button>
-          <button type="button" class="action-btn js-bookmark-btn" data-id="${cardId}" aria-label="บันทึก">
-            <i data-lucide="bookmark" class="${item.bookmarked ? 'active-bookmark' : ''}"></i>
+          <button type="button" class="action-btn js-bookmark-btn ${currentUserId && Array.isArray(item.bookmarked_by) && item.bookmarked_by.some((b) => Number(b.user_id) === currentUserId) ? "active" : ""}" data-id="${cardId}" aria-label="บันทึก">
+            <i data-lucide="bookmark" class="${currentUserId && Array.isArray(item.bookmarked_by) && item.bookmarked_by.some((b) => Number(b.user_id) === currentUserId) ? "active-bookmark" : ""}"></i>
           </button>
         </div>
       </article>
     `;
   }
 
-  function renderReviewCards(containerId = "cardsGrid", reviewsList = []) {
+  async function renderReviewCards(containerId = "cardsGrid", reviewsList = []) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
@@ -146,7 +149,8 @@
       return;
     }
 
-    container.innerHTML = reviewsList.map(createReviewCard).join("");
+    const uid = await getCurrentUserId();
+    container.innerHTML = reviewsList.map((item) => createReviewCard(item, uid)).join("");
     if (window.lucide) {
       window.lucide.createIcons();
     }
@@ -162,7 +166,7 @@
       });
     });
 
-    // ปุ่มกดถูกใจ (บันทึกจริงลง MongoDB)
+    // ปุ่มกดถูกใจ (ผูกตาม user_id แบบ Toggle)
     container.querySelectorAll(".js-like-btn").forEach((btn) => {
       btn.addEventListener("click", async (e) => {
         e.stopPropagation();
@@ -170,10 +174,17 @@
         const countEl = btn.querySelector("span");
         if (!id) return;
         try {
-          const res = await fetch(`/api/reviews/${encodeURIComponent(id)}/like`, { method: "POST" });
+          const userId = await getCurrentUserId();
+          const res = await fetch(`/api/reviews/${encodeURIComponent(id)}/like`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: userId })
+          });
           if (res.ok) {
             const updated = await res.json();
             if (countEl) countEl.textContent = updated.likes;
+            const isLiked = userId && Array.isArray(updated.upvoted_by) && updated.upvoted_by.includes(userId);
+            btn.classList.toggle("active", Boolean(isLiked));
           }
         } catch (err) {
           console.error(err);
@@ -181,20 +192,29 @@
       });
     });
 
-    //bookmark
+    // ปุ่มบันทึก Bookmark (ผูกตาม user_id แบบ Toggle)
     container.querySelectorAll(".js-bookmark-btn").forEach((btn) => {
       btn.addEventListener("click", async (e) => {
         e.stopPropagation();
         const id = btn.getAttribute("data-id");
         if (!id) return;
         try {
-          const res = await fetch(`/api/reviews/${encodeURIComponent(id)}/bookmark`, { method: "POST" });
+          const userId = await getCurrentUserId();
+          const res = await fetch(`/api/reviews/${encodeURIComponent(id)}/bookmark`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: userId })
+          });
           if (res.ok) {
             const updated = await res.json();
-            const icon = btn.querySelector("svg");
-            const isBookmarked = updated.bookmarked_by.some((b) => b.user_id === currentUserId);
-
-            icon.classList.toggle("active-bookmark", isBookmarked);
+            const isBookmarked = Boolean(
+              userId && Array.isArray(updated.bookmarked_by) && updated.bookmarked_by.some((b) => Number(b.user_id) === userId)
+            );
+            btn.classList.toggle("active", isBookmarked);
+            btn.querySelector("svg")?.classList.toggle("active-bookmark", isBookmarked);
+          } else {
+            const err = await res.json().catch(() => ({}));
+            alert(err.message || "ไม่สามารถบันทึกรีวิวได้");
           }
         } catch (err) {
           console.error(err);
@@ -215,7 +235,7 @@
   }
 
   window.InternsightUI = {
-    loadCurrentUser,
+    loadCurrentUser: getCurrentUserId,
     mapDbReviewToCard,
     createReviewCard,
     renderReviewCards
