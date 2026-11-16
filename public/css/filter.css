@@ -473,6 +473,10 @@ main {
   background: none;
   border: 0;
   padding: 4px;
+  transition: transform 0.15s ease;
+}
+.acts button:hover {
+  transform: scale(1.08);
 }
 
 /* Page */
@@ -552,4 +556,9 @@ main {
 .fab svg{
   width:24px;
   height:24px
+}
+svg.active-bookmark {
+  color: #000000;
+  stroke: #000000;
+  fill: #000000;
 }

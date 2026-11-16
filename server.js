@@ -115,6 +115,7 @@ function activeSession(req) {
     const session = sessions.get(sessionKey(req));
     return session && session.until > Date.now() ? session : null;
 }
+app.locals.activeSession = activeSession; // ใช้ดึง Session ของผู้ใช้ที่ Login อยู่
 
 app.use(express.static(path.join(__dirname, "private"), { cacheControl: false, index: false }));
 

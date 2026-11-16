@@ -25,6 +25,7 @@ let filteredReviews = [];
 let selectedSkills = [];
 let activeSuggestionIndex = -1;
 let activeCompanyIndex = -1;
+let currentUserId = null;
 
 let currentPage = 1;
 const cardsPerPage = 6;
@@ -64,7 +65,8 @@ async function loadDatabaseReviews() {
                 date: dateStr,
                 createdAt: d,
                 likes: Number(doc.likes || 0),
-                comments: Array.isArray(doc.comments) ? doc.comments.length : 0
+                comments: Array.isArray(doc.comments) ? doc.comments.length : 0,
+                bookmarked: Array.isArray(doc.bookmarked_by) && doc.bookmarked_by.some((b) => b.user_id === currentUserId)
             };
         });
 
@@ -77,6 +79,12 @@ async function loadDatabaseReviews() {
     } catch (err) {
         console.error("Failed to load DB reviews on filter page:", err);
     }
+}
+async function loadCurrentUser() {
+    const res = await fetch("/api/auth/me");
+    if (!res.ok) return;
+    const user = await res.json();
+    currentUserId = user.userId;
 }
 
 function populateRoles() {
@@ -276,8 +284,8 @@ function renderCards() {
                     <span>${review.comments}</span>
                 </button>
 
-                <button type="button" aria-label="บันทึก">
-                    <i data-lucide="bookmark"></i>
+                <button type="button" class="js-filter-bookmark" aria-label="บันทึก">
+                    <i data-lucide="bookmark" class="${review.bookmarked? "active-bookmark": ""}"></i>
                 </button>
             </div>
         `;
@@ -315,6 +323,25 @@ function renderCards() {
                 window.location.href = `review-detail.html?id=${encodeURIComponent(review.id)}#commentsSection`;
             }
         });
+        
+        const bookmarkBtn = card.querySelector(".js-filter-bookmark");
+        bookmarkBtn?.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        if (!review.id) return;
+        const icon = bookmarkBtn.querySelector("svg");
+        try {
+            const res = await fetch(`/api/reviews/${encodeURIComponent(review.id)}/bookmark`, { method: "POST" });
+            if (res.ok) {
+                const updated = await res.json();
+                review.bookmarked = updated.bookmarked_by.some((b) => b.user_id === currentUserId);
+
+                icon?.classList.toggle("active-bookmark", review.bookmarked);
+            }
+        } catch (err) {
+            console.error(err);
+
+        }}
+        );
 
         cardGrid.appendChild(card);
     });
@@ -593,5 +620,7 @@ resetFilterBtn.addEventListener("click", () => {
     render();
 });
 
-
-loadDatabaseReviews();
+(async () => {
+    await loadCurrentUser();
+    await loadDatabaseReviews();
+})();
