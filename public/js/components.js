@@ -59,6 +59,11 @@
     };
   }
 
+  function escapeHtml(value) {
+    return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+  }
+
   function createReviewCard(item, currentUserId = null) {
     const filledCount = Math.round(item.rating || 5);
     const starsHTML = Array.from({ length: 5 }, (_, idx) => {
@@ -66,35 +71,35 @@
       return `<i data-lucide="star" class="star-icon ${filledClass}"></i>`;
     }).join("");
 
-    const cardId = item.id || "";
+    const cardId = escapeHtml(item.id || "");
 
     return `
       <article class="review-card" data-review-id="${cardId}">
         <div class="card-header">
-          <h3 class="company-name">${item.company}</h3>
-          <span class="mode-badge">${item.mode}</span>
+          <h3 class="company-name"><a href="review-detail.html?id=${encodeURIComponent(item.id || "")}">${escapeHtml(item.company)}</a></h3>
+          <span class="mode-badge">${escapeHtml(item.mode)}</span>
         </div>
 
         <div class="card-row">
           <i data-lucide="briefcase-business" class="row-icon"></i>
-          <span class="job-title">${item.jobTitle}</span>
+          <span class="job-title">${escapeHtml(item.jobTitle)}</span>
         </div>
 
         <div class="card-row">
           <i data-lucide="circle-dollar-sign" class="row-icon"></i>
-          <span class="salary-text">${item.salary}</span>
+          <span class="salary-text">${escapeHtml(item.salary)}</span>
         </div>
 
         <div class="card-row skills-row">
           <i data-lucide="code-xml" class="row-icon"></i>
           <div class="skill-tags">
-            ${(item.skills || []).slice(0, 3).map((s) => `<span class="skill-pill">${s}</span>`).join("")}
+            ${(item.skills || []).slice(0, 3).map((s) => `<span class="skill-pill">${escapeHtml(s)}</span>`).join("")}
           </div>
         </div>
 
         <div class="contains-row">
           <span class="contains-label">Contains</span>
-          <span class="info-pill">${item.interviewCount}</span>
+          <span class="info-pill">${escapeHtml(item.interviewCount)}</span>
           <span class="info-pill">pros</span>
         </div>
 
@@ -108,19 +113,19 @@
             <i data-lucide="user-round"></i>
           </span>
           <div class="author-details">
-            <span class="author-name">${item.author}</span>
-            <span class="review-date">${item.date}</span>
+            <span class="author-name">${escapeHtml(item.author)}</span>
+            <span class="review-date">${escapeHtml(item.date)}</span>
           </div>
         </div>
 
         <div class="card-actions">
           <button type="button" class="action-btn js-like-btn ${currentUserId && Array.isArray(item.upvoted_by) && item.upvoted_by.includes(currentUserId) ? "active" : ""}" data-id="${cardId}" aria-label="ถูกใจ">
             <i data-lucide="thumbs-up"></i>
-            <span>${item.likes}</span>
+            <span>${escapeHtml(item.likes)}</span>
           </button>
           <button type="button" class="action-btn js-comment-btn" data-id="${cardId}" aria-label="ความคิดเห็น">
             <i data-lucide="message-square"></i>
-            <span>${item.comments}</span>
+            <span>${escapeHtml(item.comments)}</span>
           </button>
           <button type="button" class="action-btn js-bookmark-btn ${currentUserId && Array.isArray(item.bookmarked_by) && item.bookmarked_by.some((b) => Number(b.user_id) === currentUserId) ? "active" : ""}" data-id="${cardId}" aria-label="บันทึก">
             <i data-lucide="bookmark" class="${currentUserId && Array.isArray(item.bookmarked_by) && item.bookmarked_by.some((b) => Number(b.user_id) === currentUserId) ? "active-bookmark" : ""}"></i>
@@ -153,7 +158,7 @@
     // คลิกที่การ์ดเพื่อเปิดหน้าอ่านโพสต์เต็ม (review-detail.html?id=...)
     container.querySelectorAll(".review-card").forEach((card) => {
       card.addEventListener("click", (e) => {
-        if (e.target.closest(".action-btn")) return;
+        if (e.target.closest(".action-btn, a")) return;
         const id = card.getAttribute("data-review-id");
         if (id) {
           window.location.href = `review-detail.html?id=${encodeURIComponent(id)}`;

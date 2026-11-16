@@ -98,8 +98,8 @@ main {
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 36px 24px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 18px;
   padding-top: 14px;
 }
 
@@ -111,21 +111,30 @@ main {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 18px;
-  padding: 30px 18px 16px;
+  padding: 20px;
   container-type: inline-size;
   cursor: pointer;
 }
 
-.card::before {
-  content: "";
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 118px;
-  height: 30px;
-  background: var(--img);
-  border-radius: 4px 4px 0 0;
+.card p {
+  margin: 0;
+}
+
+.card {
+  overflow-wrap: anywhere;
+}
+
+.card small {
+  margin-top: auto;
+  color: var(--muted);
+}
+
+.card:only-child {
+  max-width: 640px;
+}
+
+#reviewStatus:empty {
+  margin: 0;
 }
 
 .top {
@@ -192,7 +201,7 @@ main {
   padding: 0 .7em;
 }
 
-.stars {
+.card .stars {
   display: flex;
   align-items: center;
   gap: 2px;
@@ -200,13 +209,13 @@ main {
   font-weight: 500;
 }
 
-.stars svg {
+.card .stars svg {
   width: 18px;
   height: 18px;
   stroke-width: 1.8;
 }
 
-.stars span {
+.card .stars span {
   margin-left: 6px;
 }
 
@@ -363,8 +372,15 @@ main {
   width: 150px; 
 }
 
-.grid { 
-  padding-top: 26px; 
+@media (max-width: 600px) {
+  main {
+    padding: 16px 14px 80px;
+  }
+
+  .profile, .banner, .list-head {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 }
 .acts.mine { 
   justify-content: flex-start; 

@@ -54,6 +54,8 @@ router.post("/", async (req, res) => {
 
         const newReview = new InternshipReview({
             ...reviewPayload,
+            user_id: req.user.userId,
+            author_name: req.user.userName || "สมาชิก Internsight",
             review_id: nextId,
             interview_questions: numberedQuestions,
             images: numberedImages
@@ -327,36 +329,6 @@ router.post("/:id/comments/:commentNo/like", async (req, res) => {
 
         await review.save();
         res.json(review);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-
-// 9. รายงานความคิดเห็น (POST /api/reviews/:id/comments/:commentNo/report)
-router.post("/:id/comments/:commentNo/report", async (req, res) => {
-    try {
-        const { reason, reporter_id } = req.body || {};
-        if (!reason || !String(reason).trim()) {
-            return res.status(400).json({ message: "กรุณาเลือกเหตุผลในการรายงาน" });
-        }
-        const review = await findReviewByIdParam(req.params.id);
-        if (!review) {
-            return res.status(404).json({ message: "ไม่พบข้อมูลรีวิวนี้" });
-        }
-        const commentNo = Number(req.params.commentNo);
-        const targetComment = (review.comments || []).find((c) => c.comment_no === commentNo);
-        if (!targetComment) {
-            return res.status(404).json({ message: "ไม่พบความคิดเห็นนี้" });
-        }
-        if (!Array.isArray(targetComment.reports)) {
-            targetComment.reports = [];
-        }
-        targetComment.reports.push({
-            reporter_id: reporter_id ? Number(reporter_id) : null,
-            reason: String(reason).trim()
-        });
-        await review.save();
-        res.status(201).json({ message: "ส่งรายงานความคิดเห็นเรียบร้อยแล้ว" });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

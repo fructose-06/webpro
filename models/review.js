@@ -21,14 +21,7 @@ const reviewCommentSchema = new mongoose.Schema(
         content: { type: String, required: true, maxlength: 500 },
         likes: { type: Number, default: 0 },
         liked_by: [{ type: Number }],
-        is_edited: { type: Boolean, default: false },
-        reports: [
-            {
-                reporter_id: { type: Number, default: null },
-                reason: { type: String, required: true },
-                created_at: { type: Date, default: Date.now }
-            }
-        ]
+        is_edited: { type: Boolean, default: false }
     },
     {
         _id: false,
@@ -92,7 +85,16 @@ const reviewSchema = new mongoose.Schema(
         comments: [reviewCommentSchema]
     },
     {
-        timestamps: { createdAt: "created_at", updatedAt: "updated_at" }
+        timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
+        toJSON: {
+            transform(doc, result) {
+                if (result.is_anonymous) {
+                    delete result.user_id;
+                    delete result.author_name;
+                }
+                return result;
+            }
+        }
     }
 );
 

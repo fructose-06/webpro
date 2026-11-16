@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   let editingCommentNo = null;
   let openMenuNo = null;
   let pendingDeleteNo = null;
-  let pendingReportNo = null;
   const expandedThreads = new Set();
 
   try {
@@ -94,28 +93,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     const isEditing = editingCommentNo === c.comment_no;
     const isMenuOpen = openMenuNo === c.comment_no;
 
-    const dropdownHtml = isMenuOpen
+    const dropdownHtml = isMenuOpen && owner
       ? `
         <div class="comment-dropdown-menu" data-menu-no="${c.comment_no}">
-          ${
-            owner
-              ? `
-                <button type="button" class="comment-dropdown-item js-edit-comment" data-no="${c.comment_no}">
-                  <i data-lucide="pencil"></i>
-                  <span>แก้ไขความคิดเห็น</span>
-                </button>
-                <button type="button" class="comment-dropdown-item danger js-delete-comment" data-no="${c.comment_no}">
-                  <i data-lucide="trash-2"></i>
-                  <span>ลบความคิดเห็น</span>
-                </button>
-              `
-              : `
-                <button type="button" class="comment-dropdown-item danger js-report-comment" data-no="${c.comment_no}">
-                  <i data-lucide="flag"></i>
-                  <span>รายงานความคิดเห็น</span>
-                </button>
-              `
-          }
+          <button type="button" class="comment-dropdown-item js-edit-comment" data-no="${c.comment_no}">
+            <i data-lucide="pencil"></i>
+            <span>แก้ไขความคิดเห็น</span>
+          </button>
+          <button type="button" class="comment-dropdown-item danger js-delete-comment" data-no="${c.comment_no}">
+            <i data-lucide="trash-2"></i>
+            <span>ลบความคิดเห็น</span>
+          </button>
         </div>
       `
       : "";
@@ -177,12 +165,18 @@ document.addEventListener("DOMContentLoaded", async () => {
               <span class="comment-time">${escapeHtml(formatCommentTimestamp(c.created_at))}</span>
               ${isEditing ? '<span class="comment-edited-tag">• กำลังแก้ไข...</span>' : editedTag}
             </div>
-            <div class="comment-more-wrapper">
-              <button type="button" class="comment-more-btn js-toggle-menu" data-no="${c.comment_no}" aria-label="ตัวเลือกเพิ่มเติม">
-                <i data-lucide="more-horizontal"></i>
-              </button>
-              ${dropdownHtml}
-            </div>
+            ${
+              owner
+                ? `
+                  <div class="comment-more-wrapper">
+                    <button type="button" class="comment-more-btn js-toggle-menu" data-no="${c.comment_no}" aria-label="ตัวเลือกเพิ่มเติม">
+                      <i data-lucide="more-horizontal"></i>
+                    </button>
+                    ${dropdownHtml}
+                  </div>
+                `
+                : ""
+            }
           </div>
           ${bodyHtml}
         </div>
@@ -489,18 +483,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     });
 
-    // 6. เปิด Modal รายงานความคิดเห็น
-    listEl.querySelectorAll(".js-report-comment").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        pendingReportNo = Number(btn.getAttribute("data-no"));
-        openMenuNo = null;
-        renderComments(currentReviewData?.comments || []);
-        const modal = document.getElementById("reportCommentModal");
-        if (modal) modal.hidden = false;
-      });
-    });
-
-    // 7. ดูคำตอบเพิ่มเติม
+    // 6. ดูคำตอบเพิ่มเติม
     listEl.querySelectorAll(".js-expand-replies").forEach((btn) => {
       btn.addEventListener("click", () => {
         const rootNo = Number(btn.getAttribute("data-root-no"));
@@ -789,41 +772,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     } finally {
       pendingDeleteNo = null;
       if (deleteModal) deleteModal.hidden = true;
-    }
-  });
-
-  // Report Modal Handlers
-  const reportModal = document.getElementById("reportCommentModal");
-  document.getElementById("cancelReportBtn")?.addEventListener("click", () => {
-    pendingReportNo = null;
-    if (reportModal) reportModal.hidden = true;
-  });
-
-  document.getElementById("reportCommentForm")?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    if (!pendingReportNo || !reviewId) return;
-    const selected = document.querySelector('input[name="reportReason"]:checked');
-    const reason = selected ? selected.value : "เนื้อหาไม่เหมาะสมอื่นๆ";
-    try {
-      const res = await fetch(`/api/reviews/${encodeURIComponent(reviewId)}/comments/${pendingReportNo}/report`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          reason,
-          reporter_id: currentUser?.userId || null
-        })
-      });
-      if (res.ok) {
-        alert("ส่งรายงานความคิดเห็นเรียบร้อยแล้ว");
-      } else {
-        const err = await res.json().catch(() => ({}));
-        alert(err.message || "ไม่สามารถส่งรายงานได้");
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      pendingReportNo = null;
-      if (reportModal) reportModal.hidden = true;
     }
   });
 
