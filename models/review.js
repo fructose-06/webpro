@@ -18,7 +18,17 @@ const reviewCommentSchema = new mongoose.Schema(
         parent_comment_no: { type: Number, default: null },
         author_id: { type: Number, default: null },
         author_name: { type: String, default: "นักศึกษา" },
-        content: { type: String, required: true }
+        content: { type: String, required: true, maxlength: 500 },
+        likes: { type: Number, default: 0 },
+        liked_by: [{ type: Number }],
+        is_edited: { type: Boolean, default: false },
+        reports: [
+            {
+                reporter_id: { type: Number, default: null },
+                reason: { type: String, required: true },
+                created_at: { type: Date, default: Date.now }
+            }
+        ]
     },
     {
         _id: false,

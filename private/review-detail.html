@@ -29,21 +29,21 @@
     <section class="figma-header-card">
       <div class="header-top-row">
         <div class="header-left">
-          <div class="company-subtitle" id="detailCompany">Bidkub</div>
-          <h1 class="role-main-title" id="detailJobName">Frontend Developer intern</h1>
+          <div class="company-subtitle" id="detailCompany">-</div>
+          <h1 class="role-main-title" id="detailJobName">-</h1>
 
           <div class="header-badges-row">
             <span class="gray-info-badge">
               <i data-lucide="monitor"></i>
-              <span id="detailWorkMode">Hybrid</span>
+              <span id="detailWorkMode">-</span>
             </span>
             <span class="gray-info-badge">
               <i data-lucide="circle-dollar-sign"></i>
-              <span id="detailDailyPay">500บาท/วัน</span>
+              <span id="detailDailyPay">-</span>
             </span>
             <span class="gray-info-badge">
               <i data-lucide="building-2"></i>
-              <span id="detailIndustry">start up</span>
+              <span id="detailIndustry">-</span>
             </span>
           </div>
         </div>
@@ -52,7 +52,7 @@
           <div class="overall-title">Overall Rating</div>
           <div class="overall-score-row">
             <i data-lucide="star" class="filled-black-star"></i>
-            <span class="avg-big" id="detailAvgRating">4.5</span><span class="avg-slash">/5</span>
+            <span class="avg-big" id="detailAvgRating">0.0</span><span class="avg-slash">/5</span>
           </div>
           <div class="overall-sub">คะแนนเฉลี่ยรวม</div>
         </div>
@@ -65,17 +65,17 @@
           <span class="user-circle-icon">
             <i data-lucide="user-round"></i>
           </span>
-          <strong class="author-label" id="detailAuthor">User - 101</strong>
-          <span class="dot-date" id="detailDate">• โพสต์เมื่อ 24 ก.ย. 2026</span>
+          <strong class="author-label" id="detailAuthor">-</strong>
+          <span class="dot-date" id="detailDate">• -</span>
         </div>
 
         <div class="header-icon-actions">
           <button type="button" class="icon-action-btn" id="btnLikePost" aria-label="ถูกใจ">
-            <i data-lucide="thumbs-up" class="filled-icon"></i>
-            <span id="detailLikesCount">12</span>
+            <i data-lucide="thumbs-up"></i>
+            <span id="detailLikesCount">0</span>
           </button>
           <button type="button" class="icon-action-btn" id="btnBookmarkPost" aria-label="บันทึก">
-            <i data-lucide="bookmark" class="filled-icon"></i>
+            <i data-lucide="bookmark"></i>
           </button>
         </div>
       </div>
@@ -164,25 +164,79 @@
         <form class="figma-comment-form" id="commentForm">
           <textarea
             id="commentInput"
-            placeholder="แสดงความคิดเห็น..."
+            placeholder="แสดงความคิดเห็น หรือสอบถามข้อมูลเพิ่มเติมเกี่ยวกับการฝึกงาน..."
+            maxlength="500"
             required
           ></textarea>
           <div class="comment-submit-row">
+            <span class="comment-char-count" id="commentCharCount">0 / 500 ตัวอักษร</span>
             <button type="submit" class="btn-post-comment" id="btnSubmitComment">โพสต์</button>
           </div>
         </form>
       </div>
     </section>
 
+    <hr class="comment-section-divider">
+
     <!-- 7. Comments List Section (ความคิดเห็น (N)) -->
     <section class="figma-comment-section">
-      <h2 class="figma-comment-heading">
-        <i data-lucide="message-circle"></i>
-        <span>ความคิดเห็น (<span id="commentHeaderCount">0</span>)</span>
-      </h2>
+      <div class="comments-header-bar">
+        <h2 class="figma-comment-heading">
+          <i data-lucide="message-circle"></i>
+          <span>ความคิดเห็น (<span id="commentHeaderCount">0</span>)</span>
+        </h2>
+
+        <div class="comment-sort-pills" role="group" aria-label="เรียงลำดับความคิดเห็น">
+          <button type="button" class="sort-pill-btn active" data-sort="newest" id="sortNewestBtn">ใหม่ล่าสุด</button>
+          <button type="button" class="sort-pill-btn" data-sort="popular" id="sortPopularBtn">ยอดนิยม</button>
+        </div>
+      </div>
 
       <div class="figma-comments-list" id="commentsList"></div>
     </section>
   </main>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="comment-modal-backdrop" id="deleteCommentModal" hidden>
+    <div class="comment-modal-card" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+      <h3 class="comment-modal-title" id="deleteModalTitle">ยืนยันการลบความคิดเห็น?</h3>
+      <p class="comment-modal-desc">ความคิดเห็นและการตอบกลับที่เกี่ยวข้องจะถูกลบออกอย่างถาวร และไม่สามารถกู้คืนได้</p>
+      <div class="comment-modal-actions">
+        <button type="button" class="btn-modal-cancel" id="cancelDeleteBtn">ยกเลิก</button>
+        <button type="button" class="btn-modal-danger" id="confirmDeleteBtn">ลบความคิดเห็น</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report Comment Modal -->
+  <div class="comment-modal-backdrop" id="reportCommentModal" hidden>
+    <div class="comment-modal-card" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
+      <h3 class="comment-modal-title" id="reportModalTitle">รายงานความคิดเห็นที่ไม่เหมาะสม</h3>
+      <form id="reportCommentForm">
+        <div class="report-reasons-list">
+          <label class="report-reason-item">
+            <input type="radio" name="reportReason" value="สแปมหรือโฆษณา" checked>
+            <span>สแปมหรือโฆษณา</span>
+          </label>
+          <label class="report-reason-item">
+            <input type="radio" name="reportReason" value="คำหยาบคาย หรือการคุกคาม">
+            <span>คำหยาบคาย หรือการคุกคาม</span>
+          </label>
+          <label class="report-reason-item">
+            <input type="radio" name="reportReason" value="ข้อมูลเท็จ / ทำให้เข้าใจผิด">
+            <span>ข้อมูลเท็จ / ทำให้เข้าใจผิด</span>
+          </label>
+          <label class="report-reason-item">
+            <input type="radio" name="reportReason" value="เนื้อหาไม่เหมาะสมอื่นๆ">
+            <span>เนื้อหาไม่เหมาะสมอื่นๆ</span>
+          </label>
+        </div>
+        <div class="comment-modal-actions">
+          <button type="button" class="btn-modal-cancel" id="cancelReportBtn">ยกเลิก</button>
+          <button type="submit" class="btn-modal-primary" id="confirmReportBtn">ส่งรายงาน</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </body>
 </html>

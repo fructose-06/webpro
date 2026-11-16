@@ -282,12 +282,13 @@
   margin-left: 2px;
 }
 
-/* Row 7: Author Info (left-aligned, no top border, matching Figma) */
+/* Row 7: Author Info (left-aligned, pushed to bottom so card footers align across grid) */
 .review-card .author-info {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 6px;
+  margin-top: auto;
+  padding-top: 10px;
 }
 
 .review-card .author-avatar-wrap {
@@ -358,8 +359,11 @@
   width: 20px;
   height: 20px;
   color: #000000;
+  fill: none;
+  transition: fill 0.15s ease;
 }
 
+.review-card .action-btn.active svg,
 .review-card .action-btn svg.filled-action-icon {
   fill: #000000;
 }
