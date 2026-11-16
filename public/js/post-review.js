@@ -494,23 +494,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("Submitted Review Data:", formData);
 
-    let authorName = "ผู้ไม่ประสงค์ออกนาม";
-    let currentUserId = null;
-    try {
-      const meRes = await fetch("/api/auth/me");
-      if (meRes.ok) {
-        const me = await meRes.json();
-        currentUserId = me.userId || null;
-        if (!formData.anonymous) {
-          authorName = me.userName || `User - ${me.studentCode || me.userId}`;
-        }
-      }
-    } catch {
-      if (!formData.anonymous) authorName = "นักศึกษาฝึกงาน";
-    }
-
     const payload = {
-      user_id: currentUserId,
       company_name: formData.company || "ไม่ระบุชื่อบริษัท",
       industry_type: formData.companyType || "",
       job_name: formData.position || "ไม่ระบุตำแหน่ง",
@@ -530,7 +514,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }))
           }
         : {}),
-      author_name: authorName,
       is_anonymous: formData.anonymous,
       description: formData.experience,
       work_mode: formData.workMode,

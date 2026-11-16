@@ -4,6 +4,7 @@ const cors = require("cors");
 const path = require("path");
 const { Pool } = require("pg");
 const mongoose = require("mongoose");
+const InternshipReview = require("./models/review");
 const { argon2, randomBytes, timingSafeEqual } = require("node:crypto");
 const { promisify } = require("node:util");
 const deriveKey = promisify(argon2);
@@ -25,7 +26,11 @@ app.use((req, res, next) => {
     res.set("Cache-Control", "private, no-store");
     if (req.method === "POST" &&
         (req.path === "/api/auth/register" || req.path === "/api/auth/login")) return next();
-    if (activeSession(req)) return next();
+    const session = activeSession(req);
+    if (session) {
+        req.user = session.profile;
+        return next();
+    }
     if (readsFile && !/^\/api(?:\/|$)/i.test(req.path)) return res.redirect("/login.html");
     return res.sendStatus(401);
 });
@@ -235,6 +240,18 @@ mongoose
     .catch((err) => {
         console.error("MongoDB connection error:", err.message);
     });
+
+app.get("/api/me/reviews", async (req, res) => {
+    try {
+        const reviews = await InternshipReview.find({ user_id: req.user.userId })
+            .select("_id review_id company_name job_name work_mode daily_pay description is_anonymous created_at")
+            .sort({ created_at: -1, _id: -1 }).lean();
+        return res.json({ reviews });
+    } catch (error) {
+        console.error({ event: "my_reviews_failed", type: error.name });
+        return res.status(500).json({ message: "โหลดรีวิวของคุณไม่ได้" });
+    }
+});
 
 const reviewRoutes = require("./routes/reviewRoutes");
 app.use("/api/reviews", reviewRoutes);

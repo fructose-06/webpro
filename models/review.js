@@ -82,7 +82,16 @@ const reviewSchema = new mongoose.Schema(
         comments: [reviewCommentSchema]
     },
     {
-        timestamps: { createdAt: "created_at", updatedAt: "updated_at" }
+        timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
+        toJSON: {
+            transform(doc, result) {
+                if (result.is_anonymous) {
+                    delete result.user_id;
+                    delete result.author_name;
+                }
+                return result;
+            }
+        }
     }
 );
 
