@@ -54,6 +54,8 @@ router.post("/", async (req, res) => {
 
         const newReview = new InternshipReview({
             ...reviewPayload,
+            user_id: req.user.userId,
+            author_name: req.user.userName || "สมาชิก Internsight",
             review_id: nextId,
             interview_questions: numberedQuestions,
             images: numberedImages
