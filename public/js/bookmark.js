@@ -1,59 +1,51 @@
 lucide.createIcons();
 
-const reviews = [
-  {
-    company: 'Alpha Studio', role: 'UX/UI Designer', mode: 'Hybrid', pay: '350 THB/Day',
-    skills: ['Figma', 'Photoshop', 'Illustrator'], rating: 4.5,
-    culture: 4, workload: 3, mentor: 5,
-    pros: 'ทีมใจดี มีพี่เลี้ยงสอนงานจริงจัง ได้ลงมือทำงานจริงตั้งแต่สัปดาห์แรก',
-    cons: 'งานช่วงปลายเดือนค่อนข้างหนักและมีประชุมบ่อย',
-    user: 'User - 101', date: '12 ต.ค. 2569',
-  },
-  {
-    company: 'KB Tech', role: 'Frontend Developer', mode: 'Remote', pay: '500 THB/Day',
-    skills: ['React', 'CSS', 'Git'], rating: 4.7,
-    culture: 5, workload: 4, mentor: 4,
-    pros: 'ได้เขียนโค้ดจริงบนโปรเจกต์ลูกค้า มีการรีวิวโค้ดทุกสัปดาห์ เรียนรู้เร็วมาก',
-    cons: 'งานเยอะในช่วงส่งมอบ และต้องจัดตารางเวลาเองให้ดี',
-    user: 'User - 205', date: '8 ต.ค. 2569',
-  },
-  {
-    company: 'Bluefin', role: 'Data Analyst', mode: 'On-site', pay: 'ไม่มีเบี้ยเลี้ยง',
-    skills: ['SQL', 'Python', 'Tableau'], rating: 3.9,
-    culture: 3, workload: 4, mentor: 3,
-    pros: 'ได้ฝึกวิเคราะห์ข้อมูลจริง ออฟฟิศอยู่ใกล้รถไฟฟ้า',
-    cons: 'ไม่มีเบี้ยเลี้ยง และพี่เลี้ยงไม่ค่อยว่างให้ถาม',
-    user: 'User - 318', date: '30 ก.ย. 2569',
-  },
-  {
-    company: 'Nova Labs', role: 'Backend Developer', mode: 'Hybrid', pay: '450 THB/Day',
-    skills: ['Java', 'SQL', 'Docker'], rating: 4.3,
-    culture: 4, workload: 4, mentor: 4,
-    pros: 'บรรยากาศสบาย ๆ เวลาทำงานยืดหยุ่น ได้ใช้เครื่องมือที่ทันสมัย',
-    cons: 'ระบบเก่าเยอะ เอกสารยังไม่ค่อยครบ',
-    user: 'User - 142', date: '21 ก.ย. 2569',
-  },
-  {
-    company: 'Orbit Pay', role: 'Full-stack Developer', mode: 'On-site', pay: '800 THB/Day',
-    skills: ['React', 'Node.js', 'SQL'], rating: 4.4,
-    culture: 4, workload: 2, mentor: 5,
-    pros: 'เบี้ยเลี้ยงดี พี่เลี้ยงเก่งและใส่ใจ มีโอกาสได้ทำงานต่อหลังจบฝึกงาน',
-    cons: 'ภาระงานหนัก บางวันต้องอยู่ดึก',
-    user: 'User - 276', date: '15 ก.ย. 2569',
-  },
-  {
-    company: 'Kite Data', role: 'Data Analyst', mode: 'Remote', pay: '600 THB/Day',
-    skills: ['Python', 'Excel', 'SQL'], rating: 4.8,
-    culture: 5, workload: 5, mentor: 4,
-    pros: 'ทีมเป็นกันเอง งานไม่กดดัน ได้เรียนรู้เครื่องมือหลายตัว',
-    cons: 'เวลาประชุมออนไลน์ค่อนข้างเยอะ',
-    user: 'User - 099', date: '2 ก.ย. 2569',
-  },
-];
+const reviews = [];
+let selectedReview = null;
 
 const list = document.querySelector('.list');
 const detailCard = document.querySelector('.detail');
 const field = (name) => document.querySelector(`[data-field="${name}"]`);
+const sortSelect = document.querySelector(".sel");
+
+const bookmarkModal = document.querySelector(".bookmark-modal");
+const confirmBtn = document.querySelector(".bookmark-confirm-btn");
+const cancelBtn = document.querySelector(".bookmark-cancel-btn");
+let pendingRemoveReview = null;
+
+async function loadBookmarks() {
+    try {
+        const res = await fetch("/api/reviews/bookmarks");
+        const data = await res.json();
+        reviews.splice(0, reviews.length, ...data.map((review) => ({
+          company: review.company_name,
+          role: review.job_name,
+          mode: review.work_mode,
+          pay: review.daily_pay,
+          skills: review.skills || [],
+          rating: ((
+                  Number(review.rating_culture || 0) +
+                  Number(review.rating_workload || 0) +
+                  Number(review.rating_mentor || 0)
+              ) / 3
+          ).toFixed(1),
+          culture: review.rating_culture,
+          workload: review.rating_workload,
+          mentor: review.rating_mentor,
+          pros: review.pros,
+          cons: review.cons,
+          user: review.author_name,
+          date: new Date(review.created_at).toLocaleDateString("th-TH"),
+          reviewId: review.review_id,
+          bookmarkedAt: review.bookmarked_by?.[0]?.created_at || review.created_at
+        })));
+
+        field('count').textContent = `· ${reviews.length}`;
+        renderReviews();
+    } catch (err) {
+        console.error(err);
+    }
+}
 
 const esc = (text) =>
   String(text).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -75,6 +67,8 @@ const itemHTML = (r, index) => `
   </li>`;
 
 const showDetail = (r) => {
+  selectedReview = r;
+
   field('company').textContent = r.company;
   field('mode').textContent = r.mode;
   field('role').textContent = r.role;
@@ -100,9 +94,17 @@ const showDetail = (r) => {
   }
 };
 
-list.innerHTML = reviews.map(itemHTML).join('');
-field('count').textContent = `· ${reviews.length}`;
-lucide.createIcons();
+function renderReviews() {
+    list.innerHTML = reviews.map(itemHTML).join('');
+    lucide.createIcons();
+    if (reviews.length > 0) {
+      showDetail(reviews[0]);
+      const firstItem = list.querySelector('.item');
+      if (firstItem) {
+          firstItem.setAttribute('aria-current', 'true');
+      }
+    }
+}
 
 list.addEventListener('click', (e) => {
   const item = e.target.closest('.item');
@@ -112,3 +114,34 @@ list.addEventListener('click', (e) => {
   item.setAttribute('aria-current', 'true');
   showDetail(reviews[item.dataset.index]);
 });
+
+document.querySelector(".btn-out")?.addEventListener("click", () => {
+    if (!selectedReview) return;
+    pendingRemoveReview = selectedReview;
+    bookmarkModal.classList.remove("hidden");
+});
+cancelBtn?.addEventListener("click", () => {
+    bookmarkModal.classList.add("hidden");
+    pendingRemoveReview = null;
+});
+confirmBtn?.addEventListener("click", async () => {
+    if (!pendingRemoveReview) return;
+    try {
+      const res = await fetch(`/api/reviews/${pendingRemoveReview.reviewId}/bookmark`,{ method: "POST" });
+
+      if (res.ok) {
+        bookmarkModal.classList.add("hidden");
+        pendingRemoveReview = null;
+        await loadBookmarks();
+      }
+    } catch (err) {
+        console.error(err);
+    }
+});
+
+sortSelect?.addEventListener("change", () => {
+  reviews.reverse();
+  renderReviews();
+});
+
+loadBookmarks();

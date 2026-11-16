@@ -526,3 +526,82 @@ main {
     margin-top: 12px;
   }
 }
+
+.bookmark-modal {
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0, 0, 0, .4);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    opacity: 1;
+    visibility: visible;
+
+    z-index: 3000;
+}
+
+.bookmark-modal.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.bookmark-modal-content {
+    width: 100%;
+    max-width: 400px;
+
+    background: #fff;
+
+    border-radius: 16px;
+
+    padding: 24px;
+
+    box-shadow: 0 16px 40px rgba(0,0,0,.18);
+}
+
+.bookmark-modal-title {
+    margin: 0 0 8px;
+    font-size: 20px;
+}
+
+.bookmark-modal-text {
+    margin: 0;
+    color: #6b7280;
+}
+
+.bookmark-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 24px;
+}
+
+.bookmark-cancel-btn,
+.bookmark-confirm-btn {
+    border-radius: 8px;
+    padding: 10px 16px;
+    font: inherit;
+}
+
+.bookmark-cancel-btn {
+    border: 1px solid #e3e5e9;
+    background: #fff;
+}
+
+.bookmark-cancel-btn:hover {
+    background: #f3f4f6;
+}
+
+.bookmark-confirm-btn {
+    border: 0;
+    background: #dc2626;
+    color: white;
+}
+
+.bookmark-confirm-btn:hover {
+    background: #b91c1c;
+}
