@@ -118,14 +118,31 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-// 4. กดถูกใจรีวิว / UPVOTES (POST /api/reviews/:id/like)
+// 4. กดถูกใจ / ยกเลิกถูกใจรีวิว / UPVOTES (POST /api/reviews/:id/like)
 router.post("/:id/like", async (req, res) => {
     try {
         const review = await findReviewByIdParam(req.params.id);
         if (!review) {
             return res.status(404).json({ message: "ไม่พบข้อมูลรีวิวนี้" });
         }
-        review.likes = (review.likes || 0) + 1;
+        const userId = req.body?.user_id ? Number(req.body.user_id) : null;
+        if (!Array.isArray(review.upvoted_by)) {
+            review.upvoted_by = [];
+        }
+
+        if (userId) {
+            const idx = review.upvoted_by.indexOf(userId);
+            if (idx >= 0) {
+                review.upvoted_by.splice(idx, 1);
+                review.likes = Math.max(0, (review.likes || 0) - 1);
+            } else {
+                review.upvoted_by.push(userId);
+                review.likes = (review.likes || 0) + 1;
+            }
+        } else {
+            review.likes = (review.likes || 0) + 1;
+        }
+
         await review.save();
         res.json(review);
     } catch (err) {
@@ -133,35 +150,39 @@ router.post("/:id/like", async (req, res) => {
     }
 });
 
+// 4.1 บันทึก / ยกเลิกบันทึกรีวิว / BOOKMARKS (POST /api/reviews/:id/bookmark)
 router.post("/:id/bookmark", async (req, res) => {
     try {
-        const session = req.app.locals.activeSession(req);
-        if (!session) {
-            return res.sendStatus(401);
-        }
-        const userId = session.profile.userId;
         const review = await findReviewByIdParam(req.params.id);
         if (!review) {
-            return res.status(404).json({
-                message: "ไม่พบข้อมูลรีวิวนี้"
-            });
+            return res.status(404).json({ message: "ไม่พบข้อมูลรีวิวนี้" });
         }
-        const index = review.bookmarked_by.findIndex((b) => b.user_id === userId);
-        if (index >= 0) {
-            review.bookmarked_by.splice(index, 1);
+
+        const session = typeof req.app.locals.activeSession === "function"
+            ? req.app.locals.activeSession(req)
+            : null;
+        const userId = session?.profile?.userId
+            ? Number(session.profile.userId)
+            : (req.body?.user_id ? Number(req.body.user_id) : null);
+
+        if (!userId) {
+            return res.status(401).json({ message: "กรุณาเข้าสู่ระบบก่อนบันทึกรีวิว" });
+        }
+        if (!Array.isArray(review.bookmarked_by)) {
+            review.bookmarked_by = [];
+        }
+
+        const idx = review.bookmarked_by.findIndex((b) => Number(b.user_id) === userId);
+        if (idx >= 0) {
+            review.bookmarked_by.splice(idx, 1);
         } else {
-            review.bookmarked_by.push({
-                user_id: userId,
-                created_at: new Date()
-            });
+            review.bookmarked_by.push({ user_id: userId, created_at: new Date() });
         }
+
         await review.save();
         res.json(review);
-
     } catch (err) {
-        res.status(500).json({
-            message: err.message
-        });
+        res.status(500).json({ message: err.message });
     }
 });
 
@@ -169,8 +190,12 @@ router.post("/:id/bookmark", async (req, res) => {
 router.post("/:id/comments", async (req, res) => {
     try {
         const { content, author_id, author_name, parent_comment_no } = req.body || {};
-        if (!content || !String(content).trim()) {
+        const trimmed = String(content || "").trim();
+        if (!trimmed) {
             return res.status(400).json({ message: "กรุณากรอกข้อความคิดเห็น" });
+        }
+        if (trimmed.length > 500) {
+            return res.status(400).json({ message: "ความคิดเห็นต้องไม่เกิน 500 ตัวอักษร" });
         }
         const review = await findReviewByIdParam(req.params.id);
         if (!review) {
@@ -189,7 +214,10 @@ router.post("/:id/comments", async (req, res) => {
             parent_comment_no: parent_comment_no ? Number(parent_comment_no) : null,
             author_id: author_id ? Number(author_id) : null,
             author_name: author_name || "นักศึกษา",
-            content: String(content).trim()
+            content: trimmed,
+            likes: 0,
+            liked_by: [],
+            is_edited: false
         });
         await review.save();
         res.status(201).json(review);
@@ -201,9 +229,13 @@ router.post("/:id/comments", async (req, res) => {
 // 6. แก้ไขความคิดเห็น (PUT /api/reviews/:id/comments/:commentNo)
 router.put("/:id/comments/:commentNo", async (req, res) => {
     try {
-        const { content } = req.body || {};
-        if (!content || !String(content).trim()) {
+        const { content, user_id } = req.body || {};
+        const trimmed = String(content || "").trim();
+        if (!trimmed) {
             return res.status(400).json({ message: "กรุณากรอกข้อความคิดเห็น" });
+        }
+        if (trimmed.length > 500) {
+            return res.status(400).json({ message: "ความคิดเห็นต้องไม่เกิน 500 ตัวอักษร" });
         }
         const review = await findReviewByIdParam(req.params.id);
         if (!review) {
@@ -214,8 +246,87 @@ router.put("/:id/comments/:commentNo", async (req, res) => {
         if (!targetComment) {
             return res.status(404).json({ message: "ไม่พบความคิดเห็นนี้" });
         }
-        targetComment.content = String(content).trim();
+        if (targetComment.author_id && user_id && Number(targetComment.author_id) !== Number(user_id)) {
+            return res.status(403).json({ message: "คุณไม่มีสิทธิ์แก้ไขความคิดเห็นนี้" });
+        }
+        targetComment.content = trimmed;
+        targetComment.is_edited = true;
         targetComment.updated_at = new Date();
+        await review.save();
+        res.json(review);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// 7. ลบความคิดเห็นและคำตอบย่อยทั้งหมด (DELETE /api/reviews/:id/comments/:commentNo)
+router.delete("/:id/comments/:commentNo", async (req, res) => {
+    try {
+        const review = await findReviewByIdParam(req.params.id);
+        if (!review) {
+            return res.status(404).json({ message: "ไม่พบข้อมูลรีวิวนี้" });
+        }
+        const commentNo = Number(req.params.commentNo);
+        const targetComment = (review.comments || []).find((c) => c.comment_no === commentNo);
+        if (!targetComment) {
+            return res.status(404).json({ message: "ไม่พบความคิดเห็นนี้" });
+        }
+        const userId = req.body?.user_id || req.query?.user_id;
+        if (targetComment.author_id && userId && Number(targetComment.author_id) !== Number(userId)) {
+            return res.status(403).json({ message: "คุณไม่มีสิทธิ์ลบความคิดเห็นนี้" });
+        }
+
+        // รวบรวม comment_no ที่ต้องลบ (รวมคำตอบย่อยแบบ recursive)
+        const toDelete = new Set([commentNo]);
+        let added = true;
+        while (added) {
+            added = false;
+            for (const c of review.comments || []) {
+                if (c.parent_comment_no && toDelete.has(c.parent_comment_no) && !toDelete.has(c.comment_no)) {
+                    toDelete.add(c.comment_no);
+                    added = true;
+                }
+            }
+        }
+        review.comments = (review.comments || []).filter((c) => !toDelete.has(c.comment_no));
+        await review.save();
+        res.json(review);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// 8. กดถูกใจ / ยกเลิกถูกใจความคิดเห็น (POST /api/reviews/:id/comments/:commentNo/like)
+router.post("/:id/comments/:commentNo/like", async (req, res) => {
+    try {
+        const review = await findReviewByIdParam(req.params.id);
+        if (!review) {
+            return res.status(404).json({ message: "ไม่พบข้อมูลรีวิวนี้" });
+        }
+        const commentNo = Number(req.params.commentNo);
+        const targetComment = (review.comments || []).find((c) => c.comment_no === commentNo);
+        if (!targetComment) {
+            return res.status(404).json({ message: "ไม่พบความคิดเห็นนี้" });
+        }
+
+        const userId = req.body?.user_id ? Number(req.body.user_id) : null;
+        if (!Array.isArray(targetComment.liked_by)) {
+            targetComment.liked_by = [];
+        }
+
+        if (userId) {
+            const idx = targetComment.liked_by.indexOf(userId);
+            if (idx >= 0) {
+                targetComment.liked_by.splice(idx, 1);
+                targetComment.likes = Math.max(0, (targetComment.likes || 0) - 1);
+            } else {
+                targetComment.liked_by.push(userId);
+                targetComment.likes = (targetComment.likes || 0) + 1;
+            }
+        } else {
+            targetComment.likes = (targetComment.likes || 0) + 1;
+        }
+
         await review.save();
         res.json(review);
     } catch (err) {
