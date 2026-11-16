@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   // Initialize Lucide icons
   if (window.lucide) {
     window.lucide.createIcons();
@@ -37,6 +37,44 @@ document.addEventListener("DOMContentLoaded", () => {
     anonymous: false,
     images: []
   };
+
+  const editId = new URLSearchParams(location.search).get("edit");
+  const editUrl = "/api/me/reviews/" + encodeURIComponent(editId || "");
+  if (editId !== null) {
+    step1Card.inert = true;
+    try {
+      const response = await fetch(editUrl, { cache: "no-store" });
+      if (!response.ok) throw new Error(String(response.status));
+      const r = await response.json();
+      Object.assign(formData, {
+        company: r.company_name, position: r.job_name, companyType: r.industry_type,
+        stipend: r.daily_pay, workMode: r.work_mode, anonymous: r.is_anonymous,
+        skills: r.skills || [], images: (r.images || []).map(item => item.image),
+        ratings: { mentor: r.rating_mentor, culture: r.rating_culture, suitability: r.rating_workload },
+        interviewQuestions: (r.interview_questions || []).map(q => ({ text: q.question_title, difficulty: q.difficulty }))
+      });
+      for (const [id, value] of Object.entries({
+        companyInput: r.company_name, positionInput: r.job_name, stipendInput: r.daily_pay,
+        companyTypeInput: r.industry_type, workModeInput: r.work_mode,
+        expTextarea: r.description, prosTextarea: r.pros, consTextarea: r.cons
+      })) {
+        const el = document.getElementById(id);
+        if (el) el.value = value ?? "";
+      }
+      document.querySelectorAll(".segment-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.mode === r.work_mode));
+      document.getElementById("anonymousToggle").checked = !!r.is_anonymous;
+      document.querySelector("#step1Card h1").textContent = "แก้ไขรายละเอียดที่ฝึกงาน";
+      btnSubmit.textContent = "บันทึกการแก้ไข";
+      document.getElementById("modalSuccessTitle").textContent = "แก้ไขรีวิวสำเร็จแล้ว!";
+      document.querySelector("#successModal .modal-desc").textContent = "บันทึกข้อมูลรีวิวฉบับแก้ไขแล้ว";
+      document.getElementById("modalCloseBtn").textContent = "กลับหน้าโปรไฟล์";
+      step1Card.inert = false;
+    } catch (error) {
+      alert("เปิดรีวิวเพื่อแก้ไขไม่ได้");
+      location.replace("user.html");
+      return;
+    }
+  }
 
   // ดึงตัวเลือกที่มีอยู่จริงจาก MongoDB (/api/reviews/options — ไม่มี Mock Data)
   const companyDatabase = [];
@@ -502,7 +540,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .map(
         (imgSrc, idx) => `
           <div class="preview-thumb-item">
-            <img src="${imgSrc}" alt="Preview ${idx + 1}" class="image-preview-thumb">
+            <img src="${escapeHtml(imgSrc)}" alt="Preview ${idx + 1}" class="image-preview-thumb">
             <button type="button" class="clear-image-btn" data-img-idx="${idx}" title="ลบรูปภาพนี้">
               <i data-lucide="x"></i>
             </button>
@@ -555,6 +593,8 @@ document.addEventListener("DOMContentLoaded", () => {
     imageFileInput.value = "";
   });
 
+  renderImagePreviews();
+
   // 7. Anonymous Mode Toggle
   const anonymousToggle = document.getElementById("anonymousToggle");
   anonymousToggle?.addEventListener("change", (e) => {
@@ -595,7 +635,7 @@ document.addEventListener("DOMContentLoaded", () => {
       user_id: currentUserId,
       author_name: authorName,
       company_name: formData.company || "ไม่ระบุชื่อบริษัท",
-      industry_type: formData.companyType || "",
+      industry_type: document.getElementById("companyTypeSelect").value,
       job_name: formData.position || "ไม่ระบุตำแหน่ง",
       skills: formData.skills,
       interview_questions: formData.interviewQuestions
@@ -612,7 +652,7 @@ document.addEventListener("DOMContentLoaded", () => {
               image: img
             }))
           }
-        : {}),
+        : { images: [] }),
       is_anonymous: formData.anonymous,
       description: formData.experience,
       work_mode: formData.workMode,
@@ -621,12 +661,12 @@ document.addEventListener("DOMContentLoaded", () => {
       rating_mentor: formData.ratings.mentor,
       pros: formData.pros,
       cons: formData.cons,
-      daily_pay: formData.stipend
+      daily_pay: document.getElementById("stipendInput").value.trim()
     };
 
     try {
-      const response = await fetch("/api/reviews", {
-        method: "POST",
+      const response = await fetch(editId ? editUrl : "/api/reviews", {
+        method: editId ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
@@ -647,6 +687,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   modalCloseBtn?.addEventListener("click", () => {
+    if (editId) return location.assign("user.html");
     successModal?.classList.remove("open");
     setStep(1);
   });

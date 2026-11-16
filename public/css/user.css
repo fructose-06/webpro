@@ -443,3 +443,43 @@ main {
   background: #dde4ef; 
   border-color: #dde4ef; 
 }
+#myReviews .card-actions { flex-wrap: wrap; gap: 8px; }
+#myReviews .owner-edit, #myReviews .owner-delete {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font: inherit;
+}
+#myReviews .owner-edit { margin-left: auto; background: #dde4ef; }
+#myReviews .owner-delete { background: var(--surface); }
+#deleteReview {
+  width: min(440px, 92vw);
+  padding: 36px 24px;
+  border: 0;
+  border-radius: 24px;
+  text-align: center;
+  color: var(--ink);
+}
+#deleteReview::backdrop { background: rgba(0,0,0,.45); }
+#deleteIcon {
+  display: grid; place-items: center; margin: auto;
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--accent); color: white; font-size: 30px;
+}
+#deleteMessage { color: var(--muted); margin-bottom: 24px; }
+#deleteReview button { padding: 10px 18px; }
+#deleteReview [hidden] { display: none; }
+
+#reviewStatus:not(:empty) {
+  margin: 48px auto 20px;
+  padding: 0 16px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+#firstReview:hover {
+  background: #34363b;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .18);
+}

@@ -245,13 +245,46 @@ mongoose
 app.get("/api/me/reviews", async (req, res) => {
     try {
         const reviews = await InternshipReview.find({ user_id: req.user.userId })
-            .select("_id review_id company_name job_name work_mode daily_pay description is_anonymous created_at author_name skills rating_culture rating_workload rating_mentor interview_questions.question_no comments.comment_no likes")
+            .select("_id review_id company_name job_name work_mode daily_pay description is_anonymous created_at author_name skills rating_culture rating_workload rating_mentor interview_questions.question_no comments.comment_no likes pros cons bookmarked_by.user_id")
             .sort({ created_at: -1, _id: -1 }).lean();
+        for (const review of reviews) {
+            review.bookmarked_by = review.bookmarked_by?.filter(entry => entry.user_id === req.user.userId) || [];
+        }
         return res.json({ reviews });
     } catch (error) {
         console.error({ event: "my_reviews_failed", type: error.name });
         return res.status(500).json({ message: "โหลดรีวิวของคุณไม่ได้" });
     }
+});
+
+const editableReviewFields = [
+    "company_name", "job_name", "industry_type", "daily_pay", "work_mode", "skills", "images",
+    "description", "pros", "cons", "rating_culture", "rating_workload", "rating_mentor",
+    "interview_questions", "is_anonymous"
+];
+
+app.get("/api/me/reviews/:id", async (req, res) => {
+    if (!/^[a-f0-9]{24}$/i.test(req.params.id)) return res.sendStatus(404);
+    const review = await InternshipReview.findOne({ _id: req.params.id, user_id: req.user.userId })
+        .select(editableReviewFields.join(" ")).lean();
+    return review ? res.json(review) : res.sendStatus(404);
+});
+
+app.patch("/api/me/reviews/:id", async (req, res) => {
+    if (!/^[a-f0-9]{24}$/i.test(req.params.id)) return res.sendStatus(404);
+    const changes = Object.fromEntries(editableReviewFields.filter(key => Object.hasOwn(req.body || {}, key))
+        .map(key => [key, req.body[key]]));
+    if (!Object.keys(changes).length) return res.sendStatus(400);
+    const result = await InternshipReview.updateOne(
+        { _id: req.params.id, user_id: req.user.userId }, { $set: changes }, { runValidators: true }
+    );
+    return res.sendStatus(result.matchedCount ? 204 : 404);
+});
+
+app.delete("/api/me/reviews/:id", async (req, res) => {
+    if (!/^[a-f0-9]{24}$/i.test(req.params.id)) return res.sendStatus(404);
+    const result = await InternshipReview.deleteOne({ _id: req.params.id, user_id: req.user.userId });
+    return res.sendStatus(result.deletedCount ? 204 : 404);
 });
 
 const reviewRoutes = require("./routes/reviewRoutes");
