@@ -1,6 +1,9 @@
 document.addEventListener("DOMContentLoaded", async () => {
   if (window.lucide) window.lucide.createIcons();
 
+  const cols = document.querySelector(".cols");
+const emptyState = document.querySelector(".bookmark-empty");
+
   const list = document.querySelector(".list");
   const detailCard = document.querySelector(".detail");
   const field = (name) => document.querySelector(`[data-field="${name}"]`);
@@ -116,11 +119,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   const renderList = () => {
     field("count").textContent = `· ${reviews.length}`;
     if (reviews.length === 0) {
-      list.innerHTML = `<li class="item" style="text-align:center; color:#666; cursor:default;">ยังไม่มีรีวิวที่บันทึกไว้</li>`;
-      showDetail(null);
-      if (window.lucide) window.lucide.createIcons();
-      return;
-    }
+
+    cols.classList.add("hidden");
+    emptyState.classList.remove("hidden");
+
+    return;
+}
+
+cols.classList.remove("hidden");
+emptyState.classList.add("hidden");
     list.innerHTML = reviews.map(itemHTML).join("");
     if (window.lucide) window.lucide.createIcons();
     const first = list.querySelector(".item");
