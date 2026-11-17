@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function buildFiveStarsHtml(score) {
-    const filled = Math.round(Number(score) || 0);
+    const filled = Math.floor(Number(score) || 0);
     return Array.from({ length: 5 }, (_, i) => {
       const cls = i < filled ? "filled" : "";
       return `<i data-lucide="star" class="${cls}"></i>`;
