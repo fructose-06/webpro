@@ -75,11 +75,13 @@ const readProfile = () => ({
 });
 
 let savedProfile = readProfile(); 
+let profileImage = "";
+let savedProfileImage = "";
 
 const refreshProfileButtons = () => {
   const now = readProfile();
-  const changed = now.name !== savedProfile.name;
-  profileSave.disabled = !changed; 
+  const changed = now.name !== savedProfile.name || profileImage !== savedProfileImage;
+  profileSave.disabled = !changed;
   profileCancel.disabled = !changed;
 };
 
@@ -106,6 +108,14 @@ async function loadSettings() {
     document.querySelector('#student-id').value = account.student_code;
     document.querySelector('#email').value = account.email;
     document.querySelector('.account-name').textContent = account.user_name || account.student_code;
+    if (account.profile_image) {
+      profileImage = account.profile_image;
+      savedProfileImage = account.profile_image || "";
+
+      profilePreview.src = profileImage;
+      profilePreview.hidden = false;
+      profilePlaceholder.hidden = true;
+    }
     savedProfile = readProfile();
     refreshProfileButtons();
     profileForm.inert = false;
@@ -137,7 +147,7 @@ profileForm.addEventListener('submit', async (event) => {
 
   profileForm.inert = true;
   try {
-    await settingsRequest('/api/settings/profile', 'PUT', { name: now.name });
+    await settingsRequest('/api/settings/profile', 'PUT', { name: now.name, profileImage });
   } catch (error) {
     showToast(error.message);
     return;
@@ -147,7 +157,8 @@ profileForm.addEventListener('submit', async (event) => {
   const label = now.name || document.querySelector('#student-id').value;
   document.querySelector('.account-name').textContent = label;
   document.getElementById('currentUserName').textContent = label;
-  savedProfile = now; 
+  savedProfile = now;
+  savedProfileImage = profileImage;
   nameInput.value = now.name;
   refreshProfileButtons();
   showToast('บันทึกการเปลี่ยนแปลงแล้ว');
@@ -283,4 +294,34 @@ pwCancel.addEventListener('click', async () => {
     if (!ok) return;
   }
   closePasswordForm();
+});
+
+//profile
+const imageInput = document.getElementById("profile-image-input");
+const changePhotoBtn = document.getElementById("change-photo-btn");
+const profilePreview = document.getElementById("profile-preview");
+const profilePlaceholder = document.getElementById("profile-placeholder");
+
+
+changePhotoBtn.addEventListener("click", () => {
+  imageInput.click();
+});
+
+imageInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (!file.type.startsWith("image/")) {
+    showToast("กรุณาเลือกรูปภาพ");
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    profileImage = event.target.result;
+    profilePreview.src = profileImage;
+    profilePreview.hidden = false;
+    profilePlaceholder.hidden = true;
+
+    refreshProfileButtons();
+  };
+  reader.readAsDataURL(file);
 });
