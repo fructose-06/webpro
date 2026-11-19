@@ -45,7 +45,8 @@ const reviewSchema = new mongoose.Schema(
         job_id: { type: Number, default: null },
         job_name: { type: String, default: "" },
 
-        // ข้อมูลจาก TECH_SKILL (REVIEW_SKILL)
+        // ข้อมูลจาก TECH_SKILL / REVIEW_SKILL
+        skill_ids: [{ type: Number }],
         skills: [{ type: String }],
 
         // ข้อมูลจาก IMAGE (HAS_IMAGE: (0, N) — เก็บเฉพาะเมื่อมีการอัปโหลดรูปภาพจริงเท่านั้น)
