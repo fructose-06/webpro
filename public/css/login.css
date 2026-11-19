@@ -1,11 +1,11 @@
 /* เปลี่ยนสีภายหลังได้จากตัวแปรชุดนี้ */
 :root {
-	--background: #fff;
-	--paper: #f0f0f0;
+	--background: #fcf8ed;
+	--paper: #fffcf7;
 	--ink: #000;
-	--muted: #595959;
-	--tape: #908d8e;
-	--rule: #aaa;
+	--muted: #cc5a38;
+	--tape: #bd603f;
+	--rule: #d5d1ca;
 }
 
 * {
@@ -13,7 +13,7 @@
 }
 body {
 	margin: 0;
-	background: var(--background);
+	background: var(--background) url("../images/login-bg.png") center top / cover no-repeat;
 	color: var(--ink);
 	font-family: "Noto Sans Thai", Tahoma, Arial, sans-serif;
 }
@@ -23,12 +23,6 @@ input {
 }
 button {
 	cursor: pointer;
-}
-.icon-definitions {
-	position: absolute;
-	width: 0;
-	height: 0;
-	overflow: hidden;
 }
 .icon {
 	width: 24px;
@@ -73,8 +67,9 @@ button {
 	min-width: 0;
 	height: 782px;
 	background: var(--paper);
-	border: 1px solid var(--ink);
+	border: 1px solid #cc5a38;
 	border-radius: 60px;
+	box-shadow: 0 18px 40px rgba(81, 38, 0, 0.25);
 }
 .top-tape {
 	position: absolute;
@@ -243,6 +238,9 @@ button {
 .eye-slash {
 	display: none;
 }
+.eye-button[aria-pressed="true"] .eye-open {
+	display: none;
+}
 .eye-button[aria-pressed="true"] .eye-slash {
 	display: block;
 }
@@ -268,9 +266,9 @@ button {
 	gap: 4px;
 	width: 100%;
 	height: 52px;
-	border: 1px solid black;
+	border: 1px solid #bd603f;
 	border-radius: 8px;
-	background: black;
+	background: #bd603f;
 	color: white;
 	font-size: 20px;
 }
@@ -299,7 +297,7 @@ button {
 	width: 100%;
 	height: 52px;
 	padding: 0 10px;
-	border: 1px solid #999;
+	border: 1px solid #582c08;
 	border-radius: 8px;
 	background: white;
 	color: black;
@@ -319,7 +317,7 @@ button:hover {
 	filter: brightness(0.88);
 }
 :focus-visible {
-	outline: 3px solid #666;
+	outline: 3px solid #bd603f;
 	outline-offset: 4px;
 }
 dialog {
@@ -393,4 +391,126 @@ dialog p {
 		padding-left: 16px;
 		font-size: 18px;
 	}
+}
+
+
+.intro-page h1,
+.login-content h2,
+.field label {
+	color: #512600;
+}
+.signup a {
+	color: #cc5a38;
+}
+.note-left {
+	background: #fff0b8;
+}
+.note-left span {
+	background: #e5bd23;
+}
+.note-right {
+	background: #fce2d9;
+}
+.note-right span {
+	background: #e96640;
+}
+.note-front {
+	background: #e2e9c7;
+}
+.note-front span {
+	background: #7e9209;
+}
+.binding span {
+	background: #c28b50;
+}
+
+/* เคลื่อนไหวเบา ๆ เฉพาะเมื่อผู้ใช้อนุญาตให้แสดงแอนิเมชัน */
+@media (prefers-reduced-motion: no-preference) {
+	.notebook {
+		animation: notebook-arrive 650ms cubic-bezier(.22, 1, .36, 1) both;
+	}
+	.note {
+		animation: note-settle 700ms cubic-bezier(.22, 1, .36, 1) 200ms both;
+	}
+	.note-right {
+		animation-delay: 300ms;
+	}
+	.note-front {
+		animation-delay: 400ms;
+	}
+	.login-button,
+	.kmutt-button {
+		transition: translate 180ms ease, filter 180ms ease;
+	}
+	.login-button .icon {
+		transition: translate 180ms ease;
+	}
+	.login-button:active,
+	.kmutt-button:active {
+		translate: 0 1px;
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.login-button:hover,
+		.kmutt-button:hover {
+			translate: 0 -2px;
+		}
+		.login-button:hover .icon {
+			translate: 3px 0;
+		}
+	}
+}
+
+@keyframes notebook-arrive {
+	from {
+		opacity: 0;
+		translate: 0 14px;
+	}
+	to {
+		opacity: 1;
+		translate: 0 0;
+	}
+}
+
+@keyframes note-settle {
+	from {
+		opacity: 0;
+		translate: 0 10px;
+	}
+	to {
+		opacity: 1;
+		translate: 0 0;
+	}
+}
+/* ห่วงเชื่อมและรูยึดของสมุด */
+.binding span {
+	position: relative;
+	background: radial-gradient(circle at 12px 12px, #512600 0 11px, transparent 12px),
+		radial-gradient(circle at 75px 12px, #512600 0 11px, transparent 12px);
+}
+.binding span::before {
+	content: "";
+	position: absolute;
+	inset: 3px 8px 4px;
+	border: 1px solid #512600;
+	border-radius: 50% 50% 18% 18%;
+	background: #c28b50;
+}
+@media (prefers-reduced-motion: no-preference) {
+	.note-left {
+		animation: note-float 5s ease-in-out infinite;
+	}
+	.note-right {
+		animation: note-float 6s ease-in-out -2s infinite;
+	}
+	.note-front {
+		animation: note-float 5.5s ease-in-out -1s infinite;
+	}
+	.notes {
+		translate: var(--mouse-x, 0px) var(--mouse-y, 0px);
+		transition: translate 300ms ease-out;
+	}
+}
+@keyframes note-float {
+	0%, 100% { translate: 0 0; }
+	50% { translate: 0 -20px; }
 }

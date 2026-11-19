@@ -4,6 +4,8 @@ const togglePassword = document.querySelector("#toggle-password");
 const dialog = document.querySelector("#demo-dialog");
 const message = document.querySelector("#dialog-message");
 
+window.lucide?.createIcons();
+
 function showMessage(text) {
 	message.textContent = text;
 	dialog.showModal();
@@ -53,3 +55,23 @@ document.querySelectorAll("[data-demo]").forEach((button) => {
 		showMessage(demoMessages[button.dataset.demo]),
 	);
 });
+
+// ขยับของตกแต่งตามเมาส์เมื่ออุปกรณ์และการตั้งค่ารองรับ
+const notebook = document.querySelector(".notebook");
+const mouseMotion = window.matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
+if (notebook) {
+	const resetMotion = () => {
+		notebook.style.removeProperty("--mouse-x");
+		notebook.style.removeProperty("--mouse-y");
+	};
+	notebook.addEventListener("pointermove", (event) => {
+		if (!mouseMotion.matches || event.pointerType !== "mouse") return;
+		const bounds = notebook.getBoundingClientRect();
+		const x = (event.clientX - bounds.left) / bounds.width - .5;
+		const y = (event.clientY - bounds.top) / bounds.height - .5;
+		notebook.style.setProperty("--mouse-x", x * 10 + "px");
+		notebook.style.setProperty("--mouse-y", y * 10 + "px");
+	});
+	notebook.addEventListener("pointerleave", resetMotion);
+	mouseMotion.addEventListener("change", resetMotion);
+}
