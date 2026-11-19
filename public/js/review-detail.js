@@ -557,18 +557,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Interview Questions (INTERVIEW_QUESTION: question_no, question_title, difficulty)
     const questions = Array.isArray(data.interview_questions) ? data.interview_questions : [];
-    document.getElementById("detailQuestionCount").textContent = `(${questions.length} ข้อ)`;
+    const qSectionEl = document.getElementById("detailQuestionSection");
     const qListEl = document.getElementById("detailQuestionsList");
+    document.getElementById("detailQuestionCount").textContent = `(${questions.length} ข้อ)`;
 
     if (questions.length === 0) {
-      qListEl.innerHTML = `
-        <div class="figma-q-row">
-          <span class="q-index">01</span>
-          <div class="q-box" style="color:#777;">ไม่ได้ระบุคำถามสัมภาษณ์</div>
-          <span class="q-diff-pill">-</span>
-        </div>
-      `;
+      if (qSectionEl) qSectionEl.style.display = "none";
+      if (qListEl) qListEl.innerHTML = "";
     } else {
+      if (qSectionEl) qSectionEl.style.display = "";
       qListEl.innerHTML = questions
         .map((q, idx) => {
           const qNo = q.question_no || idx + 1;

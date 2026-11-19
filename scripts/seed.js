@@ -199,7 +199,7 @@ async function seedDatabase() {
                 skills: ["Python", "SQL", "Apache Airflow", "BigQuery"],
                 is_anonymous: true,
                 description: "ได้ทำ Data Pipeline และเขียน SQL จัดการข้อมูลขนาดใหญ่บน Cloud ได้ลองจับเครื่องมือจริงที่ไม่มีสอนในห้องเรียน พี่ๆ ในทีมให้คำแนะนำเรื่องการทำ Query Optimization ดีมาก",
-                work_mode: "WFH",
+                work_mode: "Remote",
                 rating_culture: 4,
                 rating_workload: 3,
                 rating_mentor: 5,

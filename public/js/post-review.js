@@ -561,6 +561,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  renderImagePreviews();
+
   imageUploadBox?.addEventListener("click", () => {
     if (formData.images.length >= MAX_IMAGES) {
       alert(`สามารถอัปโหลดรูปภาพได้สูงสุด ${MAX_IMAGES} รูปครับ`);
@@ -635,7 +637,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       user_id: currentUserId,
       author_name: authorName,
       company_name: formData.company || "ไม่ระบุชื่อบริษัท",
-      industry_type: document.getElementById("companyTypeSelect").value,
+      industry_type: document.getElementById("companyTypeInput")?.value.trim() || formData.companyType || "",
       job_name: formData.position || "ไม่ระบุตำแหน่ง",
       skills: formData.skills,
       interview_questions: formData.interviewQuestions
@@ -688,8 +690,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   modalCloseBtn?.addEventListener("click", () => {
     if (editId) return location.assign("user.html");
-    successModal?.classList.remove("open");
-    setStep(1);
+    location.reload();
   });
 
   modalHomeBtn?.addEventListener("click", () => {
