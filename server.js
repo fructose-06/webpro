@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware พื้นฐาน
 app.use(cors());
 const guestFiles = new Set([
-    "/login.html", "/register.html",
+    "/login.html", "/register.html", "/images/logo-icon.png",
     "/css/login.css", "/css/register.css", "/js/login.js", "/js/register.js"
 ]);
 

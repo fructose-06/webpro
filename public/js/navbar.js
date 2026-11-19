@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </button>
         <a href="home.html" class="brand-link">
           <span class="brand-icon">
-            <i data-lucide="search"></i>
+            <img src="images/logo-icon.png" alt="">
           </span>
           <span>Internsight</span>
         </a>
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="sidebar-header">
         <a href="home.html" class="sidebar-logo">
           <span class="brand-icon">
-            <i data-lucide="search"></i>
+            <img src="images/logo-icon.png" alt="">
           </span>
           <span class="logo-text">Internsight</span>
         </a>
