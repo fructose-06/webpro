@@ -1,13 +1,13 @@
 :root {
-  --bg: #f3f4f6; 
-  --surface: #fff; 
-  --ink: #16171a; 
-  --muted: #6b7280;
-  --line: #e3e5e9; 
-  --chip: #f1f2f4; 
-  --accent: #16171a; 
+  --bg: #fcf8ed;
+  --surface: #fffcf5;
+  --ink: #502800;
+  --muted: #806650;
+  --line: #e9d9c2;
+  --chip: #fff0e9;
+  --accent: #bf603f;
   --on-accent: #fff; 
-  --img: #d9dee6;
+  --img: #e3e9c7;
 }
 *, *::before, *::after {
   box-sizing: border-box
@@ -576,7 +576,188 @@ main {
   height:24px
 }
 svg.active-bookmark {
-  color: #000000;
-  stroke: #000000;
-  fill: #000000;
+  color: #63370f;
+  stroke: #63370f;
+  fill: #63370f;
+}
+
+/* สีหน้า Filter ใช้ชุดเดียวกับ Home โดยไม่เปลี่ยนตำแหน่งหรือขนาด */
+/* คืนค่าพื้นฐานของเมนูให้ตรง Home ก่อนใช้กฎเฉพาะจาก navbar.css */
+#app-navbar {
+  font-size: 16px;
+  line-height: normal;
+}
+:where(#app-navbar) *,
+:where(#app-navbar) *::before,
+:where(#app-navbar) *::after {
+  margin: 0;
+  padding: 0;
+}
+:where(#app-navbar) button { font-family: Arial, sans-serif; }
+:where(#app-navbar) svg {
+  width: 24px;
+  height: 24px;
+  flex: 0 1 auto;
+}
+body {
+  background: #fcf8ed url("../images/login-bg.png") center top / 100% auto repeat-y;
+}
+.app-navbar {
+  background-color: #fcf8ed;
+  border-bottom: 2px dashed #d8c69d;
+  padding: 10px 30px;
+}
+.app-navbar .brand-link,
+.app-navbar .bookmark-btn { color: #502800; }
+.app-navbar .search-bar {
+  max-width: 740px;
+  border: 1px solid #bf603f;
+  border-radius: 20px;
+  padding: 9px 12px;
+}
+.app-navbar .search-btn {
+  padding: 8px 24px;
+  transition: background-color 0.2s ease;
+}
+.app-navbar .user-profile {
+  background: transparent;
+  border-color: transparent;
+}
+@media (max-width: 1024px) {
+  .app-navbar { padding: 14px 18px; }
+}
+.app-navbar .brand-link,
+.app-navbar .bookmark-btn,
+.app-navbar :is(.menu-btn, .nav-icon-btn, .filter-btn, .user-profile, .search-icon, .chevron-icon) {
+  color: #633d20;
+}
+.app-navbar .search-bar { border-color: #bf603f; }
+.app-navbar .search-input { color: #502800; }
+.app-navbar .search-input::placeholder { color: #947d66; }
+.app-navbar .search-bar:focus-within {
+  border-color: #a44a2d;
+  box-shadow: 0 0 0 3px #bf603f20;
+}
+.app-navbar .search-btn { background-color: #bf603f; color: #fff; }
+.app-navbar .search-btn:hover { background-color: #a44a2d; color: #fff; }
+.app-navbar .user-avatar-badge { background-color: #805333; color: #fff8ee; }
+.app-navbar :is(.menu-btn, .nav-icon-btn, .filter-btn, .user-profile):is(:hover, :focus-visible),
+.sidebar .close-btn:is(:hover, :focus-visible),
+.sidebar-item:is(:hover, :focus-visible),
+.profile-dropdown a:is(:hover, :focus-visible) {
+  background-color: #f5e4cd;
+  color: #a44a2d;
+}
+.app-navbar .brand-link:hover,
+.sidebar-logo:hover { color: #a44a2d; }
+.sidebar,
+.profile-dropdown,
+.app-navbar .search-history-dropdown {
+  background-color: #fffcf5;
+  border-color: #e2c9a9;
+}
+.sidebar :is(.sidebar-logo, .close-btn, .sidebar-item),
+.profile-dropdown a,
+.app-navbar .search-history-item { color: #633d20; }
+.sidebar-item svg { color: inherit; }
+.sidebar-item.active { background-color: #f7dfcf; color: #954627; }
+.profile-dropdown a.logout,
+.app-navbar .search-history-clear { color: #a44832; }
+.profile-dropdown a.logout:hover,
+.app-navbar .search-history-clear:hover { background-color: #fbe1d7; color: #873522; }
+.app-navbar .search-history-item:hover { background-color: #f5e4cd; }
+
+.crumb { color: #502800; }
+.crumb .back:hover { color: #a44a2d; }
+.left-bar {
+  background-color: #fffcf5;
+  border-color: #c96b4e;
+  color: #502800;
+}
+.sel, .field-icon {
+  background-color: #fff;
+  border-color: #c96b4e;
+  color: #674329;
+}
+.field-icon input { color: #502800; }
+.field-icon input::placeholder { color: #947d66; }
+.pills span, .tag { background-color: #fff0e9; border-color: #e8d6cb; color: #674329; }
+.pills span:hover, .tag:hover { background-color: #fce2d9; border-color: #c96b4e; }
+.btn.primary:hover { background-color: #a44a2d; }
+.btn.ghost, .pager .nav { background-color: #fff3eb; border-color: #e6a28d; color: #a44a2d; }
+.btn.ghost:hover,
+.pager .nav:hover:not([aria-disabled="true"]),
+.nums button:hover:not([aria-current="page"]) { background-color: #fce2d9; border-color: #bf603f; }
+.suggestion-item:hover { background-color: #fce2d9; }
+
+#cardGrid .review-card {
+  background-color: #fffcf5;
+  border-color: #c96b4e;
+  box-shadow: 0 12px 28px #66513412;
+}
+#cardGrid .review-card:nth-child(3n + 2) { background-color: #fcf8ed; }
+#cardGrid .review-card::before { background-color: #f2d9a9; }
+#cardGrid .review-card:nth-child(3n + 2)::before { background-color: #fce2d9; }
+#cardGrid .review-card:nth-child(3n)::before { background-color: #e3e9c7; }
+#cardGrid .review-card:hover { border-color: #a44a2d; box-shadow: 0 18px 32px #66513426; }
+#cardGrid .review-card :is(.company-name, .author-name, .rating-num) { color: #502800; }
+#cardGrid .review-card :is(.job-title, .salary-text, .card-row) { color: #674329; }
+#cardGrid .review-card :is(.contains-label, .review-date) { color: #806650; }
+#cardGrid .review-card .mode-badge { background-color: #ffebe2; border-color: #c96b4e; color: #8b452d; }
+#cardGrid .review-card .skill-pill { background-color: #fff0b8; border-color: #d9b445; color: #674d20; }
+#cardGrid .review-card .skill-pill:nth-child(3n + 2) { background-color: #fce2d9; border-color: #eaa38e; color: #8b452d; }
+#cardGrid .review-card .skill-pill:nth-child(3n) { background-color: #e3e9c7; border-color: #a2b867; color: #526035; }
+#cardGrid .review-card .info-pill { background-color: #fff7e8; border-color: #eaa38e; color: #8b452d; }
+#cardGrid .review-card .row-icon { color: #ad5738; }
+#cardGrid .review-card .star-icon { color: #b28030; }
+#cardGrid .review-card .star-icon.filled { fill: #d5a64d; }
+#cardGrid .review-card .author-avatar-wrap { background-color: #efe2cc; color: #805333; }
+#cardGrid .review-card .action-btn { color: #63370f; }
+#cardGrid .review-card .action-btn svg { color: inherit; }
+#cardGrid .review-card .js-like-btn { color: #bf603f; }
+#cardGrid .review-card .action-btn.active { background-color: #fce2d9; }
+#cardGrid .review-card .action-btn.active svg,
+#cardGrid .review-card .action-btn svg.active-bookmark {
+  color: inherit;
+  stroke: currentColor;
+  fill: currentColor;
+}
+#cardGrid .review-card .action-btn:hover { background-color: #f7e8d4; color: #a44a2d; }
+
+/* การเคลื่อนไหวเล็กน้อยเฉพาะแผงตัวกรองและปุ่ม */
+.left-bar {
+  animation: filter-panel-appear 0.4s ease-out;
+}
+.left-bar .btn,
+.left-bar .pills span,
+.pager button {
+  transition: transform 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .left-bar .btn:hover,
+  .left-bar .pills span:hover,
+  .pager button:hover:not(:disabled):not([aria-disabled="true"]) {
+    transform: translateY(-2px);
+  }
+}
+.left-bar .btn:active,
+.left-bar .pills label:active span,
+.pager button:active:not(:disabled):not([aria-disabled="true"]) {
+  transform: scale(0.97);
+}
+@keyframes filter-panel-appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .left-bar { animation: none; }
+  .left-bar .btn,
+  .left-bar .pills span,
+  .pager button { transition: none; }
+  .left-bar .btn:is(:hover, :active),
+  .left-bar .pills span:hover,
+  .left-bar .pills label:active span,
+  .pager button:is(:hover, :active):not(:disabled):not([aria-disabled="true"]) {
+    transform: none;
+  }
 }
