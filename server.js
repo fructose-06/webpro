@@ -16,7 +16,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 const guestFiles = new Set([
     "/login.html", "/register.html",
-    "/images/login-bg.png", "/css/login.css", "/css/register.css", "/js/login.js", "/js/register.js"
+    "/images/logo-icon.png", "/images/login-bg.png",
+    "/css/login.css", "/css/register.css",
+    "/js/login.js", "/js/register.js"
 ]);
 
 app.use((req, res, next) => {
