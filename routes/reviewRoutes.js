@@ -2,6 +2,89 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 const InternshipReview = require("../models/review");
+const Company = require("../models/company");
+const JobRole = require("../models/jobRole");
+const TechSkill = require("../models/techSkill");
+
+function escapeRegex(str) {
+    return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+async function resolveCompany(companyName, industryType = "") {
+    const cleanName = String(companyName || "").trim();
+    if (!cleanName) return { company_id: null, company_name: "", industry_type: industryType };
+
+    const existing = await Company.findOne({ company_name: new RegExp(`^${escapeRegex(cleanName)}$`, "i") });
+    if (existing) {
+        if (!existing.industry_type && industryType) {
+            existing.industry_type = industryType;
+            await existing.save();
+        }
+        return {
+            company_id: existing.company_id,
+            company_name: existing.company_name,
+            industry_type: industryType || existing.industry_type || ""
+        };
+    }
+
+    const [lastCompany, lastReviewCompany] = await Promise.all([
+        Company.findOne().sort({ company_id: -1 }),
+        InternshipReview.findOne({ company_id: { $ne: null } }).sort({ company_id: -1 })
+    ]);
+    const nextCompanyId = Math.max(lastCompany?.company_id || 0, lastReviewCompany?.company_id || 0) + 1;
+
+    const created = await Company.create({
+        company_id: nextCompanyId,
+        company_name: cleanName,
+        industry_type: String(industryType || "").trim()
+    });
+    return {
+        company_id: created.company_id,
+        company_name: created.company_name,
+        industry_type: created.industry_type
+    };
+}
+
+async function resolveJobRole(jobName) {
+    const cleanName = String(jobName || "").trim();
+    if (!cleanName) return { job_id: null, job_name: "" };
+
+    const existing = await JobRole.findOne({ job_name: new RegExp(`^${escapeRegex(cleanName)}$`, "i") });
+    if (existing) {
+        return { job_id: existing.job_id, job_name: existing.job_name };
+    }
+
+    const [lastJob, lastReviewJob] = await Promise.all([
+        JobRole.findOne().sort({ job_id: -1 }),
+        InternshipReview.findOne({ job_id: { $ne: null } }).sort({ job_id: -1 })
+    ]);
+    const nextJobId = Math.max(lastJob?.job_id || 0, lastReviewJob?.job_id || 0) + 1;
+
+    const created = await JobRole.create({
+        job_id: nextJobId,
+        job_name: cleanName
+    });
+    return { job_id: created.job_id, job_name: created.job_name };
+}
+
+async function resolveTechSkills(rawSkills = []) {
+    const cleanNames = [...new Set((Array.isArray(rawSkills) ? rawSkills : []).map((s) => String(s || "").trim()).filter(Boolean))];
+    const skillIds = [];
+    const skillNames = [];
+
+    for (const name of cleanNames) {
+        let doc = await TechSkill.findOne({ skill_name: new RegExp(`^${escapeRegex(name)}$`, "i") });
+        if (!doc) {
+            const lastSkill = await TechSkill.findOne().sort({ skill_id: -1 });
+            const nextSkillId = (lastSkill?.skill_id || 0) + 1;
+            doc = await TechSkill.create({ skill_id: nextSkillId, skill_name: name });
+        }
+        skillIds.push(doc.skill_id);
+        skillNames.push(doc.skill_name);
+    }
+
+    return { skill_ids: skillIds, skills: skillNames };
+}
 
 // Helper: ค้นหารีวิวจาก review_id (1, 2, 3...) หรือ MongoDB _id
 async function findReviewByIdParam(idParam) {
@@ -14,6 +97,55 @@ async function findReviewByIdParam(idParam) {
         return await InternshipReview.findById(idParam);
     }
     return null;
+}
+
+// Helper: ดึงชื่อล่าสุดจาก PostgreSQL (public.users) มาอัปเดตให้โพสต์และคอมเมนต์ที่ไม่ใช่ไม่ระบุตัวตน
+async function attachCurrentAuthorNames(pgPool, docs) {
+    if (!pgPool || !docs) return docs;
+    const list = Array.isArray(docs) ? docs : [docs];
+    const userIds = new Set();
+
+    for (const doc of list) {
+        if (doc?.user_id && !doc.is_anonymous) userIds.add(Number(doc.user_id));
+        if (Array.isArray(doc?.comments)) {
+            for (const c of doc.comments) {
+                if (c?.author_id) userIds.add(Number(c.author_id));
+            }
+        }
+    }
+
+    if (userIds.size === 0) return docs;
+
+    try {
+        const { rows } = await pgPool.query(
+            "SELECT user_id, user_name FROM public.users WHERE user_id = ANY($1::int[])",
+            [[...userIds]]
+        );
+        const nameMap = new Map();
+        for (const row of rows) {
+            if (row.user_name && String(row.user_name).trim()) {
+                nameMap.set(Number(row.user_id), String(row.user_name).trim());
+            }
+        }
+
+        for (const doc of list) {
+            if (!doc) continue;
+            if (doc.user_id && !doc.is_anonymous && nameMap.has(Number(doc.user_id))) {
+                doc.author_name = nameMap.get(Number(doc.user_id));
+            }
+            if (Array.isArray(doc.comments)) {
+                for (const c of doc.comments) {
+                    if (c?.author_id && nameMap.has(Number(c.author_id))) {
+                        c.author_name = nameMap.get(Number(c.author_id));
+                    }
+                }
+            }
+        }
+    } catch (err) {
+        console.error("attachCurrentAuthorNames error:", err.message);
+    }
+
+    return docs;
 }
 
 // 1. สร้างรีวิวใหม่ (POST /api/reviews)
@@ -52,10 +184,25 @@ router.post("/", async (req, res) => {
         delete reviewPayload.image;
         delete reviewPayload.image_id;
 
+        const [resolvedCompany, resolvedJob, resolvedSkills] = await Promise.all([
+            resolveCompany(reviewPayload.company_name, reviewPayload.industry_type),
+            resolveJobRole(reviewPayload.job_name),
+            resolveTechSkills(reviewPayload.skills)
+        ]);
+
         const newReview = new InternshipReview({
             ...reviewPayload,
+            company_id: resolvedCompany.company_id,
+            company_name: resolvedCompany.company_name || reviewPayload.company_name,
+            industry_type: resolvedCompany.industry_type || reviewPayload.industry_type,
+            job_id: resolvedJob.job_id,
+            job_name: resolvedJob.job_name || reviewPayload.job_name,
+            skill_ids: resolvedSkills.skill_ids,
+            skills: resolvedSkills.skills,
             user_id: req.user.userId,
-            author_name: req.user.userName || "สมาชิก Internsight",
+            author_name: reviewPayload.is_anonymous
+                ? "ผู้ไม่ประสงค์ออกนาม"
+                : (req.user.userName || "สมาชิก Internsight"),
             review_id: nextId,
             interview_questions: numberedQuestions,
             images: numberedImages
@@ -71,6 +218,7 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
     try {
         const reviews = await InternshipReview.find().sort({ created_at: -1 });
+        await attachCurrentAuthorNames(req.app.locals.pgPool, reviews);
         res.json(reviews);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -98,6 +246,7 @@ router.get("/bookmarks", async (req, res) => {
             );
         });
 
+        await attachCurrentAuthorNames(req.app.locals.pgPool, reviews);
         res.json(reviews);
     } catch (err) {
         res.status(500).json({
@@ -105,6 +254,64 @@ router.get("/bookmarks", async (req, res) => {
         });
     }
 });
+
+// 2.2 ดึงตัวเลือกที่มีอยู่ใน Database สำหรับหน้าเขียนรีวิว (GET /api/reviews/options)
+router.get("/options", async (req, res) => {
+    try {
+        const [
+            masterCompanies,
+            masterJobs,
+            masterSkills,
+            rawCompanies,
+            rawPositions,
+            rawIndustries,
+            rawSkills,
+            companyIndustryDocs
+        ] = await Promise.all([
+            Company.find({}, { company_id: 1, company_name: 1, industry_type: 1, _id: 0 }),
+            JobRole.find({}, { job_id: 1, job_name: 1, _id: 0 }),
+            TechSkill.find({}, { skill_id: 1, skill_name: 1, _id: 0 }),
+            InternshipReview.distinct("company_name"),
+            InternshipReview.distinct("job_name"),
+            InternshipReview.distinct("industry_type"),
+            InternshipReview.distinct("skills"),
+            InternshipReview.find(
+                { company_name: { $ne: "" }, industry_type: { $ne: "" } },
+                { company_name: 1, industry_type: 1, _id: 0 }
+            ).sort({ created_at: -1 })
+        ]);
+
+        const cleanSort = (arr) =>
+            [...new Set((arr || []).map((v) => String(v || "").trim()).filter(Boolean))].sort((a, b) =>
+                a.localeCompare(b, "th")
+            );
+
+        const companyIndustries = {};
+        for (const c of masterCompanies) {
+            const cName = String(c.company_name || "").trim();
+            const ind = String(c.industry_type || "").trim();
+            if (cName && ind) companyIndustries[cName] = ind;
+        }
+        for (const doc of companyIndustryDocs) {
+            const cName = String(doc.company_name || "").trim();
+            const ind = String(doc.industry_type || "").trim();
+            if (cName && ind && !companyIndustries[cName]) {
+                companyIndustries[cName] = ind;
+            }
+        }
+
+        res.json({
+            companies: cleanSort([...masterCompanies.map((c) => c.company_name), ...rawCompanies]),
+            positions: cleanSort([...masterJobs.map((j) => j.job_name), ...rawPositions]),
+            industries: cleanSort([...masterCompanies.map((c) => c.industry_type), ...rawIndustries]),
+            skills: cleanSort([...masterSkills.map((s) => s.skill_name), ...rawSkills]),
+            companyIndustries
+        });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 // 3. ดึงรีวิวรายตัวตาม review_id หรือ _id (GET /api/reviews/:id)
 router.get("/:id", async (req, res) => {
     try {
@@ -112,6 +319,7 @@ router.get("/:id", async (req, res) => {
         if (!review) {
             return res.status(404).json({ message: "ไม่พบข้อมูลรีวิวนี้" });
         }
+        await attachCurrentAuthorNames(req.app.locals.pgPool, review);
         res.json(review);
     } catch (err) {
         res.status(500).json({ message: err.message });

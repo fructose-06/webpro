@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   // Initialize Lucide icons
   if (window.lucide) {
     window.lucide.createIcons();
@@ -22,11 +22,11 @@ document.addEventListener("DOMContentLoaded", () => {
     companyType: "",
     position: "",
     stipend: "",
-    skills: ["Javascript"],
+    skills: [],
     ratings: {
-      mentor: 4,
-      culture: 4,
-      suitability: 4
+      mentor: 0,
+      culture: 0,
+      suitability: 0
     },
     experience: "",
     pros: "",
@@ -38,22 +38,70 @@ document.addEventListener("DOMContentLoaded", () => {
     images: []
   };
 
-  // ดึงรายชื่อบริษัทและตำแหน่งงานจริงจาก MongoDB (ไม่มี Mock Data)
+  const editId = new URLSearchParams(location.search).get("edit");
+  const editUrl = "/api/me/reviews/" + encodeURIComponent(editId || "");
+  if (editId !== null) {
+    step1Card.inert = true;
+    try {
+      const response = await fetch(editUrl, { cache: "no-store" });
+      if (!response.ok) throw new Error(String(response.status));
+      const r = await response.json();
+      Object.assign(formData, {
+        company: r.company_name, position: r.job_name, companyType: r.industry_type,
+        stipend: r.daily_pay, workMode: r.work_mode, anonymous: r.is_anonymous,
+        skills: r.skills || [], images: (r.images || []).map(item => item.image),
+        ratings: { mentor: r.rating_mentor, culture: r.rating_culture, suitability: r.rating_workload },
+        interviewQuestions: (r.interview_questions || []).map(q => ({ text: q.question_title, difficulty: q.difficulty }))
+      });
+      for (const [id, value] of Object.entries({
+        companyInput: r.company_name, positionInput: r.job_name, stipendInput: r.daily_pay,
+        companyTypeInput: r.industry_type, workModeInput: r.work_mode,
+        expTextarea: r.description, prosTextarea: r.pros, consTextarea: r.cons
+      })) {
+        const el = document.getElementById(id);
+        if (el) el.value = value ?? "";
+      }
+      document.querySelectorAll(".segment-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.mode === r.work_mode));
+      document.getElementById("anonymousToggle").checked = !!r.is_anonymous;
+      document.querySelector("#step1Card h1").textContent = "แก้ไขรายละเอียดที่ฝึกงาน";
+      btnSubmit.textContent = "บันทึกการแก้ไข";
+      document.getElementById("modalSuccessTitle").textContent = "แก้ไขรีวิวสำเร็จแล้ว!";
+      document.querySelector("#successModal .modal-desc").textContent = "บันทึกข้อมูลรีวิวฉบับแก้ไขแล้ว";
+      document.getElementById("modalCloseBtn").textContent = "กลับหน้าโปรไฟล์";
+      step1Card.inert = false;
+    } catch (error) {
+      alert("เปิดรีวิวเพื่อแก้ไขไม่ได้");
+      location.replace("user.html");
+      return;
+    }
+  }
+
+  // ดึงตัวเลือกที่มีอยู่จริงจาก MongoDB (/api/reviews/options — ไม่มี Mock Data)
   const companyDatabase = [];
   const positionDatabase = [];
+  const industryDatabase = [];
+  const skillDatabase = [];
+  let companyIndustryMap = {};
 
-  fetch("/api/reviews")
-    .then((res) => (res.ok ? res.json() : []))
-    .then((docs) => {
-      if (!Array.isArray(docs)) return;
-      const companies = new Set();
-      const positions = new Set();
-      docs.forEach((d) => {
-        if (d.company_name && String(d.company_name).trim()) companies.add(String(d.company_name).trim());
-        if (d.job_name && String(d.job_name).trim()) positions.add(String(d.job_name).trim());
-      });
-      companyDatabase.push(...[...companies].sort());
-      positionDatabase.push(...[...positions].sort());
+  fetch("/api/reviews/options")
+    .then((res) => (res.ok ? res.json() : null))
+    .then((opts) => {
+      if (!opts) return;
+      if (Array.isArray(opts.companies)) companyDatabase.push(...opts.companies);
+      if (Array.isArray(opts.positions)) positionDatabase.push(...opts.positions);
+      if (Array.isArray(opts.skills)) skillDatabase.push(...opts.skills);
+      if (opts.companyIndustries && typeof opts.companyIndustries === "object") {
+        companyIndustryMap = opts.companyIndustries;
+      }
+
+      if (Array.isArray(opts.industries)) {
+        opts.industries.forEach((ind) => {
+          const val = String(ind || "").trim();
+          if (val && !industryDatabase.includes(val)) {
+            industryDatabase.push(val);
+          }
+        });
+      }
     })
     .catch(() => {});
 
@@ -117,6 +165,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isNew && !dataList.includes(val)) {
         dataList.push(val); // จำลองการเพิ่มเข้าลิสต์ (และส่งไปบันทึก DB ตอน Submit)
       }
+      // ถ้าเลือกบริษัทที่มีในระบบ ให้เลือกประเภทบริษัทให้อัตโนมัติ (ยังเปลี่ยนเองได้)
+      if (fieldKey === "company" && companyIndustryMap[val]) {
+        const companyTypeInput = document.getElementById("companyTypeInput");
+        if (companyTypeInput) {
+          companyTypeInput.value = companyIndustryMap[val];
+          formData.companyType = companyIndustryMap[val];
+        }
+      }
       wrapper.classList.remove("open");
       input.style.borderColor = "";
     }
@@ -162,6 +218,15 @@ document.addEventListener("DOMContentLoaded", () => {
     dataList: positionDatabase,
     fieldKey: "position",
     newLabel: "ตำแหน่ง"
+  });
+
+  setupAutocomplete({
+    wrapperId: "companyTypeAutocomplete",
+    inputId: "companyTypeInput",
+    listId: "companyTypeDropdownList",
+    dataList: industryDatabase,
+    fieldKey: "companyType",
+    newLabel: "ประเภทบริษัท"
   });
 
   // 1. Navigation Steps
@@ -226,8 +291,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 3. Skills Input & Tags
+  // 3. Skills Input, Autocomplete from DB & Tags
+  const skillWrapper = document.getElementById("skillAutocomplete");
   const skillInput = document.getElementById("skillInput");
+  const skillDropdownList = document.getElementById("skillDropdownList");
   const addSkillBtn = document.getElementById("addSkillBtn");
   const skillsContainer = document.getElementById("skillsContainer");
 
@@ -252,17 +319,74 @@ document.addEventListener("DOMContentLoaded", () => {
     if (window.lucide) window.lucide.createIcons();
   }
 
-  function addSkill() {
+  function addSkill(customVal = null) {
     if (!skillInput) return;
-    const val = skillInput.value.trim();
-    if (val && !formData.skills.includes(val)) {
-      formData.skills.push(val);
-      renderSkills();
+    const val = (customVal !== null ? customVal : skillInput.value).trim();
+    if (val) {
+      const alreadyAdded = formData.skills.some((s) => s.toLowerCase() === val.toLowerCase());
+      if (!alreadyAdded) {
+        formData.skills.push(val);
+        if (!skillDatabase.some((s) => s.toLowerCase() === val.toLowerCase())) {
+          skillDatabase.push(val);
+        }
+        renderSkills();
+      }
       skillInput.value = "";
+      skillWrapper?.classList.remove("open");
     }
   }
 
-  addSkillBtn?.addEventListener("click", addSkill);
+  function renderSkillMenu(filterText = "") {
+    if (!skillDropdownList || !skillWrapper) return;
+    skillDropdownList.innerHTML = "";
+    const query = filterText.trim().toLowerCase();
+
+    const filtered = skillDatabase.filter(
+      (item) =>
+        item.toLowerCase().includes(query) &&
+        !formData.skills.some((s) => s.toLowerCase() === item.toLowerCase())
+    );
+
+    filtered.forEach((item) => {
+      const li = document.createElement("li");
+      li.className = "autocomplete-item";
+      li.setAttribute("role", "option");
+      li.textContent = item;
+      li.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        addSkill(item);
+      });
+      skillDropdownList.appendChild(li);
+    });
+
+    const exactMatch = skillDatabase.some((item) => item.toLowerCase() === query);
+    if (filterText.trim() !== "" && !exactMatch) {
+      const addLi = document.createElement("li");
+      addLi.className = "autocomplete-item add-new-item";
+      addLi.setAttribute("role", "option");
+      addLi.innerHTML = `
+        <span>+ เพิ่มทักษะใหม่: "<strong>${escapeHtml(filterText.trim())}</strong>"</span>
+        <span class="autocomplete-badge">เพิ่มใหม่</span>
+      `;
+      addLi.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        addSkill(filterText.trim());
+      });
+      skillDropdownList.appendChild(addLi);
+    }
+
+    if (skillDropdownList.children.length > 0) {
+      skillWrapper.classList.add("open");
+    } else {
+      skillWrapper.classList.remove("open");
+    }
+  }
+
+  skillInput?.addEventListener("focus", () => renderSkillMenu(skillInput.value));
+  skillInput?.addEventListener("input", () => renderSkillMenu(skillInput.value));
+  skillInput?.addEventListener("blur", () => skillWrapper?.classList.remove("open"));
+
+  addSkillBtn?.addEventListener("click", () => addSkill());
   skillInput?.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -309,7 +433,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    updateStars(formData.ratings[key] || 4);
+    updateStars(formData.ratings[key] ?? 0);
   });
 
   // 5. Dynamic Interview Questions
@@ -416,7 +540,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .map(
         (imgSrc, idx) => `
           <div class="preview-thumb-item">
-            <img src="${imgSrc}" alt="Preview ${idx + 1}" class="image-preview-thumb">
+            <img src="${escapeHtml(imgSrc)}" alt="Preview ${idx + 1}" class="image-preview-thumb">
             <button type="button" class="clear-image-btn" data-img-idx="${idx}" title="ลบรูปภาพนี้">
               <i data-lucide="x"></i>
             </button>
@@ -436,6 +560,8 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
+
+  renderImagePreviews();
 
   imageUploadBox?.addEventListener("click", () => {
     if (formData.images.length >= MAX_IMAGES) {
@@ -469,6 +595,8 @@ document.addEventListener("DOMContentLoaded", () => {
     imageFileInput.value = "";
   });
 
+  renderImagePreviews();
+
   // 7. Anonymous Mode Toggle
   const anonymousToggle = document.getElementById("anonymousToggle");
   anonymousToggle?.addEventListener("change", (e) => {
@@ -483,16 +611,33 @@ document.addEventListener("DOMContentLoaded", () => {
   btnSubmit?.addEventListener("click", async (e) => {
     e.preventDefault();
 
-    // Collect comments
+    // Collect Step 1 & Step 2 latest field values
+    formData.stipend = document.getElementById("stipendInput")?.value.trim() || "";
+    formData.companyType = document.getElementById("companyTypeInput")?.value.trim() || formData.companyType || "";
     formData.experience = document.getElementById("expTextarea")?.value || "";
     formData.pros = document.getElementById("prosTextarea")?.value || "";
     formData.cons = document.getElementById("consTextarea")?.value || "";
 
-    console.log("Submitted Review Data:", formData);
+    let currentUserId = null;
+    let authorName = formData.anonymous ? "ผู้ไม่ประสงค์ออกนาม" : "นักศึกษาฝึกงาน";
+    try {
+      const meRes = await fetch("/api/auth/me");
+      if (meRes.ok) {
+        const me = await meRes.json();
+        currentUserId = me?.userId || null;
+        if (!formData.anonymous) {
+          authorName = me?.userName || `User - ${me?.studentCode || me?.userId}`;
+        }
+      }
+    } catch {
+      // ignore
+    }
 
     const payload = {
+      user_id: currentUserId,
+      author_name: authorName,
       company_name: formData.company || "ไม่ระบุชื่อบริษัท",
-      industry_type: formData.companyType || "",
+      industry_type: document.getElementById("companyTypeInput")?.value.trim() || formData.companyType || "",
       job_name: formData.position || "ไม่ระบุตำแหน่ง",
       skills: formData.skills,
       interview_questions: formData.interviewQuestions
@@ -509,7 +654,7 @@ document.addEventListener("DOMContentLoaded", () => {
               image: img
             }))
           }
-        : {}),
+        : { images: [] }),
       is_anonymous: formData.anonymous,
       description: formData.experience,
       work_mode: formData.workMode,
@@ -518,12 +663,12 @@ document.addEventListener("DOMContentLoaded", () => {
       rating_mentor: formData.ratings.mentor,
       pros: formData.pros,
       cons: formData.cons,
-      daily_pay: formData.stipend
+      daily_pay: document.getElementById("stipendInput").value.trim()
     };
 
     try {
-      const response = await fetch("/api/reviews", {
-        method: "POST",
+      const response = await fetch(editId ? editUrl : "/api/reviews", {
+        method: editId ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
@@ -544,8 +689,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   modalCloseBtn?.addEventListener("click", () => {
-    successModal?.classList.remove("open");
-    setStep(1);
+    if (editId) return location.assign("user.html");
+    location.reload();
   });
 
   modalHomeBtn?.addEventListener("click", () => {

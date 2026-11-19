@@ -29,15 +29,21 @@
     const rMentor = Number(doc.rating_mentor || 0);
     const rCulture = Number(doc.rating_culture || 0);
     const rWorkload = Number(doc.rating_workload || 0);
-    const avg = ((rMentor + rCulture + rWorkload) / 3) || 5.0;
+    const avg = (rMentor + rCulture + rWorkload) / 3;
 
     const payText = doc.daily_pay && String(doc.daily_pay).trim() !== ""
       ? (String(doc.daily_pay).includes("THB") || String(doc.daily_pay).includes("฿") || String(doc.daily_pay).includes("ไม่มี")
-          ? doc.daily_pay
-          : `${doc.daily_pay} THB/Day`)
+        ? doc.daily_pay
+        : `${doc.daily_pay} THB/Day`)
       : "ไม่ระบุเบี้ยเลี้ยง";
 
     const qCount = Array.isArray(doc.interview_questions) ? doc.interview_questions.length : 0;
+
+    const containsItems = [];
+    if (qCount > 0) containsItems.push(`${qCount} Interview Questions`);
+    if (doc.pros && String(doc.pros).trim()) containsItems.push("pros");
+    if (doc.cons && String(doc.cons).trim()) containsItems.push("cons");
+    if (containsItems.length === 0) containsItems.push("Experience");
 
     return {
       id: doc.review_id || doc._id,
@@ -48,7 +54,7 @@
       jobTitle: doc.job_name || "นักศึกษาฝึกงาน",
       salary: payText,
       skills: Array.isArray(doc.skills) && doc.skills.length > 0 ? doc.skills : ["General"],
-      interviewCount: `${qCount} Interview Questions`,
+      containsItems,
       rating: Number(avg.toFixed(1)),
       author: doc.is_anonymous ? "ผู้ไม่ประสงค์ออกนาม" : (doc.author_name || "นักศึกษาฝึกงาน"),
       date: formatThaiDate(doc.created_at),
@@ -65,7 +71,7 @@
   }
 
   function createReviewCard(item, currentUserId = null) {
-    const filledCount = Math.round(item.rating || 5);
+    const filledCount = Math.floor(Number(item.rating) || 0);
     const starsHTML = Array.from({ length: 5 }, (_, idx) => {
       const filledClass = idx < filledCount ? "filled" : "";
       return `<i data-lucide="star" class="star-icon ${filledClass}"></i>`;
@@ -76,31 +82,32 @@
     return `
       <article class="review-card" data-review-id="${cardId}">
         <div class="card-header">
-          <h3 class="company-name"><a href="review-detail.html?id=${encodeURIComponent(item.id || "")}">${escapeHtml(item.company)}</a></h3>
+          <h3 class="company-name" title="${escapeHtml(item.company)}"><a href="review-detail.html?id=${encodeURIComponent(item.id || "")}">${escapeHtml(item.company)}</a></h3>
           <span class="mode-badge">${escapeHtml(item.mode)}</span>
         </div>
 
         <div class="card-row">
           <i data-lucide="briefcase-business" class="row-icon"></i>
-          <span class="job-title">${escapeHtml(item.jobTitle)}</span>
+          <span class="job-title" title="${escapeHtml(item.jobTitle)}">${escapeHtml(item.jobTitle)}</span>
         </div>
 
         <div class="card-row">
           <i data-lucide="circle-dollar-sign" class="row-icon"></i>
-          <span class="salary-text">${escapeHtml(item.salary)}</span>
+          <span class="salary-text" title="${escapeHtml(item.salary)}">${escapeHtml(item.salary)}</span>
         </div>
 
         <div class="card-row skills-row">
           <i data-lucide="code-xml" class="row-icon"></i>
           <div class="skill-tags">
-            ${(item.skills || []).slice(0, 3).map((s) => `<span class="skill-pill">${escapeHtml(s)}</span>`).join("")}
+            ${(item.skills || []).slice(0, 2).map((s) => `<span class="skill-pill">${escapeHtml(s)}</span>`).join("")}
+            ${(item.skills || []).length > 2 ? `<span class="skill-pill">+${(item.skills || []).length - 2}</span>` : ""}
           </div>
         </div>
 
         <div class="contains-row">
           <span class="contains-label">Contains</span>
-          <span class="info-pill">${escapeHtml(item.interviewCount)}</span>
-          <span class="info-pill">pros</span>
+          ${(item.containsItems || []).slice(0, 2).map((c) => `<span class="info-pill">${escapeHtml(c)}</span>`).join("")}
+          ${(item.containsItems || []).length > 2 ? `<span class="info-pill" title="${escapeHtml((item.containsItems || []).slice(2).join(", "))}">+${(item.containsItems || []).length - 2}</span>` : ""}
         </div>
 
         <div class="rating-row">

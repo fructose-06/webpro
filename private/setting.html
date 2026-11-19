@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Internsight – ตั้งค่า</title>
+  <title>Internsight Setting</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Prompt:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/navbar.css">
@@ -60,11 +60,21 @@
 
       <div>
         <span class="label">รูปโปรไฟล์ (Profile picture)</span>
-        <div class="pic">
-          <i data-lucide="image"></i>
-          <button type="button" class="edit" disabled><i data-lucide="pencil"></i>Edit</button>
+         <div class="pic">
+          <img id="profile-preview" hidden>
+          <div id="profile-placeholder"><i data-lucide="image"></i></div>
+          <input type="file" id="profile-image-input" accept="image/*" hidden>
+          <button type="button" class="edit" id="change-photo-btn">
+            <i data-lucide="pencil"></i>Edit
+          </button>
         </div>
-        <p class="pic-note">ยังไม่เปิดให้แก้รูปโปรไฟล์</p>
+        <div class="pic-note">
+          <div class="note-head">
+            <i data-lucide="info"></i>
+            <span>คำแนะนำ</span>
+          </div>
+          <p>รองรับไฟล์รูปภาพ (JPG, PNG, WEBP)</p>
+        </div>
       </div>
     </form>
   </section>
@@ -81,13 +91,13 @@
 
     <div class="form">
       <label class="label" for="student-id">รหัสนักศึกษา (Student ID)</label>
-      <div class="input"><i data-lucide="lock-keyhole"></i><input id="student-id"  readonly></div>
+      <div class="input"><i data-lucide="id-card"></i><input id="student-id"  readonly></div>
     </div>
     <hr class="rule">
 
     <div class="form">
       <label class="label" for="email">อีเมล (Email)</label>
-      <div class="input"><i data-lucide="lock-keyhole"></i><input id="email"  readonly></div>
+      <div class="input"><i data-lucide="mail"></i><input id="email"  readonly></div>
     </div>
     <hr class="rule">
 

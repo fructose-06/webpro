@@ -19,6 +19,9 @@ const skillSuggestions = document.getElementById("skillSuggestions");
 const applyFilterBtn = document.getElementById("applyFilterBtn");
 const resetFilterBtn = document.getElementById("resetFilterBtn");
 
+const params = new URLSearchParams(window.location.search);
+let globalQuery = params.get("q")?.trim() || "";
+
 // เก็บเฉพาะข้อมูลจริงจาก MongoDB (ไม่มี Mock Data)
 const reviews = [];
 let filteredReviews = [];
@@ -38,7 +41,7 @@ async function loadDatabaseReviews() {
         if (!res.ok) return;
         const dbDocs = await res.json();
         const mapped = dbDocs.map((doc) => {
-            const avg = (((Number(doc.rating_mentor || 0) + Number(doc.rating_culture || 0) + Number(doc.rating_workload || 0)) / 3) || 5.0);
+            const avg = ((Number(doc.rating_mentor || 0) + Number(doc.rating_culture || 0) + Number(doc.rating_workload || 0)) / 3);
             const qCount = Array.isArray(doc.interview_questions) ? doc.interview_questions.length : 0;
             const containsArr = [];
             if (qCount > 0) containsArr.push(`${qCount} Interview Questions`);
@@ -66,16 +69,15 @@ async function loadDatabaseReviews() {
                 createdAt: d,
                 likes: Number(doc.likes || 0),
                 comments: Array.isArray(doc.comments) ? doc.comments.length : 0,
-                bookmarked: Array.isArray(doc.bookmarked_by) && doc.bookmarked_by.some((b) => b.user_id === currentUserId)
+                bookmarked: Array.isArray(doc.bookmarked_by) && doc.bookmarked_by.some((b) => b.user_id === currentUserId),
+                rawDoc: doc
             };
         });
 
         reviews.splice(0, reviews.length, ...mapped);
-        filteredReviews = [...reviews];
         populateRoles();
         populateCompanyTypes();
-        totalPages = Math.max(1, Math.ceil(filteredReviews.length / cardsPerPage));
-        render();
+        applyFilters();
     } catch (err) {
         console.error("Failed to load DB reviews on filter page:", err);
     }
@@ -90,7 +92,7 @@ async function loadCurrentUser() {
 function populateRoles() {
     const roles = [...new Set(reviews.map(review => review.role))];
 
-    roleSelect.innerHTML =`<option>ทั้งหมด</option>`;
+    roleSelect.innerHTML = `<option>ทั้งหมด</option>`;
     roles.forEach((role) => {
         const option = document.createElement("option");
         option.value = role;
@@ -102,7 +104,7 @@ function populateRoles() {
 function populateCompanyTypes() {
     const types = [...new Set(reviews.map(review => review.industryType))];
 
-    companyTypeSelect.innerHTML =`<option>ทั้งหมด</option>`;
+    companyTypeSelect.innerHTML = `<option>ทั้งหมด</option>`;
     types.forEach((type) => {
         const option = document.createElement("option");
         option.value = type;
@@ -133,9 +135,8 @@ function renderCompanySuggestions(keyword) {
     }
     matches.slice(0, 5).forEach((company, index) => {
         const item = document.createElement("div");
-        item.className = `suggestion-item ${
-            index === activeCompanyIndex? "active": ""
-        }`;
+        item.className = `suggestion-item ${index === activeCompanyIndex ? "active" : ""
+            }`;
         item.textContent = company;
         item.addEventListener("click", () => {
             companyInput.value = company;
@@ -149,14 +150,13 @@ function renderSkillSuggestions(keyword) {
     skillSuggestions.innerHTML = "";
     if (!keyword) return;
     const matches = getAllSkills()
-        .filter(skill =>skill.toLowerCase().includes(keyword.toLowerCase()))
-        .filter(skill =>!selectedSkills.includes(skill));
+        .filter(skill => skill.toLowerCase().includes(keyword.toLowerCase()))
+        .filter(skill => !selectedSkills.includes(skill));
 
     matches.slice(0, 5).forEach((skill, index) => {
         const item = document.createElement("div");
-        item.className =`suggestion-item ${
-            index === activeSuggestionIndex? "active": ""
-        }`;
+        item.className = `suggestion-item ${index === activeSuggestionIndex ? "active" : ""
+            }`;
         item.textContent = skill;
 
         item.addEventListener("click", () => {
@@ -181,7 +181,7 @@ function renderSkillTags() {
         `;
         tag.querySelector("button")
             .addEventListener("click", () => {
-                selectedSkills =selectedSkills.filter(s => s !== skill);
+                selectedSkills = selectedSkills.filter(s => s !== skill);
                 renderSkillTags();
                 renderSkillSuggestions(skillInput.value.trim());
             });
@@ -215,7 +215,13 @@ function renderCards() {
     cardGrid.innerHTML = "";
 
     if (pageData.length === 0) {
-        cardGrid.innerHTML = `<p style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;">ยังไม่มีข้อมูลรีวิวในระบบ</p>`;
+        cardGrid.innerHTML = `<p style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;">ยังไม่มีข้อมูลรีวิวที่ตรงกับเงื่อนไข</p>`;
+        return;
+    }
+
+    if (window.InternsightUI) {
+        const uiCards = pageData.map((r) => window.InternsightUI.mapDbReviewToCard(r.rawDoc));
+        window.InternsightUI.renderReviewCards("cardGrid", uiCards);
         return;
     }
 
@@ -285,7 +291,7 @@ function renderCards() {
                 </button>
 
                 <button type="button" class="js-filter-bookmark" aria-label="บันทึก">
-                    <i data-lucide="bookmark" class="${review.bookmarked? "active-bookmark": ""}"></i>
+                    <i data-lucide="bookmark" class="${review.bookmarked ? "active-bookmark" : ""}"></i>
                 </button>
             </div>
         `;
@@ -323,24 +329,25 @@ function renderCards() {
                 window.location.href = `review-detail.html?id=${encodeURIComponent(review.id)}#commentsSection`;
             }
         });
-        
+
         const bookmarkBtn = card.querySelector(".js-filter-bookmark");
         bookmarkBtn?.addEventListener("click", async (e) => {
-        e.stopPropagation();
-        if (!review.id) return;
-        const icon = bookmarkBtn.querySelector("svg");
-        try {
-            const res = await fetch(`/api/reviews/${encodeURIComponent(review.id)}/bookmark`, { method: "POST" });
-            if (res.ok) {
-                const updated = await res.json();
-                review.bookmarked = updated.bookmarked_by.some((b) => b.user_id === currentUserId);
+            e.stopPropagation();
+            if (!review.id) return;
+            const icon = bookmarkBtn.querySelector("svg");
+            try {
+                const res = await fetch(`/api/reviews/${encodeURIComponent(review.id)}/bookmark`, { method: "POST" });
+                if (res.ok) {
+                    const updated = await res.json();
+                    review.bookmarked = updated.bookmarked_by.some((b) => b.user_id === currentUserId);
 
-                icon?.classList.toggle("active-bookmark", review.bookmarked);
+                    icon?.classList.toggle("active-bookmark", review.bookmarked);
+                }
+            } catch (err) {
+                console.error(err);
+
             }
-        } catch (err) {
-            console.error(err);
-
-        }}
+        }
         );
 
         cardGrid.appendChild(card);
@@ -477,12 +484,18 @@ function sortReviews() {
 }
 
 function applyFilters() {
+    const q = globalQuery.toLowerCase();
     const keyword = companyInput.value.trim().toLowerCase();
     const selectedRole = roleSelect.value;
     const selectedType = companyTypeSelect.value;
-    const selectedMode =document.querySelector('input[name="mode"]:checked')?.nextElementSibling?.textContent;
+    const selectedMode = document.querySelector('input[name="mode"]:checked')?.nextElementSibling?.textContent;
     const selectedPay = Array.from(payRadios).find(radio => radio.checked)?.nextElementSibling?.textContent;
     filteredReviews = reviews.filter((review) => {
+        const globalMatch = !q ||
+            review.company.toLowerCase().includes(q) ||
+            review.role.toLowerCase().includes(q) ||
+            (review.industryType || "").toLowerCase().includes(q) ||
+            review.skills.some(skill => skill.toLowerCase().includes(q));
         const companyMatch = !keyword || review.company.toLowerCase().includes(keyword);
         const roleMatch = selectedRole === "ทั้งหมด" || review.role.includes(selectedRole);
         const typeMatch = selectedType === "ทั้งหมด" || review.industryType === selectedType;
@@ -505,15 +518,15 @@ function applyFilters() {
 
         const skillMatch = selectedSkills.length === 0 || selectedSkills.some(skill => review.skills.includes(skill));
 
-        return companyMatch && roleMatch && typeMatch && modeMatch && payMatch && skillMatch;
+        return globalMatch && companyMatch && roleMatch && typeMatch && modeMatch && payMatch && skillMatch;
     });
     sortReviews();
     currentPage = 1;
-    totalPages = Math.max(1,Math.ceil(filteredReviews.length / cardsPerPage));
-    
+    totalPages = Math.max(1, Math.ceil(filteredReviews.length / cardsPerPage));
+
     render();
 }
-applyFilterBtn.addEventListener("click",applyFilters);
+applyFilterBtn.addEventListener("click", applyFilters);
 
 companyInput.addEventListener("keydown", (e) => {
     const matches = getAllCompanies()
@@ -548,12 +561,12 @@ companyInput.addEventListener("keydown", (e) => {
 });
 skillInput.addEventListener("keydown", (e) => {
     const matches = getAllSkills()
-        .filter(skill =>skill.toLowerCase().includes(skillInput.value.trim().toLowerCase()))
-        .filter(skill =>!selectedSkills.includes(skill));
+        .filter(skill => skill.toLowerCase().includes(skillInput.value.trim().toLowerCase()))
+        .filter(skill => !selectedSkills.includes(skill));
 
     if (e.key === "ArrowDown") {
         e.preventDefault();
-        activeSuggestionIndex =Math.min(activeSuggestionIndex + 1,matches.length - 1);
+        activeSuggestionIndex = Math.min(activeSuggestionIndex + 1, matches.length - 1);
 
         renderSkillSuggestions(
             skillInput.value.trim()
@@ -561,7 +574,7 @@ skillInput.addEventListener("keydown", (e) => {
     }
     if (e.key === "ArrowUp") {
         e.preventDefault();
-        activeSuggestionIndex =Math.max(activeSuggestionIndex - 1,-1);
+        activeSuggestionIndex = Math.max(activeSuggestionIndex - 1, -1);
 
         renderSkillSuggestions(
             skillInput.value.trim()
@@ -583,7 +596,7 @@ skillInput.addEventListener("keydown", (e) => {
     }
 });
 
-document.addEventListener("click",(e) => {
+document.addEventListener("click", (e) => {
     if (!skillInput.contains(e.target) && !skillSuggestions.contains(e.target)) {
         skillSuggestions.innerHTML = "";
     }
@@ -613,9 +626,15 @@ resetFilterBtn.addEventListener("click", () => {
     companySuggestions.innerHTML = "";
 
     activeSuggestionIndex = -1;
+    globalQuery = "";
+    const topSearch = document.getElementById("globalSearchInput");
+    if (topSearch) topSearch.value = "";
+    if (window.location.search) {
+        window.history.replaceState(null, "", "filter.html");
+    }
     filteredReviews = [...reviews];
     currentPage = 1;
-    totalPages = Math.max(1,Math.ceil(filteredReviews.length /cardsPerPage));
+    totalPages = Math.max(1, Math.ceil(filteredReviews.length / cardsPerPage));
 
     render();
 });

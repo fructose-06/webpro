@@ -15,8 +15,10 @@ const PORT = process.env.PORT || 3000;
 // Middleware พื้นฐาน
 app.use(cors());
 const guestFiles = new Set([
-    "/login.html", "/register.html", "/images/logo-icon.png",
-    "/css/login.css", "/css/register.css", "/js/login.js", "/js/register.js"
+    "/login.html", "/register.html",
+    "/images/logo-icon.png", "/images/login-bg.png",
+    "/css/login.css", "/css/register.css",
+    "/js/login.js", "/js/register.js"
 ]);
 
 app.use((req, res, next) => {
@@ -173,27 +175,40 @@ app.get("/api/auth/me", (req, res) => {
 app.get("/api/settings", async (req, res) => {
     const { userId } = activeSession(req).profile;
     const result = await pgPool.query(
-        "SELECT student_code, email, user_name FROM public.users WHERE user_id = $1", [userId]
+        "SELECT student_code, email, user_name, profile_image FROM public.users WHERE user_id = $1", [userId]
     );
     if (!result.rowCount) return res.sendStatus(401);
     return res.json(result.rows[0]);
 });
 
 app.put("/api/settings/profile", async (req, res) => {
-    const { name } = req.body || {};
+    const { name, profileImage } = req.body || {};
     if (typeof name !== "string" || name.trim().length > 100) {
         return res.status(400).json({ message: "กรุณาตรวจชื่อที่แสดง" });
     }
     const { userId } = activeSession(req).profile;
     const userName = name.trim() || null;
     const result = await pgPool.query(
-        "UPDATE public.users SET user_name = $1 WHERE user_id = $2",
-        [userName, userId]
-    );
+    "UPDATE public.users SET user_name = $1, profile_image = $2 WHERE user_id = $3", [userName, profileImage || null, userId]);
     if (!result.rowCount) return res.sendStatus(401);
     for (const session of sessions.values()) {
         if (session.profile.userId === userId) session.profile.userName = userName;
     }
+
+    // ซิงค์ชื่อผู้เขียนรีวิวและคอมเมนต์ใน MongoDB (เฉพาะโพสต์ที่ไม่ใช่โหมดไม่ระบุตัวตน)
+    const displayAuthor = userName || "สมาชิก Internsight";
+    await Promise.all([
+        InternshipReview.updateMany(
+            { user_id: userId, is_anonymous: { $ne: true } },
+            { $set: { author_name: displayAuthor } }
+        ),
+        InternshipReview.updateMany(
+            { "comments.author_id": userId },
+            { $set: { "comments.$[c].author_name": displayAuthor } },
+            { arrayFilters: [{ "c.author_id": userId }] }
+        )
+    ]).catch((err) => console.error("Mongo author sync error:", err.message));
+
     return res.sendStatus(204);
 });
 
@@ -245,8 +260,14 @@ mongoose
 app.get("/api/me/reviews", async (req, res) => {
     try {
         const reviews = await InternshipReview.find({ user_id: req.user.userId })
-            .select("_id review_id company_name job_name work_mode daily_pay description is_anonymous created_at author_name skills rating_culture rating_workload rating_mentor interview_questions.question_no comments.comment_no likes")
+            .select("_id review_id company_name job_name work_mode daily_pay description is_anonymous created_at author_name skills rating_culture rating_workload rating_mentor interview_questions.question_no comments.comment_no likes pros cons bookmarked_by.user_id")
             .sort({ created_at: -1, _id: -1 }).lean();
+        for (const review of reviews) {
+            review.bookmarked_by = review.bookmarked_by?.filter(entry => entry.user_id === req.user.userId) || [];
+            if (!review.is_anonymous && req.user.userName) {
+                review.author_name = req.user.userName;
+            }
+        }
         return res.json({ reviews });
     } catch (error) {
         console.error({ event: "my_reviews_failed", type: error.name });
@@ -254,6 +275,37 @@ app.get("/api/me/reviews", async (req, res) => {
     }
 });
 
+const editableReviewFields = [
+    "company_name", "job_name", "industry_type", "daily_pay", "work_mode", "skills", "images",
+    "description", "pros", "cons", "rating_culture", "rating_workload", "rating_mentor",
+    "interview_questions", "is_anonymous"
+];
+
+app.get("/api/me/reviews/:id", async (req, res) => {
+    if (!/^[a-f0-9]{24}$/i.test(req.params.id)) return res.sendStatus(404);
+    const review = await InternshipReview.findOne({ _id: req.params.id, user_id: req.user.userId })
+        .select(editableReviewFields.join(" ")).lean();
+    return review ? res.json(review) : res.sendStatus(404);
+});
+
+app.patch("/api/me/reviews/:id", async (req, res) => {
+    if (!/^[a-f0-9]{24}$/i.test(req.params.id)) return res.sendStatus(404);
+    const changes = Object.fromEntries(editableReviewFields.filter(key => Object.hasOwn(req.body || {}, key))
+        .map(key => [key, req.body[key]]));
+    if (!Object.keys(changes).length) return res.sendStatus(400);
+    const result = await InternshipReview.updateOne(
+        { _id: req.params.id, user_id: req.user.userId }, { $set: changes }, { runValidators: true }
+    );
+    return res.sendStatus(result.matchedCount ? 204 : 404);
+});
+
+app.delete("/api/me/reviews/:id", async (req, res) => {
+    if (!/^[a-f0-9]{24}$/i.test(req.params.id)) return res.sendStatus(404);
+    const result = await InternshipReview.deleteOne({ _id: req.params.id, user_id: req.user.userId });
+    return res.sendStatus(result.deletedCount ? 204 : 404);
+});
+
+app.locals.pgPool = pgPool;
 const reviewRoutes = require("./routes/reviewRoutes");
 app.use("/api/reviews", reviewRoutes);
 
