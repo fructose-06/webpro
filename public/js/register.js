@@ -5,6 +5,28 @@ const yearSelect = document.querySelector("#admission-year");
 const dialog = document.querySelector("#register-dialog");
 const message = document.querySelector("#dialog-message");
 
+window.lucide?.createIcons();
+
+// ขยับกระดานโน้ตตามเมาส์ตามการตั้งค่าการเคลื่อนไหวของผู้ใช้
+const registerLayout = document.querySelector(".register-layout");
+const mouseMotion = window.matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
+if (registerLayout) {
+	const resetMotion = () => {
+		registerLayout.style.removeProperty("--mouse-x");
+		registerLayout.style.removeProperty("--mouse-y");
+	};
+	registerLayout.addEventListener("pointermove", (event) => {
+		if (!mouseMotion.matches || event.pointerType !== "mouse") return;
+		const bounds = registerLayout.getBoundingClientRect();
+		const x = (event.clientX - bounds.left) / bounds.width - .5;
+		const y = (event.clientY - bounds.top) / bounds.height - .5;
+		registerLayout.style.setProperty("--mouse-x", x * 10 + "px");
+		registerLayout.style.setProperty("--mouse-y", y * 10 + "px");
+	});
+	registerLayout.addEventListener("pointerleave", resetMotion);
+	mouseMotion.addEventListener("change", resetMotion);
+}
+
 // ปรับปีเริ่มต้นได้ตามกลุ่มผู้ใช้ของโปรเจกต์
 const earliestAdmissionYear = 2503;
 const currentBuddhistYear = new Date().getFullYear() + 543;
