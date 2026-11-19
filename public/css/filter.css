@@ -276,6 +276,12 @@ main {
 }
 
 /* Card */
+.right-bar .cards-grid {
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 32px 24px;
+  padding-top: 14px;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(3,1fr);

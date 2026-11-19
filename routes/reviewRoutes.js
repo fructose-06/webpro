@@ -16,6 +16,55 @@ async function findReviewByIdParam(idParam) {
     return null;
 }
 
+// Helper: ดึงชื่อล่าสุดจาก PostgreSQL (public.users) มาอัปเดตให้โพสต์และคอมเมนต์ที่ไม่ใช่ไม่ระบุตัวตน
+async function attachCurrentAuthorNames(pgPool, docs) {
+    if (!pgPool || !docs) return docs;
+    const list = Array.isArray(docs) ? docs : [docs];
+    const userIds = new Set();
+
+    for (const doc of list) {
+        if (doc?.user_id && !doc.is_anonymous) userIds.add(Number(doc.user_id));
+        if (Array.isArray(doc?.comments)) {
+            for (const c of doc.comments) {
+                if (c?.author_id) userIds.add(Number(c.author_id));
+            }
+        }
+    }
+
+    if (userIds.size === 0) return docs;
+
+    try {
+        const { rows } = await pgPool.query(
+            "SELECT user_id, user_name FROM public.users WHERE user_id = ANY($1::int[])",
+            [[...userIds]]
+        );
+        const nameMap = new Map();
+        for (const row of rows) {
+            if (row.user_name && String(row.user_name).trim()) {
+                nameMap.set(Number(row.user_id), String(row.user_name).trim());
+            }
+        }
+
+        for (const doc of list) {
+            if (!doc) continue;
+            if (doc.user_id && !doc.is_anonymous && nameMap.has(Number(doc.user_id))) {
+                doc.author_name = nameMap.get(Number(doc.user_id));
+            }
+            if (Array.isArray(doc.comments)) {
+                for (const c of doc.comments) {
+                    if (c?.author_id && nameMap.has(Number(c.author_id))) {
+                        c.author_name = nameMap.get(Number(c.author_id));
+                    }
+                }
+            }
+        }
+    } catch (err) {
+        console.error("attachCurrentAuthorNames error:", err.message);
+    }
+
+    return docs;
+}
+
 // 1. สร้างรีวิวใหม่ (POST /api/reviews)
 router.post("/", async (req, res) => {
     try {
@@ -73,6 +122,7 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
     try {
         const reviews = await InternshipReview.find().sort({ created_at: -1 });
+        await attachCurrentAuthorNames(req.app.locals.pgPool, reviews);
         res.json(reviews);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -100,6 +150,7 @@ router.get("/bookmarks", async (req, res) => {
             );
         });
 
+        await attachCurrentAuthorNames(req.app.locals.pgPool, reviews);
         res.json(reviews);
     } catch (err) {
         res.status(500).json({
@@ -155,6 +206,7 @@ router.get("/:id", async (req, res) => {
         if (!review) {
             return res.status(404).json({ message: "ไม่พบข้อมูลรีวิวนี้" });
         }
+        await attachCurrentAuthorNames(req.app.locals.pgPool, review);
         res.json(review);
     } catch (err) {
         res.status(500).json({ message: err.message });
