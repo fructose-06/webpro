@@ -4,6 +4,8 @@ const togglePassword = document.querySelector("#toggle-password");
 const dialog = document.querySelector("#demo-dialog");
 const message = document.querySelector("#dialog-message");
 
+window.lucide?.createIcons();
+
 function showMessage(text) {
 	message.textContent = text;
 	dialog.showModal();

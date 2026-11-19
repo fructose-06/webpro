@@ -24,12 +24,6 @@ input {
 button {
 	cursor: pointer;
 }
-.icon-definitions {
-	position: absolute;
-	width: 0;
-	height: 0;
-	overflow: hidden;
-}
 .icon {
 	width: 24px;
 	height: 24px;
@@ -242,6 +236,9 @@ button {
 	background: transparent;
 }
 .eye-slash {
+	display: none;
+}
+.eye-button[aria-pressed="true"] .eye-open {
 	display: none;
 }
 .eye-button[aria-pressed="true"] .eye-slash {
