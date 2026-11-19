@@ -283,6 +283,10 @@ main {
   margin: 0;
   font-size: 22px;
   font-weight: 600;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .item .rate {
@@ -291,12 +295,14 @@ main {
   gap: 4px;
   font-size: 13px;
   font-weight: 600;
+  flex-shrink: 0;
 }
 
 .item small {
   margin-left: auto;
   color: var(--muted);
   font-size: 12px;
+  flex-shrink: 0;
 }
 
 .item .r2 {
