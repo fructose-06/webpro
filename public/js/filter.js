@@ -193,18 +193,47 @@ function renderSkillTags() {
 
 function renderPages() {
     pageNumbers.innerHTML = "";
-    for (let page = 1; page <= totalPages; page++) {
-        const pageLink = document.createElement("button");
-        pageLink.textContent = page;
-        if (page === currentPage) {
-            pageLink.setAttribute("aria-current", "page");
+
+    const maxVisible = 5;
+
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, currentPage + 2);
+
+    if (start > 1) {
+        addPageButton(1);
+
+        if (start > 2) {
+            pageNumbers.append("...");
         }
-        pageLink.addEventListener("click", () => {
-            currentPage = page;
-            render();
-        });
-        pageNumbers.appendChild(pageLink);
     }
+
+    for (let page = start; page <= end; page++) {
+        addPageButton(page);
+    }
+
+    if (end < totalPages) {
+        if (end < totalPages - 1) {
+            pageNumbers.append("...");
+        }
+
+        addPageButton(totalPages);
+    }
+}
+
+function addPageButton(page) {
+    const btn = document.createElement("button");
+    btn.textContent = page;
+
+    if (page === currentPage) {
+        btn.setAttribute("aria-current", "page");
+    }
+
+    btn.addEventListener("click", () => {
+        currentPage = page;
+        render();
+    });
+
+    pageNumbers.appendChild(btn);
 }
 
 function renderCards() {
