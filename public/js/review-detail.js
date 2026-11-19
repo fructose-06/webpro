@@ -157,10 +157,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="comment-card-body">
           <div class="comment-user-row">
             <div class="comment-user-meta">
-              <span class="user-circle-icon">
-                <i data-lucide="user-round"></i>
-              </span>
-              <span class="comment-author-name">${escapeHtml(c.author_name || "User")}</span>
+              ${
+                c.author_id
+                  ? `<a href="user.html?id=${encodeURIComponent(c.author_id)}" class="author-profile-link comment-author-link">`
+                  : ""
+              }
+                <span class="user-circle-icon">
+                  ${
+                    c.author_image
+                      ? `<img src="${escapeHtml(c.author_image)}" alt="${escapeHtml(c.author_name || "User")}" class="circle-avatar-img">`
+                      : `<i data-lucide="user-round"></i>`
+                  }
+                </span>
+                <span class="comment-author-name">${escapeHtml(c.author_name || "User")}</span>
+              ${c.author_id ? `</a>` : ""}
               ${reviewAuthorBadge}
               <span class="comment-time">${escapeHtml(formatCommentTimestamp(c.created_at))}</span>
               ${isEditing ? '<span class="comment-edited-tag">• กำลังแก้ไข...</span>' : editedTag}
@@ -494,10 +504,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function renderReviewDetail(data) {
-    const rMentor = Number(data.rating_mentor ?? 4);
-    const rCulture = Number(data.rating_culture ?? 4);
-    const rWorkload = Number(data.rating_workload ?? 4);
-    const avg = Number(data.rating || ((rMentor + rCulture + rWorkload) / 3) || 4.5).toFixed(1);
+    const rMentor = Number(data.rating_mentor ?? 0);
+    const rCulture = Number(data.rating_culture ?? 0);
+    const rWorkload = Number(data.rating_workload ?? 0);
+    const avg = Number(data.rating ?? ((rMentor + rCulture + rWorkload) / 3)).toFixed(1);
 
     const company = data.company_name || "ไม่ระบุชื่อบริษัท";
     const industry = data.industry_type || "ทั่วไป";
@@ -520,7 +530,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("detailDailyPay").textContent = dailyPay;
     document.getElementById("detailIndustry").textContent = industry;
     document.getElementById("detailAvgRating").textContent = avg;
-    document.getElementById("detailAuthor").textContent = author;
+    const detailAuthorEl = document.getElementById("detailAuthor");
+    const headerAvatarEl = document.querySelector(".header-author .user-circle-icon");
+    if (headerAvatarEl) {
+      if (!data.is_anonymous && data.author_image) {
+        headerAvatarEl.innerHTML = `<img src="${escapeHtml(data.author_image)}" alt="${escapeHtml(author)}" class="circle-avatar-img">`;
+      } else {
+        headerAvatarEl.innerHTML = `<i data-lucide="user-round"></i>`;
+      }
+      if (!data.is_anonymous && data.user_id && headerAvatarEl.parentElement) {
+        headerAvatarEl.style.cursor = "pointer";
+        headerAvatarEl.onclick = () => {
+          window.location.href = `user.html?id=${encodeURIComponent(data.user_id)}`;
+        };
+      }
+    }
+    if (detailAuthorEl) {
+      if (!data.is_anonymous && data.user_id) {
+        detailAuthorEl.innerHTML = `<a href="user.html?id=${encodeURIComponent(data.user_id)}" class="author-profile-link">${escapeHtml(author)}</a>`;
+      } else {
+        detailAuthorEl.textContent = author;
+      }
+    }
     document.getElementById("detailDate").textContent = `• โพสต์เมื่อ ${dateText}`;
     document.getElementById("detailLikesCount").textContent = Number(data.likes || 0);
 

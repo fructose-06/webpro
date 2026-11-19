@@ -91,12 +91,24 @@ body {
     height: 130px;
 }
 
-/* จัดการ์ดเป็น 3 คอลัมน์สวยงาม (Grid System) */
+/* จัดการ์ดเป็น 3 คอลัมน์สวยงาม (Grid System — ใช้ auto-fit ไม่ได้เพราะ 1 การ์ดจะยืดเต็มจอ) */
 .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 32px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 38px 26px;
     margin-top: 20px;
+}
+
+@media (max-width: 1024px) {
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 680px) {
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* กล่องการ์ดรีวิวพร้อมเทปแปะ */

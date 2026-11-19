@@ -56,6 +56,8 @@
       skills: Array.isArray(doc.skills) && doc.skills.length > 0 ? doc.skills : ["General"],
       containsItems,
       rating: Number(avg.toFixed(1)),
+      userId: !doc.is_anonymous && doc.user_id ? Number(doc.user_id) : null,
+      authorImage: !doc.is_anonymous && doc.author_image ? doc.author_image : null,
       author: doc.is_anonymous ? "ผู้ไม่ประสงค์ออกนาม" : (doc.author_name || "นักศึกษาฝึกงาน"),
       date: formatThaiDate(doc.created_at),
       likes: Number(doc.likes || 0),
@@ -116,11 +118,25 @@
         </div>
 
         <div class="author-info">
-          <span class="author-avatar-wrap">
-            <i data-lucide="user-round"></i>
-          </span>
+          ${
+            item.userId
+              ? `<a href="user.html?id=${encodeURIComponent(item.userId)}" class="author-profile-link author-avatar-link" aria-label="ดูโปรไฟล์ของ ${escapeHtml(item.author)}">`
+              : ""
+          }
+            <span class="author-avatar-wrap">
+              ${
+                item.authorImage
+                  ? `<img src="${escapeHtml(item.authorImage)}" alt="${escapeHtml(item.author)}" class="author-avatar-img">`
+                  : `<i data-lucide="user-round"></i>`
+              }
+            </span>
+          ${item.userId ? `</a>` : ""}
           <div class="author-details">
-            <span class="author-name">${escapeHtml(item.author)}</span>
+            <span class="author-name">${
+              item.userId
+                ? `<a href="user.html?id=${encodeURIComponent(item.userId)}" class="author-profile-link">${escapeHtml(item.author)}</a>`
+                : escapeHtml(item.author)
+            }</span>
             <span class="review-date">${escapeHtml(item.date)}</span>
           </div>
         </div>
