@@ -667,7 +667,18 @@ resetFilterBtn.addEventListener("click", () => {
 
     render();
 });
+window.addEventListener("review:updated", (e) => {
+    const { id, likes, upvoted_by, bookmarked_by } = e.detail;
+    const r = reviews.find((x) => String(x.id) === String(id));
+    if (!r) return;
 
+    if (likes !== undefined) {
+        r.likes = Number(likes);     
+        r.rawDoc.likes = Number(likes);
+    }
+    if (upvoted_by) r.rawDoc.upvoted_by = upvoted_by;
+    if (bookmarked_by) r.rawDoc.bookmarked_by = bookmarked_by;
+});
 (async () => {
     await loadCurrentUser();
     await loadDatabaseReviews();

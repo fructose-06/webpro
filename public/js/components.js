@@ -208,6 +208,8 @@
             if (countEl) countEl.textContent = updated.likes;
             const isLiked = userId && Array.isArray(updated.upvoted_by) && updated.upvoted_by.includes(userId);
             btn.classList.toggle("active", Boolean(isLiked));
+
+            window.dispatchEvent(new CustomEvent("review:updated", { detail: { id, likes: updated.likes, upvoted_by: updated.upvoted_by }}));
           }
         } catch (err) {
           console.error(err);
@@ -235,6 +237,8 @@
             );
             btn.classList.toggle("active", isBookmarked);
             btn.querySelector("svg")?.classList.toggle("active-bookmark", isBookmarked);
+
+            window.dispatchEvent(new CustomEvent("review:updated", { detail: { id, bookmarked_by: updated.bookmarked_by }}));
           } else {
             const err = await res.json().catch(() => ({}));
             alert(err.message || "ไม่สามารถบันทึกรีวิวได้");
