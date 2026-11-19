@@ -46,21 +46,64 @@ function addOwnerActions(card, review) {
 
 async function loadProfile() {
   order.disabled = true;
+  const viewUserId = new URLSearchParams(location.search).get("id");
+
   try {
-    const [identity, result] = await Promise.all([
-      fetch("/api/auth/me", { cache: "no-store" }),
-      fetch("/api/me/reviews", { cache: "no-store" })
-    ]);
-    if (identity.status === 401 || result.status === 401) {
+    const identity = await fetch("/api/auth/me", { cache: "no-store" });
+    if (identity.status === 401) {
       location.replace("login.html");
       return;
     }
-    if (!identity.ok || !result.ok) throw new Error("โหลดข้อมูลไม่สำเร็จ");
-    const profile = await identity.json();
-    const { reviews } = await result.json();
+    if (!identity.ok) throw new Error("โหลดข้อมูลไม่สำเร็จ");
+    const me = await identity.json();
+
+    const targetId = viewUserId ? Number(viewUserId) : Number(me.userId);
+    const isOwnProfile = !viewUserId || targetId === Number(me.userId);
+
+    let profile = me;
+    let reviews = [];
+
+    if (isOwnProfile) {
+      const result = await fetch("/api/me/reviews", { cache: "no-store" });
+      if (result.status === 401) return location.replace("login.html");
+      if (!result.ok) throw new Error("โหลดข้อมูลไม่สำเร็จ");
+      ({ reviews } = await result.json());
+    } else {
+      const result = await fetch(`/api/users/${encodeURIComponent(targetId)}/profile`, { cache: "no-store" });
+      if (result.status === 401) return location.replace("login.html");
+      if (result.status === 404) {
+        document.querySelector("#profileName").textContent = "ไม่พบผู้ใช้งานนี้";
+        statusText.textContent = "ไม่พบข้อมูลโปรไฟล์ที่คุณต้องการดู";
+        document.querySelector('.profile a[href="setting.html"]')?.setAttribute("hidden", "");
+        document.querySelector(".banner")?.setAttribute("hidden", "");
+        return;
+      }
+      if (!result.ok) throw new Error("โหลดข้อมูลไม่สำเร็จ");
+      const data = await result.json();
+      profile = data.user;
+      reviews = data.reviews || [];
+
+      // ซ่อนปุ่มแก้ไขโปรไฟล์และแบนเนอร์เขียนรีวิวเมื่อดูโปรไฟล์คนอื่น
+      document.querySelector('.profile a[href="setting.html"]')?.style.setProperty("display", "none");
+      document.querySelector(".banner")?.style.setProperty("display", "none");
+      const listHeading = document.querySelector(".list-head h2");
+      if (listHeading) {
+        const nameLabel = profile.userName || profile.studentCode || "สมาชิก";
+        listHeading.innerHTML = `<i data-lucide="pin" class="solid"></i>รีวิวของ ${String(nameLabel).replace(/[&<>'"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[c]))} <span id="reviewCount"></span>`;
+      }
+    }
+
     document.querySelector("#profileName").textContent = profile.userName || profile.studentCode;
+    const bigAvatar = document.querySelector(".profile .big");
+    if (bigAvatar && profile.profileImage) {
+      const img = document.createElement("img");
+      img.src = profile.profileImage;
+      img.alt = profile.userName || "Profile";
+      img.className = "profile-avatar-img";
+      bigAvatar.replaceChildren(img);
+    }
     document.querySelector("#reviewCount").textContent = "(" + reviews.length + " รีวิว)";
-    statusText.textContent = reviews.length ? "" : "ยังไม่มีรีวิว";
+    statusText.textContent = reviews.length ? "" : (isOwnProfile ? "ยังไม่มีรีวิว" : "ผู้ใช้นี้ยังไม่มีรีวิวที่เปิดเผย");
     order.disabled = reviews.length < 2;
     await window.InternsightUI.loadCurrentUser();
     async function render() {
@@ -68,7 +111,9 @@ async function loadProfile() {
       if (sorted.length) {
         const ui = window.InternsightUI;
         await ui.renderReviewCards(list.id, sorted.map(ui.mapDbReviewToCard));
-        list.querySelectorAll(".review-card").forEach((card, index) => addOwnerActions(card, sorted[index]));
+        if (isOwnProfile) {
+          list.querySelectorAll(".review-card").forEach((card, index) => addOwnerActions(card, sorted[index]));
+        }
       } else {
         list.replaceChildren();
       }

@@ -260,6 +260,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!response.ok) throw new Error(String(response.status));
       const profile = await response.json();
       document.getElementById("currentUserName").textContent = profile.userName || profile.studentCode;
+      const badge = document.querySelector("#userProfileBtn .user-avatar-badge");
+      if (badge && profile.profileImage) {
+        const img = document.createElement("img");
+        img.src = profile.profileImage;
+        img.alt = profile.userName || "Profile";
+        img.className = "nav-avatar-img";
+        badge.replaceChildren(img);
+      }
     } catch (error) {
       document.getElementById("currentUserName").textContent = "โหลดบัญชีไม่ได้";
       console.error({ event: "profile_load_failed", type: error.name });

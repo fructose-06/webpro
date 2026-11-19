@@ -452,6 +452,18 @@ main {
 }
 #myReviews .owner-edit { margin-left: auto; background: #dde4ef; }
 #myReviews .owner-delete { background: var(--surface); }
+
+.profile .big {
+  overflow: hidden;
+}
+
+.profile .big .profile-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
 #deleteReview {
   width: min(440px, 92vw);
   padding: 36px 24px;
