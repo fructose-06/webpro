@@ -5,6 +5,8 @@ const yearSelect = document.querySelector("#admission-year");
 const dialog = document.querySelector("#register-dialog");
 const message = document.querySelector("#dialog-message");
 
+window.lucide?.createIcons();
+
 // ปรับปีเริ่มต้นได้ตามกลุ่มผู้ใช้ของโปรเจกต์
 const earliestAdmissionYear = 2503;
 const currentBuddhistYear = new Date().getFullYear() + 543;
