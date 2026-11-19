@@ -20,7 +20,7 @@ const applyFilterBtn = document.getElementById("applyFilterBtn");
 const resetFilterBtn = document.getElementById("resetFilterBtn");
 
 const params = new URLSearchParams(window.location.search);
-const keyword = params.get("q")?.trim() || "";
+let globalQuery = params.get("q")?.trim() || "";
 
 // เก็บเฉพาะข้อมูลจริงจาก MongoDB (ไม่มี Mock Data)
 const reviews = [];
@@ -75,23 +75,9 @@ async function loadDatabaseReviews() {
         });
 
         reviews.splice(0, reviews.length, ...mapped);
-        filteredReviews = [...reviews];
-        if (keyword) {
-            companyInput.value = keyword;
-            const searchKeyword = keyword.toLowerCase();
-            filteredReviews = reviews.filter(review =>
-                review.company.toLowerCase().includes(searchKeyword) ||
-                review.role.toLowerCase().includes(searchKeyword) ||
-                (review.industryType || "").toLowerCase().includes(searchKeyword) ||
-                review.skills.some(skill =>
-                    skill.toLowerCase().includes(searchKeyword)
-                )
-            );
-        }
         populateRoles();
         populateCompanyTypes();
-        totalPages = Math.max(1, Math.ceil(filteredReviews.length / cardsPerPage));
-        render();
+        applyFilters();
     } catch (err) {
         console.error("Failed to load DB reviews on filter page:", err);
     }
@@ -498,12 +484,18 @@ function sortReviews() {
 }
 
 function applyFilters() {
+    const q = globalQuery.toLowerCase();
     const keyword = companyInput.value.trim().toLowerCase();
     const selectedRole = roleSelect.value;
     const selectedType = companyTypeSelect.value;
     const selectedMode = document.querySelector('input[name="mode"]:checked')?.nextElementSibling?.textContent;
     const selectedPay = Array.from(payRadios).find(radio => radio.checked)?.nextElementSibling?.textContent;
     filteredReviews = reviews.filter((review) => {
+        const globalMatch = !q ||
+            review.company.toLowerCase().includes(q) ||
+            review.role.toLowerCase().includes(q) ||
+            (review.industryType || "").toLowerCase().includes(q) ||
+            review.skills.some(skill => skill.toLowerCase().includes(q));
         const companyMatch = !keyword || review.company.toLowerCase().includes(keyword);
         const roleMatch = selectedRole === "ทั้งหมด" || review.role.includes(selectedRole);
         const typeMatch = selectedType === "ทั้งหมด" || review.industryType === selectedType;
@@ -526,7 +518,7 @@ function applyFilters() {
 
         const skillMatch = selectedSkills.length === 0 || selectedSkills.some(skill => review.skills.includes(skill));
 
-        return companyMatch && roleMatch && typeMatch && modeMatch && payMatch && skillMatch;
+        return globalMatch && companyMatch && roleMatch && typeMatch && modeMatch && payMatch && skillMatch;
     });
     sortReviews();
     currentPage = 1;
@@ -634,6 +626,12 @@ resetFilterBtn.addEventListener("click", () => {
     companySuggestions.innerHTML = "";
 
     activeSuggestionIndex = -1;
+    globalQuery = "";
+    const topSearch = document.getElementById("globalSearchInput");
+    if (topSearch) topSearch.value = "";
+    if (window.location.search) {
+        window.history.replaceState(null, "", "filter.html");
+    }
     filteredReviews = [...reviews];
     currentPage = 1;
     totalPages = Math.max(1, Math.ceil(filteredReviews.length / cardsPerPage));

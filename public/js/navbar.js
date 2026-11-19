@@ -29,15 +29,16 @@ document.addEventListener("DOMContentLoaded", () => {
       ${
         !hideSearch
           ? `
-      <form class="search-bar" id="globalSearchForm" action="filter.html" method="get" role="search">
+      <form class="search-bar" id="globalSearchForm" action="home.html" method="get" role="search">
         <span class="search-icon">
           <i data-lucide="search"></i>
         </span>
-        <input class="search-input" id="globalSearchInput" name="q" type="text" placeholder="พิมพ์คำค้นหา เช่น ชื่อบริษัท, ตำแหน่งงาน" required>
+        <input class="search-input" id="globalSearchInput" name="q" type="text" placeholder="พิมพ์คำค้นหา เช่น ชื่อบริษัท, ตำแหน่งงาน" autocomplete="off">
         <button type="submit" class="search-btn">ค้นหา</button>
         <a href="filter.html" class="filter-btn" title="ตัวกรองค้นหา" aria-label="ตัวกรองค้นหา">
           <i data-lucide="filter"></i>
         </a>
+        <div class="search-history-dropdown" id="searchHistoryDropdown" hidden></div>
       </form>
       `
           : ""
@@ -120,6 +121,112 @@ document.addEventListener("DOMContentLoaded", () => {
   `;
 
   placeholder.innerHTML = layoutHTML;
+
+  // คงคำค้นหาเดิมไว้ใน Search Bar ด้านบน และจัดการประวัติการค้นหา (Search History)
+  const SEARCH_HISTORY_KEY = "internsight_search_history";
+  const MAX_SEARCH_HISTORY = 6;
+  const initialQuery = new URLSearchParams(window.location.search).get("q");
+  const globalSearchForm = document.getElementById("globalSearchForm");
+  const globalSearchInput = document.getElementById("globalSearchInput");
+  const searchHistoryDropdown = document.getElementById("searchHistoryDropdown");
+
+  function getSearchHistory() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(SEARCH_HISTORY_KEY) || "[]");
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveSearchHistory(term) {
+    const clean = String(term || "").trim();
+    if (!clean) return;
+    const list = getSearchHistory().filter((item) => item.toLowerCase() !== clean.toLowerCase());
+    list.unshift(clean);
+    try {
+      localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(list.slice(0, MAX_SEARCH_HISTORY)));
+    } catch {
+      // ignore storage errors
+    }
+  }
+
+  function renderSearchHistory() {
+    if (!searchHistoryDropdown || !globalSearchInput) return;
+    const query = globalSearchInput.value.trim().toLowerCase();
+    const history = getSearchHistory().filter((item) => !query || item.toLowerCase().includes(query));
+
+    if (history.length === 0) {
+      searchHistoryDropdown.hidden = true;
+      searchHistoryDropdown.innerHTML = "";
+      return;
+    }
+
+    searchHistoryDropdown.innerHTML = "";
+    const header = document.createElement("div");
+    header.className = "search-history-header";
+    header.innerHTML = `<span>ประวัติการค้นหา</span><button type="button" class="search-history-clear">ล้างทั้งหมด</button>`;
+    header.querySelector(".search-history-clear")?.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      localStorage.removeItem(SEARCH_HISTORY_KEY);
+      searchHistoryDropdown.hidden = true;
+    });
+    searchHistoryDropdown.appendChild(header);
+
+    history.forEach((term) => {
+      const row = document.createElement("div");
+      row.className = "search-history-item";
+
+      const termSpan = document.createElement("span");
+      termSpan.className = "search-history-term";
+      termSpan.innerHTML = `<i data-lucide="history"></i><span></span>`;
+      termSpan.querySelector("span").textContent = term;
+
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "search-history-remove";
+      removeBtn.setAttribute("aria-label", `ลบประวัติ ${term}`);
+      removeBtn.textContent = "×";
+      removeBtn.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const next = getSearchHistory().filter((item) => item !== term);
+        localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(next));
+        renderSearchHistory();
+      });
+
+      row.append(termSpan, removeBtn);
+      row.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        globalSearchInput.value = term;
+        searchHistoryDropdown.hidden = true;
+        globalSearchForm?.requestSubmit();
+      });
+      searchHistoryDropdown.appendChild(row);
+    });
+
+    searchHistoryDropdown.hidden = false;
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  if (globalSearchInput) {
+    if (initialQuery) {
+      globalSearchInput.value = initialQuery;
+      saveSearchHistory(initialQuery);
+    }
+    globalSearchInput.addEventListener("focus", renderSearchHistory);
+    globalSearchInput.addEventListener("input", renderSearchHistory);
+    globalSearchInput.addEventListener("blur", () => {
+      setTimeout(() => {
+        if (searchHistoryDropdown) searchHistoryDropdown.hidden = true;
+      }, 120);
+    });
+  }
+
+  globalSearchForm?.addEventListener("submit", () => {
+    saveSearchHistory(globalSearchInput?.value);
+    if (searchHistoryDropdown) searchHistoryDropdown.hidden = true;
+  });
 
   // Render Lucide Icons inside navbar & sidebar
   if (window.lucide) {

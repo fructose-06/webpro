@@ -15,6 +15,9 @@ const mongoose = require("mongoose");
 const { argon2, randomBytes } = require("node:crypto");
 const { promisify } = require("node:util");
 const Review = require("../models/review");
+const Company = require("../models/company");
+const JobRole = require("../models/jobRole");
+const TechSkill = require("../models/techSkill");
 
 const deriveKey = promisify(argon2);
 
@@ -246,7 +249,25 @@ async function seedDatabase() {
         ];
 
         await Review.insertMany(sampleReviews);
-        console.log(`✅ เพิ่มข้อมูลรีวิว (INTERNSHIP_REVIEW) ลงใน MongoDB สำเร็จจำนวน ${sampleReviews.length} รายการ!`);
+
+        // 4. ซิงค์ข้อมูลเข้า Master Collections: COMPANY, JOB_ROLE, TECH_SKILL
+        await Promise.all([Company.deleteMany({}), JobRole.deleteMany({}), TechSkill.deleteMany({})]);
+        await Company.insertMany([
+            { company_id: 1, company_name: "LINE MAN Wongnai", industry_type: "เทคโนโลยี / สตาร์ทอัพ" },
+            { company_id: 2, company_name: "KBTG (Kasikorn Business-Technology Group)", industry_type: "การเงิน / ธนาคาร" },
+            { company_id: 3, company_name: "SCB TechX", industry_type: "การเงิน / ธนาคาร" },
+            { company_id: 4, company_name: "Agoda", industry_type: "เทคโนโลยี / ท่องเที่ยว" }
+        ]);
+        await JobRole.insertMany([
+            { job_id: 1, job_name: "Frontend Developer Intern" },
+            { job_id: 2, job_name: "UX/UI Designer Intern" },
+            { job_id: 3, job_name: "Data Engineer Intern" },
+            { job_id: 4, job_name: "Backend Software Engineer Intern" }
+        ]);
+        const uniqueSkills = [...new Set(sampleReviews.flatMap((r) => r.skills || []))];
+        await TechSkill.insertMany(uniqueSkills.map((skill_name, idx) => ({ skill_id: idx + 1, skill_name })));
+
+        console.log(`✅ เพิ่มข้อมูลรีวิว (INTERNSHIP_REVIEW) และ Master Collections (COMPANY, JOB_ROLE, TECH_SKILL) ลงใน MongoDB สำเร็จจำนวน ${sampleReviews.length} รายการ!`);
         console.log("\n🎉 เสร็จสมบูรณ์! คุณสามารถเข้าสู่ระบบด้วยบัญชีต่อไปนี้:");
         console.log("   - รหัสนักศึกษา: 67090500400 | รหัสผ่าน: password123");
         console.log("   - รหัสนักศึกษา: 67090500401 | รหัสผ่าน: password123");

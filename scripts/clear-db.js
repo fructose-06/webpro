@@ -12,6 +12,9 @@ require("dotenv").config();
 const { Pool } = require("pg");
 const mongoose = require("mongoose");
 const Review = require("../models/review");
+const Company = require("../models/company");
+const JobRole = require("../models/jobRole");
+const TechSkill = require("../models/techSkill");
 
 const pgPool = new Pool({
     host: process.env.PG_HOST,
@@ -26,7 +29,8 @@ async function clearDatabase() {
     try {
         await mongoose.connect(process.env.MONGO_URI);
         const delResult = await Review.deleteMany({});
-        console.log(`🗑️ ลบข้อมูลรีวิวใน MongoDB เรียบร้อยแล้ว (${delResult.deletedCount} รายการ)`);
+        await Promise.all([Company.deleteMany({}), JobRole.deleteMany({}), TechSkill.deleteMany({})]);
+        console.log(`🗑️ ลบข้อมูลรีวิวและ Master Collections (companies, jobroles, techskills) ใน MongoDB เรียบร้อยแล้ว (${delResult.deletedCount} รีวิว)`);
 
         if (clearAll) {
             await pgPool.query("TRUNCATE TABLE public.users RESTART IDENTITY CASCADE;");

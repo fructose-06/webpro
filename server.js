@@ -192,6 +192,21 @@ app.put("/api/settings/profile", async (req, res) => {
     for (const session of sessions.values()) {
         if (session.profile.userId === userId) session.profile.userName = userName;
     }
+
+    // ซิงค์ชื่อผู้เขียนรีวิวและคอมเมนต์ใน MongoDB (เฉพาะโพสต์ที่ไม่ใช่โหมดไม่ระบุตัวตน)
+    const displayAuthor = userName || "สมาชิก Internsight";
+    await Promise.all([
+        InternshipReview.updateMany(
+            { user_id: userId, is_anonymous: { $ne: true } },
+            { $set: { author_name: displayAuthor } }
+        ),
+        InternshipReview.updateMany(
+            { "comments.author_id": userId },
+            { $set: { "comments.$[c].author_name": displayAuthor } },
+            { arrayFilters: [{ "c.author_id": userId }] }
+        )
+    ]).catch((err) => console.error("Mongo author sync error:", err.message));
+
     return res.sendStatus(204);
 });
 
@@ -247,6 +262,9 @@ app.get("/api/me/reviews", async (req, res) => {
             .sort({ created_at: -1, _id: -1 }).lean();
         for (const review of reviews) {
             review.bookmarked_by = review.bookmarked_by?.filter(entry => entry.user_id === req.user.userId) || [];
+            if (!review.is_anonymous && req.user.userName) {
+                review.author_name = req.user.userName;
+            }
         }
         return res.json({ reviews });
     } catch (error) {
@@ -285,6 +303,7 @@ app.delete("/api/me/reviews/:id", async (req, res) => {
     return res.sendStatus(result.deletedCount ? 204 : 404);
 });
 
+app.locals.pgPool = pgPool;
 const reviewRoutes = require("./routes/reviewRoutes");
 app.use("/api/reviews", reviewRoutes);
 

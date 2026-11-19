@@ -261,7 +261,9 @@
   font-weight: 500;
   color: #16171a;
   white-space: nowrap;
-  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .review-card .contains-row {
