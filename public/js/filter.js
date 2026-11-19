@@ -19,6 +19,9 @@ const skillSuggestions = document.getElementById("skillSuggestions");
 const applyFilterBtn = document.getElementById("applyFilterBtn");
 const resetFilterBtn = document.getElementById("resetFilterBtn");
 
+const params = new URLSearchParams(window.location.search);
+const keyword = params.get("q")?.trim() || "";
+
 // เก็บเฉพาะข้อมูลจริงจาก MongoDB (ไม่มี Mock Data)
 const reviews = [];
 let filteredReviews = [];
@@ -72,6 +75,18 @@ async function loadDatabaseReviews() {
 
         reviews.splice(0, reviews.length, ...mapped);
         filteredReviews = [...reviews];
+        if (keyword) {
+            companyInput.value = keyword;
+            const searchKeyword = keyword.toLowerCase();
+            filteredReviews = reviews.filter(review =>
+                review.company.toLowerCase().includes(searchKeyword) ||
+                review.role.toLowerCase().includes(searchKeyword) ||
+                (review.industryType || "").toLowerCase().includes(searchKeyword) ||
+                review.skills.some(skill =>
+                    skill.toLowerCase().includes(searchKeyword)
+                )
+            );
+        }
         populateRoles();
         populateCompanyTypes();
         totalPages = Math.max(1, Math.ceil(filteredReviews.length / cardsPerPage));

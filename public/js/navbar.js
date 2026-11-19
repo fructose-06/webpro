@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="search-icon">
           <i data-lucide="search"></i>
         </span>
-        <input class="search-input" id="globalSearchInput" name="q" type="text" placeholder="พิมพ์คำค้นหา เช่น ชื่อบริษัท, ตำแหน่งงาน">
+        <input class="search-input" id="globalSearchInput" name="q" type="text" placeholder="พิมพ์คำค้นหา เช่น ชื่อบริษัท, ตำแหน่งงาน" required>
         <button type="submit" class="search-btn">ค้นหา</button>
         <a href="filter.html" class="filter-btn" title="ตัวกรองค้นหา" aria-label="ตัวกรองค้นหา">
           <i data-lucide="filter"></i>
