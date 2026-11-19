@@ -303,3 +303,234 @@ body {
     width: 16px;
     height: 16px;
 }
+
+/* ธีมกระดาษครีม จำกัดเฉพาะหน้าหลัก */
+.home-page {
+    background: #fcf8ed url("../images/login-bg.png") center top / 100% auto repeat-y;
+    color: #502800;
+}
+
+.home-page .app-navbar {
+    background: #fcf8ed;
+    border-bottom: 2px dashed #d8c69d;
+    padding: 10px 30px;
+}
+
+.home-page .app-navbar .brand-link,
+.home-page .app-navbar .bookmark-btn { color: #502800; }
+.home-page .app-navbar .search-bar {
+    max-width: 740px;
+    border: 1px solid #bf603f;
+    border-radius: 20px;
+    padding: 9px 12px;
+}
+.home-page .app-navbar .search-btn {
+    background: #bf603f;
+    color: #fff;
+    padding: 8px 24px;
+    transition: background-color 0.2s ease;
+}
+.home-page .app-navbar .search-btn:hover { background: #a44a2d; }
+.home-page .app-navbar .user-profile { background: transparent; border-color: transparent; }
+
+.home-page .container {
+    max-width: 1440px;
+    padding: 54px clamp(20px, 3.5vw, 52px) 100px;
+}
+.home-page .hero-section { gap: 32px; margin-bottom: 64px; }
+.home-page .hero-text { min-width: 0; flex: 1.4; }
+.home-page .hero-title {
+    font-size: clamp(32px, 4.5vw, 64px);
+    line-height: 1.35;
+    color: #502800;
+    margin-bottom: 42px;
+    letter-spacing: -0.035em;
+    animation: home-appear 0.65s ease-out;
+}
+.home-page .page-indicator { gap: 14px; font-size: 22px; font-weight: 500; }
+.home-page .pin { display: flex; transform: rotate(35deg); }
+.home-page .pin svg { width: 30px; height: 30px; fill: currentColor; }
+.home-page .hero-papers {
+    flex: 1;
+    min-width: 0;
+    gap: 0;
+    padding: 20px 8px;
+    justify-content: center;
+}
+.home-page .paper {
+    width: 32%;
+    max-width: 165px;
+    height: clamp(120px, 14vw, 195px);
+    border: 0;
+    border-radius: 0;
+    background: #fff0b8;
+    box-shadow: 0 3px 10px #50371830;
+    transform-origin: 50% 8%;
+    animation: home-paper-float 5s ease-in-out infinite;
+}
+.home-page .paper::before {
+    width: 42%;
+    height: 20px;
+    top: -10px;
+    border-radius: 0;
+    background: #e8c990;
+}
+.home-page .paper-1 { --paper-angle: 4deg; animation-delay: -1.8s; }
+.home-page .paper-2 {
+    --paper-angle: -5deg;
+    height: clamp(150px, 17vw, 240px);
+    width: 37%;
+    background: #fce2d9;
+    z-index: 1;
+    animation-delay: -0.5s;
+}
+.home-page .paper-2::before { background: #ffbba7; }
+.home-page .paper-3 { --paper-angle: 4deg; background: #e3e9c7; animation-delay: -3s; }
+.home-page .paper-3::before { background: #cbcea8; }
+
+.home-page .cards-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 76px 40px;
+    margin-top: 0;
+}
+.home-page .review-card {
+    background: #fffcf5;
+    border: 1px solid #c96b4e;
+    border-radius: 20px;
+    padding: 38px 26px 24px;
+    box-shadow: 0 12px 28px #66513412;
+    animation: home-appear 0.5s ease-out;
+}
+.home-page .review-card:nth-child(3n + 2) { background: #fcf8ed; }
+.home-page .review-card::before {
+    width: 35%;
+    max-width: 142px;
+    height: 38px;
+    top: -20px;
+    background: #f2d9a9;
+    border-radius: 0;
+}
+.home-page .review-card:nth-child(3n + 2)::before { background: #fce2d9; }
+.home-page .review-card:nth-child(3n)::before { background: #e3e9c7; }
+.home-page .review-card:hover {
+    transform: translateY(-6px);
+    border-color: #a44a2d;
+    box-shadow: 0 18px 32px #66513426;
+}
+.home-page .review-card .company-name { font-size: 24px; }
+.home-page .review-card .mode-badge { background: #ffebe2; border-color: #c96b4e; }
+.home-page .review-card .skill-tags { flex-wrap: wrap; }
+.home-page .review-card .skill-pill { background: #fff0b8; border-color: #d9b445; }
+.home-page .review-card .skill-pill:nth-child(3n + 2) { background: #fce2d9; border-color: #eaa38e; }
+.home-page .review-card .skill-pill:nth-child(3n) { background: #e3e9c7; border-color: #a2b867; }
+.home-page .review-card .contains-row { flex-wrap: wrap; }
+.home-page .review-card .info-pill { background: #fff7e8; border-color: #eaa38e; }
+.home-page .review-card .action-btn { color: #63370f; }
+.home-page .review-card .js-like-btn { color: #bf603f; }
+.home-page .review-card .action-btn.active { background: #fce2d9; }
+.home-page .review-card .active-bookmark { color: #63370f; fill: currentColor; }
+.home-page .review-card .card-actions { justify-content: space-around; gap: 12px; }
+
+/* สีตัวอักษรและไอคอนบนกระดาษรีวิว */
+.home-page .review-card .company-name,
+.home-page .review-card .author-name,
+.home-page .review-card .rating-num { color: #502800; }
+.home-page .review-card .job-title,
+.home-page .review-card .salary-text,
+.home-page .review-card .card-row { color: #674329; }
+.home-page .review-card .contains-label,
+.home-page .review-card .review-date { color: #806650; }
+.home-page .review-card .mode-badge,
+.home-page .review-card .info-pill { color: #8b452d; }
+.home-page .review-card .skill-pill { color: #674d20; }
+.home-page .review-card .skill-pill:nth-child(3n + 2) { color: #8b452d; }
+.home-page .review-card .skill-pill:nth-child(3n) { color: #526035; }
+.home-page .review-card .row-icon { color: #ad5738; }
+.home-page .review-card .row-icon[data-lucide="circle-dollar-sign"],
+.home-page .review-card .skills-row .row-icon { color: #73804a; }
+.home-page .review-card .star-icon { color: #b28030; }
+.home-page .review-card .star-icon.filled { fill: #d5a64d; }
+.home-page .review-card .author-avatar-wrap { background: #efe2cc; color: #805333; }
+.home-page .review-card .action-btn svg { color: inherit; }
+.home-page .review-card .action-btn.active svg,
+.home-page .review-card .action-btn svg.filled-action-icon,
+.home-page .review-card .action-btn svg.active-bookmark {
+    color: inherit;
+    stroke: currentColor;
+    fill: currentColor;
+}
+.home-page .review-card .action-btn:hover,
+.home-page .review-card .action-btn:focus-visible { background: #f7e8d4; color: #a44a2d; }
+.home-page .review-card .company-name a:hover { color: #a44a2d; }
+
+/* เมนูและช่องค้นหาใช้สีเดียวกันทั้งสถานะปกติและโต้ตอบ */
+.home-page .app-navbar :is(.menu-btn, .nav-icon-btn, .filter-btn, .user-profile, .search-input, .search-icon, .chevron-icon),
+.home-page .sidebar :is(.sidebar-logo, .close-btn, .sidebar-item),
+.home-page .profile-dropdown a { color: #633d20; }
+.home-page .app-navbar .user-avatar-badge { background: #805333; color: #fff8ee; }
+.home-page .app-navbar .search-input::placeholder { color: #947d66; }
+.home-page .app-navbar .search-bar:focus-within {
+    border-color: #a44a2d;
+    box-shadow: 0 0 0 3px #bf603f20;
+}
+.home-page .app-navbar :is(.menu-btn, .nav-icon-btn, .filter-btn, .user-profile):is(:hover, :focus-visible),
+.home-page .sidebar .close-btn:is(:hover, :focus-visible),
+.home-page .sidebar-item:is(:hover, :focus-visible),
+.home-page .profile-dropdown a:is(:hover, :focus-visible) {
+    background: #f5e4cd;
+    color: #a44a2d;
+}
+.home-page .app-navbar .brand-link:hover,
+.home-page .sidebar-logo:hover { color: #a44a2d; }
+.home-page .sidebar,
+.home-page .profile-dropdown,
+.home-page .app-navbar .search-history-dropdown {
+    background: #fffcf5;
+    border-color: #e2c9a9;
+    box-shadow: 0 10px 28px #63432020;
+}
+.home-page .sidebar-item svg { color: inherit; }
+.home-page .sidebar-item.active { background: #f7dfcf; color: #954627; }
+.home-page .profile-dropdown a.logout,
+.home-page .app-navbar .search-history-clear { color: #a44832; border-color: #e2c9a9; }
+.home-page .profile-dropdown a.logout:hover,
+.home-page .app-navbar .search-history-clear:hover { background: #fbe1d7; color: #873522; }
+.home-page .app-navbar .search-history-item { color: #633d20; }
+.home-page .app-navbar .search-history-item:hover { background: #f5e4cd; }
+.home-page .app-navbar :is(.search-history-title, .search-history-remove) { color: #806650; }
+.home-page :is(.app-navbar, .sidebar, .profile-dropdown, .review-card) :is(a, button):focus-visible {
+    outline: 2px solid #a44a2d;
+    outline-offset: 3px;
+}
+
+@keyframes home-paper-float {
+    0%, 100% { transform: translateY(0) rotate(var(--paper-angle)); }
+    50% { transform: translateY(-9px) rotate(calc(var(--paper-angle) + 2deg)); }
+}
+@keyframes home-appear {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 1024px) {
+    .home-page .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 64px 28px; }
+    .home-page .hero-section { gap: 20px; }
+    .home-page .app-navbar { padding: 14px 18px; }
+}
+@media (max-width: 680px) {
+    .home-page .container { padding-top: 30px; }
+    .home-page .hero-section { flex-direction: column; align-items: stretch; margin-bottom: 42px; }
+    .home-page .hero-title { margin-bottom: 24px; }
+    .home-page .hero-papers { width: 85%; max-width: 360px; align-self: center; }
+    .home-page .cards-grid { grid-template-columns: minmax(0, 1fr); gap: 56px; }
+    .home-page .review-card { padding: 34px 20px 22px; }
+    .home-page .page-indicator { font-size: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .home-page .paper,
+    .home-page .hero-title,
+    .home-page .review-card { animation: none; }
+    .home-page .review-card,
+    .home-page .action-btn { transition: none; }
+    .home-page .review-card:hover,
+    .home-page .action-btn:hover { transform: none; }
+}
