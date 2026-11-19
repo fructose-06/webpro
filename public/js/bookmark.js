@@ -60,7 +60,7 @@ const emptyState = document.querySelector(".bookmark-empty");
   const itemHTML = (r, index) => `
     <li class="item" data-index="${index}">
       <div class="r1">
-        <h3>${esc(r.company)}</h3>
+        <h3 title="${esc(r.company)}">${esc(r.company)}</h3>
         <span class="rate"><i data-lucide="star"></i>${r.rating} / 5</span>
         <small>${esc(r.date)}</small>
         <i data-lucide="bookmark" class="solid"></i>
