@@ -67,7 +67,7 @@ svg.pin {
 }
 
 main {
-  max-width: 1320px;
+  max-width: 1460px;
   margin: 0 auto;
   padding: 20px 24px 48px;
 }
@@ -82,8 +82,8 @@ main {
 }
 .layout {
   display: grid;
-  grid-template-columns: 304px 1fr;
-  gap: 36px;
+  grid-template-columns: 276px 1fr;
+  gap: 24px;
   align-items: start;
 }
 
@@ -277,9 +277,21 @@ main {
 
 /* Card */
 .right-bar .cards-grid {
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 32px 24px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px 20px;
   padding-top: 14px;
+}
+
+@media (max-width: 1200px) {
+  .right-bar .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .right-bar .cards-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .grid {
