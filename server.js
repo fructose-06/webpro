@@ -173,23 +173,21 @@ app.get("/api/auth/me", (req, res) => {
 app.get("/api/settings", async (req, res) => {
     const { userId } = activeSession(req).profile;
     const result = await pgPool.query(
-        "SELECT student_code, email, user_name FROM public.users WHERE user_id = $1", [userId]
+        "SELECT student_code, email, user_name, profile_image FROM public.users WHERE user_id = $1", [userId]
     );
     if (!result.rowCount) return res.sendStatus(401);
     return res.json(result.rows[0]);
 });
 
 app.put("/api/settings/profile", async (req, res) => {
-    const { name } = req.body || {};
+    const { name, profileImage } = req.body || {};
     if (typeof name !== "string" || name.trim().length > 100) {
         return res.status(400).json({ message: "กรุณาตรวจชื่อที่แสดง" });
     }
     const { userId } = activeSession(req).profile;
     const userName = name.trim() || null;
     const result = await pgPool.query(
-        "UPDATE public.users SET user_name = $1 WHERE user_id = $2",
-        [userName, userId]
-    );
+    "UPDATE public.users SET user_name = $1, profile_image = $2 WHERE user_id = $3", [userName, profileImage || null, userId]);
     if (!result.rowCount) return res.sendStatus(401);
     for (const session of sessions.values()) {
         if (session.profile.userId === userId) session.profile.userName = userName;
