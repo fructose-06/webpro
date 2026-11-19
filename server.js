@@ -147,7 +147,7 @@ app.post("/api/auth/login", async (req, res) => {
     }
     try {
         const { rows } = await pgPool.query(
-            "SELECT user_id, student_code, user_name, password_hash FROM public.users WHERE student_code = $1",
+            "SELECT user_id, student_code, user_name, profile_image, password_hash FROM public.users WHERE student_code = $1",
             [studentId]
         );
         const user = rows[0];
@@ -156,7 +156,12 @@ app.post("/api/auth/login", async (req, res) => {
         }
         sessions.delete(sessionKey(req));
         const key = randomBytes(32).toString("hex");
-        const profile = { userId: user.user_id, studentCode: user.student_code, userName: user.user_name };
+        const profile = {
+            userId: user.user_id,
+            studentCode: user.student_code,
+            userName: user.user_name,
+            profileImage: user.profile_image || null
+        };
         sessions.set(key, { profile, until: Date.now() + sessionLimitMs });
         res.cookie("internsight_sid", key, { httpOnly: true, sameSite: "lax", secure: req.secure, path: "/" });
         return res.sendStatus(204);
@@ -192,7 +197,10 @@ app.put("/api/settings/profile", async (req, res) => {
     "UPDATE public.users SET user_name = $1, profile_image = $2 WHERE user_id = $3", [userName, profileImage || null, userId]);
     if (!result.rowCount) return res.sendStatus(401);
     for (const session of sessions.values()) {
-        if (session.profile.userId === userId) session.profile.userName = userName;
+        if (session.profile.userId === userId) {
+            session.profile.userName = userName;
+            session.profile.profileImage = profileImage || null;
+        }
     }
 
     // ซิงค์ชื่อผู้เขียนรีวิวและคอมเมนต์ใน MongoDB (เฉพาะโพสต์ที่ไม่ใช่โหมดไม่ระบุตัวตน)
@@ -267,6 +275,9 @@ app.get("/api/me/reviews", async (req, res) => {
             if (!review.is_anonymous && req.user.userName) {
                 review.author_name = req.user.userName;
             }
+            if (!review.is_anonymous && req.user.profileImage) {
+                review.author_image = req.user.profileImage;
+            }
         }
         return res.json({ reviews });
     } catch (error) {
@@ -303,6 +314,55 @@ app.delete("/api/me/reviews/:id", async (req, res) => {
     if (!/^[a-f0-9]{24}$/i.test(req.params.id)) return res.sendStatus(404);
     const result = await InternshipReview.deleteOne({ _id: req.params.id, user_id: req.user.userId });
     return res.sendStatus(result.deletedCount ? 204 : 404);
+});
+
+// ดูโปรไฟล์สาธารณะและรีวิวของสมาชิกตาม user_id (ซ่อนรีวิวที่เปิดโหมดไม่ระบุตัวตนหากไม่ใช่เจ้าของ)
+app.get("/api/users/:userId/profile", async (req, res) => {
+    const targetUserId = Number(req.params.userId);
+    if (!Number.isInteger(targetUserId) || targetUserId <= 0) {
+        return res.status(404).json({ message: "ไม่พบข้อมูลผู้ใช้งานนี้" });
+    }
+    try {
+        const { rows } = await pgPool.query(
+            "SELECT user_id, student_code, admission_year, user_name, profile_image FROM public.users WHERE user_id = $1",
+            [targetUserId]
+        );
+        if (!rows.length) {
+            return res.status(404).json({ message: "ไม่พบข้อมูลผู้ใช้งานนี้" });
+        }
+        const target = rows[0];
+        const isOwner = Number(req.user.userId) === targetUserId;
+        const filter = isOwner ? { user_id: targetUserId } : { user_id: targetUserId, is_anonymous: { $ne: true } };
+
+        const reviews = await InternshipReview.find(filter)
+            .select("_id review_id user_id company_name job_name work_mode daily_pay description is_anonymous created_at author_name skills rating_culture rating_workload rating_mentor interview_questions.question_no comments.comment_no likes pros cons bookmarked_by.user_id upvoted_by")
+            .sort({ created_at: -1, _id: -1 })
+            .lean();
+
+        const displayName = target.user_name || "สมาชิก Internsight";
+        for (const review of reviews) {
+            review.bookmarked_by = review.bookmarked_by?.filter((entry) => entry.user_id === req.user.userId) || [];
+            if (!review.is_anonymous) {
+                review.author_name = displayName;
+                review.author_image = target.profile_image || null;
+            }
+        }
+
+        return res.json({
+            user: {
+                userId: target.user_id,
+                studentCode: target.student_code,
+                admissionYear: target.admission_year,
+                userName: target.user_name,
+                profileImage: target.profile_image
+            },
+            isOwner,
+            reviews
+        });
+    } catch (error) {
+        console.error({ event: "public_profile_failed", type: error.name });
+        return res.status(500).json({ message: "โหลดข้อมูลโปรไฟล์ไม่ได้" });
+    }
 });
 
 app.locals.pgPool = pgPool;

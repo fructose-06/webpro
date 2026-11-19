@@ -118,25 +118,38 @@ async function attachCurrentAuthorNames(pgPool, docs) {
 
     try {
         const { rows } = await pgPool.query(
-            "SELECT user_id, user_name FROM public.users WHERE user_id = ANY($1::int[])",
+            "SELECT user_id, user_name, profile_image FROM public.users WHERE user_id = ANY($1::int[])",
             [[...userIds]]
         );
-        const nameMap = new Map();
+        const userMap = new Map();
         for (const row of rows) {
-            if (row.user_name && String(row.user_name).trim()) {
-                nameMap.set(Number(row.user_id), String(row.user_name).trim());
-            }
+            userMap.set(Number(row.user_id), {
+                name: row.user_name && String(row.user_name).trim() ? String(row.user_name).trim() : null,
+                image: row.profile_image || null
+            });
         }
 
         for (const doc of list) {
             if (!doc) continue;
-            if (doc.user_id && !doc.is_anonymous && nameMap.has(Number(doc.user_id))) {
-                doc.author_name = nameMap.get(Number(doc.user_id));
+            if (doc.user_id && !doc.is_anonymous && userMap.has(Number(doc.user_id))) {
+                const info = userMap.get(Number(doc.user_id));
+                if (info.name) doc.author_name = info.name;
+                if (typeof doc.set === "function") {
+                    doc.set("author_image", info.image, { strict: false });
+                } else {
+                    doc.author_image = info.image;
+                }
             }
             if (Array.isArray(doc.comments)) {
                 for (const c of doc.comments) {
-                    if (c?.author_id && nameMap.has(Number(c.author_id))) {
-                        c.author_name = nameMap.get(Number(c.author_id));
+                    if (c?.author_id && userMap.has(Number(c.author_id))) {
+                        const info = userMap.get(Number(c.author_id));
+                        if (info.name) c.author_name = info.name;
+                        if (typeof c.set === "function") {
+                            c.set("author_image", info.image, { strict: false });
+                        } else {
+                            c.author_image = info.image;
+                        }
                     }
                 }
             }
@@ -151,6 +164,17 @@ async function attachCurrentAuthorNames(pgPool, docs) {
 // 1. สร้างรีวิวใหม่ (POST /api/reviews)
 router.post("/", async (req, res) => {
     try {
+        const companyName = String(req.body?.company_name || "").trim();
+        const jobName = String(req.body?.job_name || "").trim();
+        const industryType = String(req.body?.industry_type || "").trim();
+        const description = String(req.body?.description || "").trim();
+        const pros = String(req.body?.pros || "").trim();
+        const cons = String(req.body?.cons || "").trim();
+        const skillsArr = Array.isArray(req.body?.skills) ? req.body.skills.filter((s) => String(s || "").trim() !== "") : [];
+        if (!companyName || !jobName || !industryType || skillsArr.length === 0 || !description || !pros || !cons) {
+            return res.status(400).json({ message: "กรุณากรอกข้อมูลสำคัญให้ครบถ้วน (บริษัท ตำแหน่ง ประเภท ทักษะ ประสบการณ์ ข้อดี และข้อเสีย)" });
+        }
+
         const lastReview = await InternshipReview.findOne({ review_id: { $ne: null } }).sort({ review_id: -1 });
         const nextId = lastReview && lastReview.review_id ? lastReview.review_id + 1 : 1;
 

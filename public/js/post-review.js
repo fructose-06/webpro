@@ -249,27 +249,90 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (window.lucide) window.lucide.createIcons();
   }
 
+  // Validation Helpers
+  function clearFieldError(el) {
+    if (!el) return;
+    el.classList.remove("input-error");
+    const container = el.closest(".form-group, .rating-section") || el.parentElement;
+    container?.querySelectorAll(".field-error-msg").forEach((m) => m.remove());
+  }
+
+  function showFieldError(el, message) {
+    if (!el) return;
+    clearFieldError(el);
+    if (el.classList.contains("form-control")) {
+      el.classList.add("input-error");
+    }
+    const container = el.closest(".form-group, .rating-section") || el.parentElement;
+    if (container) {
+      const msgEl = document.createElement("span");
+      msgEl.className = "field-error-msg";
+      msgEl.textContent = message;
+      container.appendChild(msgEl);
+    }
+  }
+
+  document.getElementById("stipendInput")?.addEventListener("input", (e) => clearFieldError(e.target));
+  document.getElementById("expTextarea")?.addEventListener("input", (e) => clearFieldError(e.target));
+  document.getElementById("prosTextarea")?.addEventListener("input", (e) => clearFieldError(e.target));
+  document.getElementById("consTextarea")?.addEventListener("input", (e) => clearFieldError(e.target));
+  document.getElementById("companyInput")?.addEventListener("input", (e) => clearFieldError(e.target));
+  document.getElementById("positionInput")?.addEventListener("input", (e) => clearFieldError(e.target));
+  document.getElementById("companyTypeInput")?.addEventListener("input", (e) => clearFieldError(e.target));
+
   btnNext?.addEventListener("click", () => {
-    // Validate minimal step 1 info
     const companyInput = document.getElementById("companyInput");
     const positionInput = document.getElementById("positionInput");
+    const companyTypeInput = document.getElementById("companyTypeInput");
+    const skillInputEl = document.getElementById("skillInput");
+    const stipendInput = document.getElementById("stipendInput");
+    const ratingSection = document.querySelector(".rating-section");
+
+    [companyInput, positionInput, companyTypeInput, skillInputEl, stipendInput, ratingSection].forEach(clearFieldError);
+
+    let firstInvalid = null;
 
     if (companyInput && !companyInput.value.trim()) {
-      companyInput.focus();
-      companyInput.style.borderColor = "#ef4444";
-      setTimeout(() => { companyInput.style.borderColor = ""; }, 2000);
-      return;
+      showFieldError(companyInput, "กรุณาระบุชื่อบริษัท");
+      firstInvalid = firstInvalid || companyInput;
     }
 
     if (positionInput && !positionInput.value.trim()) {
-      positionInput.focus();
-      positionInput.style.borderColor = "#ef4444";
-      setTimeout(() => { positionInput.style.borderColor = ""; }, 2000);
+      showFieldError(positionInput, "กรุณาระบุตำแหน่งงานที่ฝึก");
+      firstInvalid = firstInvalid || positionInput;
+    }
+
+    const stipendVal = stipendInput?.value.trim() || "";
+    if (stipendVal !== "" && !/^\d+$/.test(stipendVal)) {
+      showFieldError(stipendInput, "กรุณากรอกค่าตอบแทนเป็นตัวเลขจำนวนเต็ม (เช่น 300 หรือ 0)");
+      firstInvalid = firstInvalid || stipendInput;
+    }
+
+    if (companyTypeInput && !companyTypeInput.value.trim()) {
+      showFieldError(companyTypeInput, "กรุณาเลือกหรือระบุประเภทของบริษัท");
+      firstInvalid = firstInvalid || companyTypeInput;
+    }
+
+    if (!Array.isArray(formData.skills) || formData.skills.length === 0) {
+      showFieldError(skillInputEl, "กรุณาเพิ่มทักษะและความสามารถอย่างน้อย 1 ทักษะ");
+      firstInvalid = firstInvalid || skillInputEl;
+    }
+
+    if (!formData.ratings.mentor || !formData.ratings.culture || !formData.ratings.suitability) {
+      showFieldError(ratingSection, "กรุณาให้คะแนนดาวครบทั้ง 3 หัวข้อ (1–5 ดาว)");
+      firstInvalid = firstInvalid || ratingSection;
+    }
+
+    if (firstInvalid) {
+      firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (typeof firstInvalid.focus === "function") firstInvalid.focus();
       return;
     }
 
     formData.company = companyInput ? companyInput.value.trim() : "";
     formData.position = positionInput ? positionInput.value.trim() : "";
+    formData.stipend = stipendVal;
+    formData.companyType = companyTypeInput ? companyTypeInput.value.trim() : (formData.companyType || "");
 
     setStep(2);
   });
@@ -313,6 +376,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       chip.querySelector(".remove-chip-btn")?.addEventListener("click", () => {
         formData.skills.splice(index, 1);
         renderSkills();
+        clearFieldError(skillInput);
       });
       skillsContainer.appendChild(chip);
     });
@@ -330,6 +394,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           skillDatabase.push(val);
         }
         renderSkills();
+        clearFieldError(skillInput);
       }
       skillInput.value = "";
       skillWrapper?.classList.remove("open");
@@ -420,6 +485,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       star.addEventListener("click", () => {
         const val = parseInt(star.dataset.val, 10);
         updateStars(val);
+        clearFieldError(document.querySelector(".rating-section"));
       });
       star.addEventListener("mouseenter", () => {
         const hoverVal = parseInt(star.dataset.val, 10);
@@ -582,6 +648,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const filesToRead = files.slice(0, remainingSlots);
     filesToRead.forEach((file) => {
+      if (!file.type.startsWith("image/")) {
+        alert(`ไฟล์ "${file.name}" ไม่ใช่ไฟล์รูปภาพ`);
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`ไฟล์ "${file.name}" มีขนาดใหญ่เกิน 5MB กรุณาเลือกรูปที่เล็กลง`);
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target?.result && formData.images.length < MAX_IMAGES) {
@@ -611,12 +685,40 @@ document.addEventListener("DOMContentLoaded", async () => {
   btnSubmit?.addEventListener("click", async (e) => {
     e.preventDefault();
 
+    const expTextarea = document.getElementById("expTextarea");
+    const prosTextarea = document.getElementById("prosTextarea");
+    const consTextarea = document.getElementById("consTextarea");
+
+    [expTextarea, prosTextarea, consTextarea].forEach(clearFieldError);
+
+    let firstInvalidStep2 = null;
+    if (expTextarea && !expTextarea.value.trim()) {
+      showFieldError(expTextarea, "กรุณากรอกประสบการณ์การทำงานและรายละเอียดที่เจอ");
+      firstInvalidStep2 = firstInvalidStep2 || expTextarea;
+    }
+    if (prosTextarea && !prosTextarea.value.trim()) {
+      showFieldError(prosTextarea, "กรุณากรอกสิ่งที่ประทับใจ / ข้อดี");
+      firstInvalidStep2 = firstInvalidStep2 || prosTextarea;
+    }
+    if (consTextarea && !consTextarea.value.trim()) {
+      showFieldError(consTextarea, "กรุณากรอกข้อเสีย / สิ่งที่อยากให้ปรับปรุง");
+      firstInvalidStep2 = firstInvalidStep2 || consTextarea;
+    }
+
+    if (firstInvalidStep2) {
+      firstInvalidStep2.scrollIntoView({ behavior: "smooth", block: "center" });
+      firstInvalidStep2.focus();
+      return;
+    }
+
     // Collect Step 1 & Step 2 latest field values
     formData.stipend = document.getElementById("stipendInput")?.value.trim() || "";
     formData.companyType = document.getElementById("companyTypeInput")?.value.trim() || formData.companyType || "";
-    formData.experience = document.getElementById("expTextarea")?.value || "";
-    formData.pros = document.getElementById("prosTextarea")?.value || "";
-    formData.cons = document.getElementById("consTextarea")?.value || "";
+    formData.experience = expTextarea?.value.trim() || "";
+    formData.pros = prosTextarea?.value.trim() || "";
+    formData.cons = consTextarea?.value.trim() || "";
+
+    btnSubmit.disabled = true;
 
     let currentUserId = null;
     let authorName = formData.anonymous ? "ผู้ไม่ประสงค์ออกนาม" : "นักศึกษาฝึกงาน";
@@ -680,11 +782,14 @@ document.addEventListener("DOMContentLoaded", async () => {
           if (window.lucide) window.lucide.createIcons();
         }
       } else {
-        alert("เกิดข้อผิดพลาดในการบันทึกรีวิว");
+        const errData = await response.json().catch(() => ({}));
+        alert(errData.message || "เกิดข้อผิดพลาดในการบันทึกรีวิว");
       }
     } catch (err) {
       console.error("Error submitting review:", err);
       alert("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+    } finally {
+      btnSubmit.disabled = false;
     }
   });
 
