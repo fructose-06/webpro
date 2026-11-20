@@ -35,8 +35,18 @@
 
   <div class="list-head">
     <h2><i data-lucide="pin" class="solid"></i>รีวิวของฉันทั้งหมด <span id="reviewCount"></span></h2>
-    <label>เรียงตาม :
-      <select id="reviewOrder" class="sel" aria-label="เรียงตาม"><option value="newest">รีวิวล่าสุด</option><option value="oldest">รีวิวที่เก่าที่สุด</option></select>
+    <label class="sort-label">เรียงตาม :
+      <div class="sort-dropdown" id="reviewOrderDropdown">
+        <button type="button" class="sort-trigger" id="reviewOrderBtn" aria-expanded="false" aria-haspopup="listbox">
+          <span id="reviewOrderLabel">รีวิวล่าสุด</span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+        <ul class="sort-menu" id="reviewOrderMenu" role="listbox" hidden>
+          <li class="sort-option active" role="option" data-value="newest" aria-selected="true">รีวิวล่าสุด</li>
+          <li class="sort-option" role="option" data-value="oldest" aria-selected="false">รีวิวที่เก่าที่สุด</li>
+        </ul>
+        <input type="hidden" id="reviewOrder" value="newest">
+      </div>
     </label>
   </div>
 
