@@ -605,7 +605,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <div class="figma-q-row">
               <span class="q-index">${numStr}</span>
               <div class="q-box">${escapeHtml(q.question_title || q.text || "")}</div>
-              <span class="q-diff-pill">${escapeHtml(q.difficulty || "ง่าย")}</span>
+              <span class="q-diff-pill" data-difficulty="${escapeHtml(q.difficulty || "ง่าย")}">${escapeHtml(q.difficulty || "ง่าย")}</span>
             </div>
           `;
         })

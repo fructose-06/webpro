@@ -4,8 +4,8 @@
    ========================================================= */
 
 body {
-  background-color: #f6f6f6;
-  color: #000000;
+  background-color: #fcf8ed;
+  color: #502800;
   font-family: "Inter", "Prompt", "Noto Sans Thai", sans-serif;
   margin: 0;
 }
@@ -1037,7 +1037,107 @@ body {
 }
 
 .btn-modal-primary {
-  background: #000000;
+  background: #bf603f;
   color: #ffffff;
   border: none;
+}
+
+/* สีเนื้อหาและกระดาษตามแบบหน้าอ่านรีวิว */
+.figma-header-card { background: #fffcf5; border-color: #c96b4e; }
+.company-subtitle, .role-main-title, .overall-title, .avg-big, .avg-slash,
+.overall-sub, .dot-date, .exp-label, .score-fraction, .figma-block-title,
+.figma-paragraph, .back-arrow-link { color: #502800; }
+.gray-info-badge { background: #fff0b8; color: #502800; }
+.gray-info-badge:nth-child(2) { background: #fce2d9; }
+.gray-info-badge:nth-child(3) { background: #e3e9c7; }
+.overall-rating-box { background: #fff0b8; }
+.filled-black-star { color: #ffc400; fill: #ffc400; }
+.five-stars svg { color: #e4ae00; }
+.five-stars svg.filled { fill: #ffc400; }
+.header-divider { border-color: #efbfaa; }
+.user-circle-icon, .user-circle-icon svg { color: #63370f; border-color: #63370f; }
+.icon-action-btn, .icon-action-btn svg { color: #bf603f; }
+.icon-action-btn.active svg, .icon-action-btn svg.filled-icon { fill: currentColor; }
+.q-box { background: #fffcf5; border-color: #a97d55; }
+.q-diff-pill { background: #738121; }
+.q-diff-pill[data-difficulty="ปานกลาง"] { background: #a76113; }
+.q-diff-pill[data-difficulty="ยาก"] { background: #ae0003; }
+.figma-img-box { border-color: #d4b99b; }
+
+/* สีคอมเมนต์ การตอบกลับ การแก้ไข และกล่องยืนยัน */
+.figma-comment-form textarea, .inline-reply-textarea, .comment-edit-textarea {
+  border-color: #c96b4e;
+  color: #502800;
+}
+.comment-edit-textarea { background: #fcf8ed; }
+.figma-comment-form textarea:focus, .inline-reply-textarea:focus, .comment-edit-textarea:focus {
+  border-color: #a44a2d;
+  box-shadow: 0 0 0 3px #bf603f20;
+}
+.btn-post-comment, .btn-reply-submit, .sort-pill-btn.active {
+  background: #bf603f;
+  color: #fff;
+  border-color: #bf603f;
+}
+.btn-post-comment:hover, .btn-reply-submit:hover, .btn-modal-primary:hover { background: #a44a2d; }
+.sort-pill-btn, .btn-reply-cancel, .btn-modal-cancel { color: #63370f; border-color: #e2c9b4; }
+.sort-pill-btn.active { color: #fff; border-color: #bf603f; }
+.figma-comment-card { border-color: #c96b4e; }
+.figma-comment-card.is-reply, .comment-replies-thread,
+.comment-section-divider, .inline-reply-divider { border-color: #e8d1bd; }
+.comment-card-footer { background: #fbf3e9; border-color: #e8d1bd; }
+.comment-owner-badge { background: #fff3eb; color: #b15132; border-color: #bf603f; }
+.inline-reply-label, .btn-show-more-replies { color: #b15132; }
+.comment-reply-mention { background: #fce2d9; color: #984329; }
+.comment-act-link:hover, .comment-act-link.active { color: #b15132; border-color: #bf603f; }
+.comment-act-link.danger, .comment-dropdown-item.danger { color: #ae0003; }
+.comment-dropdown-menu, .comment-modal-card { border-color: #d7a086; background: #fff; }
+.comment-dropdown-item { color: #63370f; }
+.comment-dropdown-item:hover, .comment-more-btn:hover { background: #fff0df; }
+.comment-empty-state { background: #fbf3e9; border-color: #e8d1bd; }
+.comment-empty-state svg { color: #bf603f; }
+.comment-empty-title { color: #502800; }
+
+/* Navbar ใช้ขนาดและสีชุดเดียวกับ Home */
+#app-navbar { font-size: 16px; line-height: normal; }
+:where(#app-navbar) *, :where(#app-navbar) *::before, :where(#app-navbar) *::after { margin: 0; padding: 0; box-sizing: border-box; }
+.app-navbar { background: #fcf8ed; border-bottom: 2px dashed #d8c69d; padding: 10px 30px; }
+.app-navbar .search-bar { max-width: 740px; border: 1px solid #bf603f; border-radius: 20px; padding: 9px 12px; }
+.app-navbar .search-btn { background: #bf603f; color: #fff; padding: 8px 24px; }
+.app-navbar .search-btn:hover { background: #a44a2d; }
+.app-navbar :is(.brand-link, .menu-btn, .nav-icon-btn, .filter-btn, .user-profile, .search-icon, .chevron-icon, .search-input) { color: #633d20; }
+.app-navbar .user-profile { background: transparent; border-color: transparent; }
+.app-navbar .user-avatar-badge { background: #805333; color: #fff8ee; }
+.app-navbar .search-input::placeholder { color: #947d66; }
+.app-navbar :is(.menu-btn, .nav-icon-btn, .filter-btn, .user-profile):hover,
+.profile-dropdown a:hover, .sidebar-item:hover { background: #f5e4cd; color: #a44a2d; }
+.sidebar, .profile-dropdown, .app-navbar .search-history-dropdown { background: #fffcf5; border-color: #e2c9a9; }
+.sidebar :is(.sidebar-logo, .sidebar-item, .close-btn), .profile-dropdown a { color: #633d20; }
+.sidebar-item svg { color: inherit; }
+.sidebar-item.active { background: #f7dfcf; color: #954627; }
+.profile-dropdown a.logout { color: #a44832; }
+.profile-dropdown a.logout:hover { background: #fbe1d7; }
+.app-navbar .search-history-item { color: #633d20; }
+.app-navbar .search-history-item:hover { background: #f5e4cd; }
+@media (max-width: 1024px) {
+  .app-navbar { padding: 14px 18px; }
+}
+
+/* เคลื่อนไหวสั้น ๆ โดยไม่เปลี่ยนพื้นที่จัดวาง */
+.figma-header-card { animation: detail-appear 0.4s ease-out; }
+.inline-reply-composer, .comment-dropdown-menu, .comment-modal-card { animation: detail-appear 0.2s ease-out; }
+.post-review-page button { transition: transform 0.16s ease, background-color 0.16s ease, color 0.16s ease; }
+@media (hover: hover) and (pointer: fine) {
+  .post-review-page :is(.btn-post-comment, .btn-reply-submit, .sort-pill-btn):hover:not(:disabled) { transform: translateY(-2px); }
+}
+.post-review-page :is(.btn-post-comment, .btn-reply-submit, .icon-action-btn):active:not(:disabled) { transform: scale(0.97); }
+.post-review-page :is(button, a):focus-visible { outline: 2px solid #bf603f; outline-offset: 3px; }
+@keyframes detail-appear {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .figma-header-card, .inline-reply-composer, .comment-dropdown-menu, .comment-modal-card { animation: none; }
+  .post-review-page button, .back-arrow-link { transition: none; }
+  .post-review-page button:is(:hover, :active), .back-arrow-link:hover { transform: none; }
 }
