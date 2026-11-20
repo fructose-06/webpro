@@ -1,6 +1,45 @@
 const list = document.querySelector("#myReviews");
 const statusText = document.querySelector("#reviewStatus");
 const order = document.querySelector("#reviewOrder");
+const orderDropdown = document.querySelector("#reviewOrderDropdown");
+const orderBtn = document.querySelector("#reviewOrderBtn");
+const orderLabel = document.querySelector("#reviewOrderLabel");
+const orderMenu = document.querySelector("#reviewOrderMenu");
+
+if (orderBtn && orderMenu && orderDropdown) {
+  orderBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isOpen = orderMenu.hidden;
+    orderMenu.hidden = !isOpen;
+    orderDropdown.classList.toggle("open", isOpen);
+    orderBtn.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  orderMenu.querySelectorAll(".sort-option").forEach((opt) => {
+    opt.addEventListener("click", () => {
+      const val = opt.dataset.value;
+      if (order) order.value = val;
+      if (orderLabel) orderLabel.textContent = opt.textContent;
+      orderMenu.querySelectorAll(".sort-option").forEach((o) => {
+        const active = o === opt;
+        o.classList.toggle("active", active);
+        o.setAttribute("aria-selected", String(active));
+      });
+      orderMenu.hidden = true;
+      orderDropdown.classList.remove("open");
+      orderBtn.setAttribute("aria-expanded", "false");
+      order?.dispatchEvent(new Event("change"));
+    });
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!orderDropdown.contains(e.target)) {
+      orderMenu.hidden = true;
+      orderDropdown.classList.remove("open");
+      orderBtn.setAttribute("aria-expanded", "false");
+    }
+  });
+}
 
 const dialog = document.querySelector("#deleteReview");
 const confirmDelete = document.querySelector("#confirmDelete");
@@ -45,7 +84,7 @@ function addOwnerActions(card, review) {
 }
 
 async function loadProfile() {
-  order.disabled = true;
+  if (orderBtn) orderBtn.disabled = true;
   const viewUserId = new URLSearchParams(location.search).get("id");
 
   try {
@@ -104,7 +143,7 @@ async function loadProfile() {
     }
     document.querySelector("#reviewCount").textContent = "(" + reviews.length + " รีวิว)";
     statusText.textContent = reviews.length ? "" : (isOwnProfile ? "ยังไม่มีรีวิว" : "ผู้ใช้นี้ยังไม่มีรีวิวที่เปิดเผย");
-    order.disabled = reviews.length < 2;
+    if (orderBtn) orderBtn.disabled = reviews.length < 2;
     await window.InternsightUI.loadCurrentUser();
     async function render() {
       const sorted = order.value === "oldest" ? [...reviews].reverse() : reviews;

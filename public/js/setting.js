@@ -115,6 +115,13 @@ async function loadSettings() {
       profilePreview.src = profileImage;
       profilePreview.hidden = false;
       profilePlaceholder.hidden = true;
+      const sideAvatar = document.querySelector('.account-card .avatar-lg');
+      if (sideAvatar) {
+        const img = document.createElement('img');
+        img.src = profileImage;
+        img.alt = 'Profile';
+        sideAvatar.replaceChildren(img);
+      }
     }
     savedProfile = readProfile();
     refreshProfileButtons();
@@ -157,6 +164,23 @@ profileForm.addEventListener('submit', async (event) => {
   const label = now.name || document.querySelector('#student-id').value;
   document.querySelector('.account-name').textContent = label;
   document.getElementById('currentUserName').textContent = label;
+  if (profileImage) {
+    const sideAvatar = document.querySelector('.account-card .avatar-lg');
+    if (sideAvatar) {
+      const img = document.createElement('img');
+      img.src = profileImage;
+      img.alt = label;
+      sideAvatar.replaceChildren(img);
+    }
+    const navBadge = document.querySelector('#userProfileBtn .user-avatar-badge');
+    if (navBadge) {
+      const navImg = document.createElement('img');
+      navImg.src = profileImage;
+      navImg.alt = label;
+      navImg.className = 'nav-avatar-img';
+      navBadge.replaceChildren(navImg);
+    }
+  }
   savedProfile = now;
   savedProfileImage = profileImage;
   nameInput.value = now.name;

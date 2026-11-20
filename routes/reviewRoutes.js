@@ -376,6 +376,7 @@ router.post("/:id/like", async (req, res) => {
         }
 
         await review.save();
+        await attachCurrentAuthorNames(req.app.locals.pgPool, review);
         res.json(review);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -412,6 +413,7 @@ router.post("/:id/bookmark", async (req, res) => {
         }
 
         await review.save();
+        await attachCurrentAuthorNames(req.app.locals.pgPool, review);
         res.json(review);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -452,6 +454,7 @@ router.post("/:id/comments", async (req, res) => {
             is_edited: false
         });
         await review.save();
+        await attachCurrentAuthorNames(req.app.locals.pgPool, review);
         res.status(201).json(review);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -485,6 +488,7 @@ router.put("/:id/comments/:commentNo", async (req, res) => {
         targetComment.is_edited = true;
         targetComment.updated_at = new Date();
         await review.save();
+        await attachCurrentAuthorNames(req.app.locals.pgPool, review);
         res.json(review);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -522,6 +526,7 @@ router.delete("/:id/comments/:commentNo", async (req, res) => {
         }
         review.comments = (review.comments || []).filter((c) => !toDelete.has(c.comment_no));
         await review.save();
+        await attachCurrentAuthorNames(req.app.locals.pgPool, review);
         res.json(review);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -560,6 +565,7 @@ router.post("/:id/comments/:commentNo/like", async (req, res) => {
         }
 
         await review.save();
+        await attachCurrentAuthorNames(req.app.locals.pgPool, review);
         res.json(review);
     } catch (err) {
         res.status(500).json({ message: err.message });

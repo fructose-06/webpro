@@ -17,6 +17,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const meRes = await fetch("/api/auth/me");
     if (meRes.ok) {
       currentUser = await meRes.json();
+      const composeAvatar = document.querySelector("#commentsSection .user-circle-icon.lg");
+      if (composeAvatar && currentUser?.profileImage) {
+        composeAvatar.innerHTML = `<img src="${escapeHtml(currentUser.profileImage)}" alt="${escapeHtml(currentUser.userName || "User")}" class="circle-avatar-img">`;
+      }
     }
   } catch {
     // ignore
@@ -204,7 +208,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
         <div class="inline-reply-row">
           <span class="user-circle-icon">
-            <i data-lucide="user-round"></i>
+            ${
+              currentUser?.profileImage
+                ? `<img src="${escapeHtml(currentUser.profileImage)}" alt="${escapeHtml(currentUser.userName || "User")}" class="circle-avatar-img">`
+                : `<i data-lucide="user-round"></i>`
+            }
           </span>
           <form class="inline-reply-form" id="inlineReplyForm">
             <textarea

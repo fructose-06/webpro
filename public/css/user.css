@@ -464,6 +464,93 @@ main {
   border-radius: 50%;
   display: block;
 }
+
+.sort-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.sort-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 165px;
+  padding: 8px 14px;
+  background: #ffffff;
+  border: 1.5px solid #d4d7de;
+  border-radius: 9999px;
+  font-family: "Prompt", "Noto Sans Thai", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #16171a;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.sort-trigger:hover:not(:disabled) {
+  border-color: #16171a;
+}
+
+.sort-trigger:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.sort-trigger svg {
+  width: 16px;
+  height: 16px;
+  color: #6b7280;
+  transition: transform 0.15s ease;
+}
+
+.sort-dropdown.open .sort-trigger {
+  border-color: #16171a;
+}
+
+.sort-dropdown.open .sort-trigger svg {
+  transform: rotate(180deg);
+}
+
+.sort-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 100%;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #ffffff;
+  border: 1px solid #d4d7de;
+  border-radius: 14px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.1);
+  z-index: 200;
+}
+
+.sort-menu[hidden] {
+  display: none;
+}
+
+.sort-option {
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #16171a;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.12s ease;
+}
+
+.sort-option:hover {
+  background: #f1f2f5;
+}
+
+.sort-option.active {
+  background: #16171a;
+  color: #ffffff;
+  font-weight: 600;
+}
 #deleteReview {
   width: min(440px, 92vw);
   padding: 36px 24px;
