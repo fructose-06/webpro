@@ -86,6 +86,10 @@ PG_DATABASE=internsight_db
 
 # ตั้งค่า MongoDB (NoSQL)
 MONGO_URI=mongodb://127.0.0.1:27017/internsight_nosql
+
+# ต้องรัน npm install nodemailer ก่อนด้วย
+GMAIL_USER= 
+GMAIL_APP_PASSWORD=
 ```
 
 ---
