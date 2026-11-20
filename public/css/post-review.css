@@ -1,16 +1,16 @@
 :root {
-  --bg: #f5f6f8;
-  --surface: #ffffff;
-  --surface-alt: #f1f2f5;
-  --ink: #16171a;
-  --muted: #6b7280;
-  --line: #e3e5e9;
-  --line-strong: #16171a;
-  --tape-color: #d1d4dc;
-  --accent: #16171a;
+  --bg: #fcf8ed;
+  --surface: #fffcf5;
+  --surface-alt: #fff0df;
+  --ink: #502800;
+  --muted: #806650;
+  --line: #e9c5ae;
+  --line-strong: #c96b4e;
+  --tape-color: #bf603f;
+  --accent: #bf603f;
   --on-accent: #ffffff;
-  --star-gold: #16171a; /* Figma mockup shows dark/black filled stars */
-  --star-empty: #d1d5db;
+  --star-gold: #ffc400;
+  --star-empty: #d9ad42;
   --danger: #ef4444;
   --radius-lg: 24px;
   --radius-md: 12px;
@@ -101,7 +101,7 @@ button {
 .form-card {
   position: relative;
   background: var(--surface);
-  border: 1.5px solid #d4d7de;
+  border: 1.5px solid var(--line-strong);
   border-radius: var(--radius-lg);
   padding: 44px 48px;
   box-shadow: var(--shadow-card);
@@ -113,7 +113,7 @@ button {
   position: absolute;
   width: 110px;
   height: 34px;
-  background: rgba(200, 204, 212, 0.75);
+  background: var(--tape-color);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   pointer-events: none;
   z-index: 10;
@@ -190,14 +190,14 @@ button {
   font-size: 15px;
   border: 1.5px solid var(--line-strong);
   border-radius: var(--radius-md);
-  background: var(--surface);
+  background: #fff;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .form-control:focus {
-  border-color: #000;
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+  border-color: #a44a2d;
+  box-shadow: 0 0 0 3px #bf603f20;
 }
 
 .form-control::placeholder {
@@ -364,7 +364,7 @@ select.form-control {
 }
 
 .segment-btn.active {
-  background: var(--ink);
+  background: var(--accent);
   color: var(--surface);
   font-weight: 600;
 }
@@ -415,7 +415,7 @@ select.form-control {
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
-  background: #e5e7eb;
+  background: #e3e9c7;
   border-radius: var(--radius-pill);
   font-size: 13px;
   font-weight: 500;
@@ -667,8 +667,8 @@ select.form-control {
 }
 
 .diff-pill.active {
-  background: var(--ink);
-  border-color: var(--ink);
+  background: var(--accent);
+  border-color: var(--accent);
   color: var(--surface);
   font-weight: 600;
 }
@@ -688,8 +688,8 @@ select.form-control {
   min-height: 140px;
   padding: 16px;
   width: 100%;
-  background: #e5e7eb;
-  border: 2px dashed #cbd5e1;
+  background: #fff;
+  border: 2px dashed var(--line-strong);
   border-radius: 20px;
   position: relative;
   overflow: hidden;
@@ -698,7 +698,7 @@ select.form-control {
 }
 
 .image-upload-dropzone:hover {
-  background: #dde1e8;
+  background: #fff0df;
   border-color: var(--ink);
 }
 
@@ -796,18 +796,18 @@ select.form-control {
   align-items: center;
   gap: 8px;
   padding: 10px 28px;
-  border: 1px solid var(--ink);
+  border: 1px solid var(--accent);
   border-radius: var(--radius-pill);
   font-size: 15px;
   font-weight: 600;
-  background: var(--ink);
+  background: var(--accent);
   color: var(--surface);
   transition: all 0.2s;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .btn-primary:hover {
-  background: #2b2e35;
+  background: #a44a2d;
   transform: translateY(-1px);
 }
 
@@ -863,7 +863,7 @@ select.form-control {
 }
 
 .toggle-switch input:checked + .toggle-slider {
-  background-color: var(--ink);
+  background-color: var(--accent);
 }
 
 .toggle-switch input:checked + .toggle-slider:before {
@@ -1011,4 +1011,56 @@ select.form-control {
 .rating-section .field-error-msg {
   text-align: center;
   margin-top: 12px;
+}
+
+/* สีเมนูและช่องกรอกให้เข้าชุดกับหน้าหลัก */
+#app-navbar { line-height: normal; }
+.app-navbar { background: #fcf8ed; border-bottom: 2px dashed #d8c69d; padding: 10px 30px; }
+.app-navbar .search-bar { max-width: 740px; border: 1px solid #bf603f; border-radius: 20px; padding: 9px 12px; }
+.app-navbar .search-btn { background: #bf603f; color: #fff; padding: 8px 24px; }
+.app-navbar .search-btn:hover { background: #a44a2d; }
+.app-navbar :is(.brand-link, .menu-btn, .nav-icon-btn, .filter-btn, .user-profile, .search-icon, .chevron-icon, .search-input) { color: #633d20; }
+.app-navbar .user-profile { background: transparent; border-color: transparent; }
+.app-navbar .user-avatar-badge { background: #805333; color: #fff8ee; }
+.app-navbar .search-input::placeholder { color: #947d66; }
+.app-navbar :is(.menu-btn, .nav-icon-btn, .filter-btn, .user-profile):hover,
+.profile-dropdown a:hover,
+.sidebar-item:hover { background: #f5e4cd; color: #a44a2d; }
+.sidebar, .profile-dropdown, .app-navbar .search-history-dropdown { background: #fffcf5; border-color: #e2c9a9; }
+.sidebar :is(.sidebar-logo, .sidebar-item, .close-btn), .profile-dropdown a { color: #633d20; }
+.sidebar-item svg { color: inherit; }
+.sidebar-item.active { background: #f7dfcf; color: #954627; }
+.profile-dropdown a.logout { color: #a44832; }
+.profile-dropdown a.logout:hover { background: #fbe1d7; }
+.app-navbar .search-history-item { color: #633d20; }
+.app-navbar .search-history-item:hover { background: #f5e4cd; }
+.app-navbar .search-bar:focus-within { border-color: #a44a2d; box-shadow: 0 0 0 3px #bf603f20; }
+.btn-secondary, .delete-question-btn, .diff-pill, .image-upload-btn { background: #fff0df; }
+.skill-chip { color: #526035; }
+.modal-box { background: #fffcf5; }
+.modal-icon-wrap { background: #bf603f; color: #fff; }
+.page-container :is(button, a, input, select, textarea):focus-visible { outline: 2px solid #a44a2d; outline-offset: 3px; }
+
+/* ฟอร์มค่อย ๆ ปรากฏเมื่อเปลี่ยนขั้น และปุ่มตอบสนองเบา ๆ */
+.form-card { animation: review-step-appear 0.35s ease-out; }
+.page-container :is(.btn-primary, .btn-secondary, .add-skill-btn, .diff-pill, .segment-btn) {
+  transition: transform 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .page-container :is(.btn-primary, .btn-secondary, .add-skill-btn):hover:not(:disabled) { transform: translateY(-2px); }
+  .page-container .star-btn:hover { transform: scale(1.12); }
+}
+.page-container :is(.btn-primary, .btn-secondary, .add-skill-btn):active:not(:disabled) { transform: scale(0.97); }
+@keyframes review-step-appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 1024px) {
+  .app-navbar { padding: 14px 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .form-card { animation: none; transition: none; }
+  .page-container :is(button, a, .toggle-slider, .toggle-slider::before) { transition: none; }
+  .page-container :is(.btn-primary, .btn-secondary, .add-skill-btn, .star-btn):is(:hover, :active) { transform: none; }
+  .modal-box { transition: none; }
 }
