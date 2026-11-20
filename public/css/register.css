@@ -234,3 +234,32 @@
 		font-size: 20px;
 	}
 }
+.rules {
+  display: grid;
+  gap: 4px;
+  margin: 10px 0 18px;
+  padding: 0;
+  list-style: none;
+}
+
+.rules li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #dc2626;
+  transition: .2s;
+}
+
+.rules li svg {
+  width: 16px;
+  height: 16px;
+  color: #dc2626;
+}
+
+.rules li.valid {
+  color: #16a34a;
+}
+
+.rules li.valid svg {
+  color: #16a34a;
+}

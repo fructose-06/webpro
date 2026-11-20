@@ -532,12 +532,22 @@ input[type="password"]::-ms-reveal, input[type="password"]::-ms-clear {
   display: flex;
   align-items: center;
   gap: 8px;
+  color: #dc2626;
+  transition: .2s;
 }
 
-.rules svg {
+.rules li svg {
   width: 16px;
   height: 16px;
-  color: #333;
+  color: #dc2626;
+}
+
+.rules li.valid {
+  color: #16a34a;
+}
+
+.rules li.valid svg {
+  color: #16a34a;
 }
 
 @media (max-width: 900px) {

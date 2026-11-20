@@ -83,6 +83,7 @@
 							<input
 								id="new-password"
 								name="password"
+								minlength="8"
 								maxlength="1024"
 								type="password"
 								autocomplete="new-password"
@@ -126,6 +127,16 @@
 							</button>
 						</div>
 					</div>
+					<ul class="rules">
+						<li data-rule="length">
+							<i data-lucide="circle-check"></i>
+							มีความยาวอย่างน้อย 8 ตัวอักษร (Minimum 8 characters)
+						</li>
+						<li data-rule="mix">
+							<i data-lucide="circle-check"></i>
+							ประกอบด้วยตัวอักษรภาษาอังกฤษ (A-Z, a-z) และตัวเลข (0-9)
+						</li>
+					</ul>
 					<button class="login-button register-submit" type="submit">
 						สมัครสมาชิก
 						<i data-lucide="arrow-right" class="icon"></i>
