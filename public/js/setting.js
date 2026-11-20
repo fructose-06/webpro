@@ -246,7 +246,7 @@ const setError = (input, message) => {
 
 const refreshPwForm = () => {
   ruleItems.forEach((item) => {
-    item.classList.toggle('ok', rules[item.dataset.rule](newPw.value));
+    item.classList.toggle('valid', rules[item.dataset.rule](newPw.value));
   });
 
   const sameAsCurrent = newPw.value !== '' && newPw.value === currentPw.value;

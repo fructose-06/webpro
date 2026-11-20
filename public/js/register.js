@@ -5,6 +5,18 @@ const yearSelect = document.querySelector("#admission-year");
 const dialog = document.querySelector("#register-dialog");
 const message = document.querySelector("#dialog-message");
 
+const ruleItems = document.querySelectorAll(".rules li");
+const passwordRules = {
+    length: (value) => value.length >= 8,
+    mix: (value) => /[A-Za-z]/.test(value) && /\d/.test(value),
+};
+
+const refreshPasswordRules = () => {
+    ruleItems.forEach((item) => {
+        item.classList.toggle("valid", passwordRules[item.dataset.rule](password.value));
+    });
+};
+
 window.lucide?.createIcons();
 
 // ขยับกระดานโน้ตตามเมาส์ตามการตั้งค่าการเคลื่อนไหวของผู้ใช้
@@ -55,13 +67,23 @@ function validateConfirmation() {
 			: "",
 	);
 }
-password.addEventListener("input", validateConfirmation);
+
+password.addEventListener("input", () => {
+    validateConfirmation();
+    refreshPasswordRules();
+});
 confirmation.addEventListener("input", validateConfirmation);
+refreshPasswordRules();
 
 form.addEventListener("submit", async (event) => {
 	event.preventDefault();
 	validateConfirmation();
-	if (!form.reportValidity()) return;
+	if (!passwordRules.length(password.value) || !passwordRules.mix(password.value)) {
+		message.textContent = "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร และมีทั้งตัวอักษรภาษาอังกฤษและตัวเลข";
+		dialog.showModal();
+		return;
+	}
+if (!form.reportValidity()) return;
 	const submit = form.querySelector('button[type="submit"]');
 	if (submit.disabled) return;
 	submit.disabled = true;
@@ -79,6 +101,8 @@ form.addEventListener("submit", async (event) => {
 		});
 		if (response.status === 201) {
 			form.reset();
+			confirmation.setCustomValidity("");
+			refreshPasswordRules();
 			message.textContent = "สร้างบัญชีสำเร็จ กดปิดเพื่อไปหน้าเข้าสู่ระบบ";
 			dialog.addEventListener("close", () => location.assign("login.html"), { once: true });
 		} else {
