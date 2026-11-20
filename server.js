@@ -18,7 +18,8 @@ const guestFiles = new Set([
     "/login.html", "/register.html",
     "/images/logo-icon.png", "/images/login-bg.png",
     "/css/login.css", "/css/register.css",
-    "/js/login.js", "/js/register.js"
+    "/js/login.js", "/js/register.js",
+    "/forgot.html", "/css/forgot.css", "/js/forgot.js"
 ]);
 
 app.use((req, res, next) => {
@@ -27,7 +28,7 @@ app.use((req, res, next) => {
 
     res.set("Cache-Control", "private, no-store");
     if (req.method === "POST" &&
-        (req.path === "/api/auth/register" || req.path === "/api/auth/login")) return next();
+        ["/api/auth/register", "/api/auth/login", "/api/auth/forgot", "/api/auth/reset"].includes(req.path)) return next();
     const session = activeSession(req);
     if (session) {
         req.user = session.profile;
@@ -247,6 +248,65 @@ app.put("/api/settings/password", async (req, res) => {
 app.use("/api/settings", (error, req, res, next) => {
     console.error({ event: "settings_failed", code: error.code || error.name });
     res.status(500).json({ message: "ติดต่อฐานข้อมูลไม่ได้ กรุณาตรวจการตั้งค่าฐานข้อมูล" });
+});
+
+// npm install nodemailer ก่อน)
+const nodemailer = require("nodemailer");
+const otps = new Map();
+
+const mailer = process.env.GMAIL_USER
+    ? nodemailer.createTransport({
+          service: "gmail",
+          auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD }
+      })
+    : null;
+
+app.post("/api/auth/forgot", async (req, res) => {
+    const { studentId } = req.body || {};
+    res.json({ message: "ถ้ามีรหัสนักศึกษานี้ในระบบ เราส่ง OTP ไปที่อีเมลที่ลงทะเบียนไว้แล้ว" });
+    if (typeof studentId !== "string" || !/^[0-9]{1,20}$/.test(studentId)) return;
+    try {
+        const { rows } = await pgPool.query(
+            "SELECT user_id, email FROM public.users WHERE student_code = $1", [studentId]
+        );
+        if (!rows[0]) return;
+        const code = String(require("node:crypto").randomInt(100000, 1000000));
+        otps.set(rows[0].user_id, { code, expires: Date.now() + 5 * 60 * 1000, tries: 0 });
+        const text = `รหัส OTP ของคุณคือ ${code} (หมดอายุใน 5 นาที)`;
+        if (mailer) {
+            await mailer.sendMail({ from: process.env.GMAIL_USER, to: rows[0].email, subject: "OTP รีเซ็ตรหัสผ่าน", text });
+        } else {
+            console.log("[OTP]", rows[0].email, code);
+        }
+    } catch (error) {
+        console.error("forgot failed:", error.message);
+    }
+});
+
+app.post("/api/auth/reset", async (req, res) => {
+    const { studentId, otp, replacement } = req.body || {};
+    if (typeof studentId !== "string" || !/^[0-9]{1,20}$/.test(studentId) ||
+        typeof replacement !== "string" || replacement.length < 8 || replacement.length > 1024 ||
+        !/[a-z]/i.test(replacement) || !/[0-9]/.test(replacement)) {
+        return res.status(400).json({ message: "ตรวจรหัสนักศึกษาและเงื่อนไขรหัสผ่านใหม่" });
+    }
+    try {
+        const { rows } = await pgPool.query(
+            "SELECT user_id FROM public.users WHERE student_code = $1", [studentId]
+        );
+        const entry = rows[0] && otps.get(rows[0].user_id);
+        if (!entry || Date.now() > entry.expires || entry.tries >= 5 || String(otp) !== entry.code) {
+            if (entry) entry.tries++;
+            return res.status(400).json({ message: "OTP ไม่ถูกต้องหรือหมดอายุ" });
+        }
+        otps.delete(rows[0].user_id);
+        await pgPool.query("UPDATE public.users SET password_hash = $1 WHERE user_id = $2",
+            [await hashPassword(replacement), rows[0].user_id]);
+        return res.sendStatus(204);
+    } catch (error) {
+        console.error("reset failed:", error.message);
+        return res.status(500).json({ message: "รีเซ็ตรหัสผ่านไม่ได้ กรุณาลองอีกครั้ง" });
+    }
 });
 
 app.post("/api/auth/logout", (req, res) => {
