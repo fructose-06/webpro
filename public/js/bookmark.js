@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (window.lucide) window.lucide.createIcons();
 
   const cols = document.querySelector(".cols");
-const emptyState = document.querySelector(".bookmark-empty");
+  const emptyState = document.querySelector(".bookmark-empty");
 
   const list = document.querySelector(".list");
   const detailCard = document.querySelector(".detail");
@@ -13,7 +13,11 @@ const emptyState = document.querySelector(".bookmark-empty");
   const confirmBtn = document.querySelector(".bookmark-confirm-btn");
   const cancelBtn = document.querySelector(".bookmark-cancel-btn");
 
+  const searchInput = document.querySelector(".find input");
+  const searchEmpty = document.querySelector(".search-empty");
+
   let reviews = [];
+  let allReviews = [];
   let selectedReview = null;
   let pendingRemoveReview = null;
 
@@ -117,19 +121,30 @@ const emptyState = document.querySelector(".bookmark-empty");
   };
 
   const renderList = () => {
-    field("count").textContent = `· ${reviews.length}`;
+    field("count").textContent = `· ${allReviews.length}`;
+
+    if (allReviews.length === 0) {
+      cols.classList.add("hidden");
+      emptyState.classList.remove("hidden");
+      if (window.lucide) window.lucide.createIcons();
+      return;
+    }
+
+    cols.classList.remove("hidden");
+    emptyState.classList.add("hidden");
+
     if (reviews.length === 0) {
+      list.classList.add("hidden");
+      searchEmpty.classList.remove("hidden");
+      selectedReview = null;
+      return;
+    }
 
-    cols.classList.add("hidden");
-    emptyState.classList.remove("hidden");
-
-    return;
-}
-
-cols.classList.remove("hidden");
-emptyState.classList.add("hidden");
+    list.classList.remove("hidden");
+    searchEmpty.classList.add("hidden");
     list.innerHTML = reviews.map(itemHTML).join("");
     if (window.lucide) window.lucide.createIcons();
+
     const first = list.querySelector(".item");
     if (first) {
       first.setAttribute("aria-current", "true");
@@ -142,7 +157,8 @@ emptyState.classList.add("hidden");
       const res = await fetch("/api/reviews/bookmarks");
       if (!res.ok) return;
       const data = await res.json();
-      reviews = Array.isArray(data) ? data.map(mapDoc) : [];
+      allReviews = Array.isArray(data) ? data.map(mapDoc) : [];
+      reviews = [...allReviews];
       renderList();
     } catch (err) {
       console.error("Failed to load bookmarks:", err);
@@ -200,6 +216,22 @@ emptyState.classList.add("hidden");
       window.location.href = `review-detail.html?id=${encodeURIComponent(selectedReview.id)}`;
     }
   });
+
+  searchInput?.addEventListener("input", (e) => {
+  const keyword = e.target.value.trim().toLowerCase();
+
+  reviews = allReviews.filter((review) => {
+    return (
+      review.company.toLowerCase().includes(keyword) ||
+      review.role.toLowerCase().includes(keyword) ||
+      review.skills.some((skill) =>
+        skill.toLowerCase().includes(keyword)
+      )
+    );
+  });
+
+  renderList();
+});
 
   await loadBookmarks();
 });
