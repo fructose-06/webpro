@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ลืมรหัสผ่าน | Internsight</title>
+  <link rel="stylesheet" href="css/forgot.css">
+  <script src="js/forgot.js" defer></script>
+</head>
+<body>
+  <main class="box">
+    <h1>ลืมรหัสผ่าน</h1>
+    <p id="intro">กรอกรหัสนักศึกษา เราจะส่งรหัส OTP ไปที่อีเมลที่ลงทะเบียนไว้</p>
+    <p id="message" role="alert" hidden></p>
+
+    <!-- ขั้นที่ 1: รหัสนักศึกษา -->
+    <form id="step1">
+      <label for="student-id">รหัสนักศึกษา</label>
+      <input id="student-id" inputmode="numeric" pattern="[0-9]+" required>
+      <button type="submit">ส่งรหัส OTP</button>
+    </form>
+
+    <!-- ขั้นที่ 2: OTP + รหัสผ่านใหม่ -->
+    <form id="step2" hidden>
+      <label for="otp">รหัส OTP 6 หลัก</label>
+      <input id="otp" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" autocomplete="one-time-code" required>
+
+      <label for="new-pw">รหัสผ่านใหม่</label>
+      <input id="new-pw" type="password" minlength="8" autocomplete="new-password" required>
+      <small>อย่างน้อย 8 ตัว มีตัวอักษรภาษาอังกฤษและตัวเลข</small>
+
+      <label for="confirm-pw">ยืนยันรหัสผ่านใหม่</label>
+      <input id="confirm-pw" type="password" autocomplete="new-password" required>
+
+      <label class="check"><input id="show-pw" type="checkbox"> แสดงรหัสผ่าน</label>
+
+      <button type="submit">เปลี่ยนรหัสผ่าน</button>
+
+      <div class="links">
+        <button type="button" id="resend" class="link">ส่งรหัสอีกครั้ง</button>
+        <button type="button" id="change-id" class="link">ใช้รหัสนักศึกษาอื่น</button>
+      </div>
+    </form>
+
+    <p class="back"><a href="login.html">กลับไปเข้าสู่ระบบ</a></p>
+  </main>
+</body>
+</html>
