@@ -133,7 +133,8 @@ main {
 
 .cols {
   display: grid;
-  grid-template-columns: 4fr 5fr;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 8fr);
+  grid-template-rows: minmax(0, 1fr);
   gap: 16px;
   align-items: stretch;
   height: calc(100vh - 150px);
@@ -164,7 +165,10 @@ main {
   color: var(--muted);
   font-size: 17px;
 }
-
+.left,
+.detail {
+  min-width: 0;
+}
 .panel {
   display: flex;
   flex: 1;
@@ -246,12 +250,14 @@ main {
 
 .list {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   flex: 1;
   gap: 10px;
   align-content: start;
   min-height: 0;
   margin: 0;
   padding: 0 4px 0 0;
+  overflow-x: hidden;
   overflow-y: auto;
   list-style: none;
   scrollbar-width: thin;
@@ -343,11 +349,10 @@ main {
   flex-direction: column;
   min-height: 0;
   padding: 26px 28px 22px 72px;
-  overflow-y: auto;
+  overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 22px;
   background: var(--surface);
-  scrollbar-width: thin;
 }
 
 .detail::before {
@@ -376,9 +381,9 @@ main {
 
 .name {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 14px;
-  margin: 12px 0 14px;
+  margin: 12px 150px 14px 0;
   font-size: clamp(28px, 3vw, 40px);
   font-weight: 600;
 }
@@ -391,6 +396,19 @@ main {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
   font-size: 15px;
   white-space: nowrap;
+  flex: none;
+  margin-top: 6px;
+}
+
+.name [data-field="company"] {
+  display: -webkit-box;
+  min-width: 0;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-size: clamp(24px, 2.4vw, 34px);
+  line-height: 1.25;
 }
 
 .detail .line {
@@ -420,7 +438,10 @@ main {
   gap: 12px;
   margin: 16px 0 10px;
 }
-
+.item .r3 {
+  min-width: 0;
+  flex-wrap: wrap;
+}
 .score {
   display: flex;
   align-items: center;
@@ -443,7 +464,7 @@ main {
 
 .box {
   flex: 1 1 0;
-  min-height: 92px;
+  min-height: 0;
   padding: 14px 16px;
   overflow-y: auto;
   border-radius: 12px;
@@ -453,6 +474,7 @@ main {
 
 .detail footer {
   display: flex;
+  flex: none;
   align-items: center;
   gap: 12px;
   margin-top: 22px;
@@ -630,6 +652,15 @@ main {
     box-shadow: 0 8px 16px rgba(0, 0, 0, .08);
 }
 
+.search-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  color: var(--muted);
+}
+
 @media (max-height: 850px) {
   .left h1,
   .bookmark-empty h1 {
@@ -654,7 +685,7 @@ main {
     bottom: 24px;
   }
   .name {
-    margin: 8px 0;
+    margin: 8px 150px 8px 0;
     gap: 10px;
   }
   .mode {
@@ -683,7 +714,7 @@ main {
     font-size: 16px;
   }
   .box {
-    min-height: 60px;
+    min-height: 0;
     padding: 10px 12px;
     font-size: 14px;
   }
