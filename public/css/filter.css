@@ -56,16 +56,6 @@ svg.pin {
   transform: rotate(45deg);
 }
 
-.avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 2px solid var(--ink);
-  display: grid;
-  place-items: center;
-  flex:none;
-}
-
 main {
   max-width: 1460px;
   margin: 0 auto;
@@ -87,7 +77,6 @@ main {
   align-items: start;
 }
 
-/* Left Bar */
 .left-bar {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -232,6 +221,9 @@ main {
     overflow-y: auto;
     z-index: 100;
 }
+#skillSuggestions:empty{
+    display: none;
+}
 .suggestion-item{
     padding: 10px 14px;
     cursor: pointer;
@@ -263,7 +255,6 @@ main {
     display: none;
 }
 
-/* right bar */
 .right-bar {
   min-width: 0;
   min-height: 850px;
@@ -271,7 +262,6 @@ main {
   flex-direction: column;
 }
 
-/* Card */
 .right-bar .cards-grid {
   grid-template-columns: repeat(3, 1fr);
   gap: 32px 20px;
@@ -290,158 +280,12 @@ main {
   }
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 36px 24px;
-  padding-top: 14px;
-}
-.card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 30px 18px 16px;
-  container-type: inline-size;
-  cursor: pointer;
-  min-height: 250px;
-
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-}
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
-  border-color: #cfd3dc;
-}
-.card::before {
-  content: "";
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 118px;
-  height: 30px;
-  background: var(--img);
-  border-radius: 4px 4px 0 0;
-}
-.top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-}
-.card h3 {
-  margin: 0;
-  font-size: 21px;
-  font-weight: 600;
-}
-.mode {
-  font-size: 12px;
-  white-space: nowrap;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 1px 12px;
-  background: var(--chip);
-}
-.line {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.role {
-  font: 500 17px "Prompt";
-}
-.pay {
-  font-weight: 500;
-  font-size: 15px;
-}
-.chips {
-  display: flex;
-  flex: 1;
-  min-width: 0;
-  flex-wrap: nowrap;
-  gap: 6px;
-  overflow: hidden;
-}
-.chip {
-  flex: none;
-  white-space: nowrap;
-  border: 1px solid var(--line);
-  background: var(--chip);
-  border-radius: 999px;
-  padding: 0 14px;
-  font-size: 12px;
-}
-.chip.more {
-  cursor: pointer;
-  font: inherit;
-  font-size: 12px;
-  line-height: 1.5;
-  color: inherit;
-  padding: 0 14px;
-  margin: 0;
-  appearance: none;
-  transition: background .15s, border-color .15s;
-}
-.chip.more:hover {
-  border-color: var(--ink);
-  background: #e6e8ec;
-}
-.chip.more:active {
-  transform: scale(.95);
-}
-.more-pop {
-  position: absolute;
-  z-index: 10;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  max-width: 260px;
-  padding: 10px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.15);
-}
-.more-pop[hidden] {
-  display: none;
-}
-.contains {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  min-width: 0;
-  font-weight: 500;
-  font-size: 12px;
-  white-space: nowrap;
-  overflow: hidden;
-}
-.contains .chip {
-  font-size: inherit;
-  padding: 0 .7em;
-}
-.contains .chip.more {
-  font-size: inherit;
-  padding: 0 .7em;
-}
 .stars {
   display: flex;
   align-items: center;
   gap: 2px;
   margin-top: 14px;
   font-weight: 500;
-}
-.filled-star{
-    fill: black;
-    stroke: black;
-}
-.empty-star{
-    fill: none;
-    stroke: #c5c5c5;
 }
 .stars svg {
   width: 18px;
@@ -450,47 +294,6 @@ main {
 }
 .stars span {
   margin-left: 6px;
-}
-.who {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 6px;
-}
-.who .avatar {
-  width: 40px;
-  height: 40px;
-  background: var(--chip);
-  border-color: var(--line);
-}
-.who b {
-  display: block;
-  font-size: 12px;
-  line-height: 1.2;
-}
-.who small {
-  color: var(--muted);
-  font-size: 11px;
-}
-.acts {
-  display: flex;
-  justify-content: center;
-  gap: 28px;
-  margin-top: auto;
-  font-size: 13px;
-  font-weight: 500;
-}
-.acts button {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: none;
-  border: 0;
-  padding: 4px;
-  transition: transform 0.15s ease;
-}
-.acts button:hover {
-  transform: scale(1.08);
 }
 
 /* Page */
@@ -720,7 +523,6 @@ body {
 }
 #cardGrid .review-card .action-btn:hover { background-color: #f7e8d4; color: #a44a2d; }
 
-/* การเคลื่อนไหวเล็กน้อยเฉพาะแผงตัวกรองและปุ่ม */
 .left-bar {
   animation: filter-panel-appear 0.4s ease-out;
 }
