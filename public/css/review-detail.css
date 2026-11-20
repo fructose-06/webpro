@@ -1133,7 +1133,6 @@ body {
   .app-navbar { padding: 14px 18px; }
 }
 
-/* เคลื่อนไหวสั้น ๆ โดยไม่เปลี่ยนพื้นที่จัดวาง */
 .figma-header-card { animation: detail-appear 0.4s ease-out; }
 .inline-reply-composer, .comment-dropdown-menu, .comment-modal-card { animation: detail-appear 0.2s ease-out; }
 .post-review-page button { transition: transform 0.16s ease, background-color 0.16s ease, color 0.16s ease; }
