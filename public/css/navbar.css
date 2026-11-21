@@ -564,7 +564,8 @@ a.fab-write-review:focus-visible {
 .logout-modal {
   width: 100%;
   max-width: 400px;
-  background: #fff;
+  background: #fffcf5;
+  color: #502800;
   border-radius: 16px;
   padding: 24px;
   box-shadow: 0 16px 40px rgba(0,0,0,.18);
@@ -575,7 +576,7 @@ a.fab-write-review:focus-visible {
 }
 .logout-modal p {
   margin: 0;
-  color: #6b7280;
+  color: #806650;
 }
 .modal-actions {
   display: flex;
@@ -589,19 +590,29 @@ a.fab-write-review:focus-visible {
   font: inherit;
 }
 #cancelLogout {
-  border: 1px solid #e3e5e9;
-  background: #fff;
+  border: 1px solid #dfb99c;
+  background: #fff0df;
+  color: #63370f;
 }
 #cancelLogout:hover {
-  background: #f3f4f6;
+  background: #fce2d9;
 }
 .btn-logout {
   border: 0;
-  background: #dc2626;
+  background: #bf603f;
   color: white;
 }
 .btn-logout:hover {
-  background: #b91c1c;
+  background: #a44a2d;
+}
+.logout-modal-overlay.show .logout-modal { animation: logout-dialog-appear 0.2s ease-out; }
+@keyframes logout-dialog-appear {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .logout-modal-overlay { transition: none; }
+  .logout-modal-overlay.show .logout-modal { animation: none; }
 }
 
 @media (max-width: 768px) {

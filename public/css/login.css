@@ -329,7 +329,22 @@ dialog {
 	border-radius: 16px;
 }
 dialog::backdrop {
-	background: #0006;
+	background: #50371866;
+}
+dialog {
+	background: #fffcf5;
+	border-color: #c96b4e;
+	color: #502800;
+	box-shadow: 0 16px 40px #50371826;
+}
+dialog[open] { animation: auth-dialog-appear 0.2s ease-out; }
+dialog p { color: #806650; }
+@keyframes auth-dialog-appear {
+	from { opacity: 0; transform: translateY(6px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+	dialog[open] { animation: none; }
 }
 dialog h2 {
 	margin-top: 0;
