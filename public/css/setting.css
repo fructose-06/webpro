@@ -1,10 +1,10 @@
 :root {
-  --field-bg: #eef3fb;
-  --field-line: #cfd8e6;
-  --navy: #0b1f4d;
-  --blue: #5b7fb5;
+  --field-bg: #fffaf2;
+  --field-line: #dfb99c;
+  --navy: #63370f;
+  --blue: #bf603f;
   --danger: #d4000f;
-  --link: #0a58ff;
+  --link: #a44a2d;
 }
 
 *,
@@ -626,4 +626,91 @@ input[type="password"]::-ms-reveal, input[type="password"]::-ms-clear {
 .toast.show {
   opacity: 1;
   transform: translate(-50%, 0);
+}
+
+/* ธีมกระดาษครีมสำหรับการตั้งค่าบัญชี */
+body {
+  --ink: #502800;
+  --muted: #806650;
+  background: #fcf8ed url("../images/login-bg.png") center top / 100% auto repeat-y;
+}
+.account-card, .menu-card, .panel {
+  background: #fffcf5;
+  border-color: #d99b7b;
+  box-shadow: 0 8px 24px #66513412;
+}
+.panel::before { background: #f2d9a9; }
+.panel[data-panel="account"]::before { background: #e3e9c7; }
+.avatar-lg { background: #ffd3c2; color: #805333; border-color: #c96b4e; }
+.menu-item:hover { background: #fff0df; }
+.menu-item.active { background: #fce2d9; color: #a44a2d; }
+.menu-card hr, .rule { border-color: #e9d9c2; }
+.input { color: #674329; }
+.input svg { color: #ad5738; }
+.input:has(input[readonly]) { background: #f2eee5; border-color: #ded4c4; }
+.input:has(input:not([readonly])):hover { background: #fffaf2; border-color: #c96b4e; }
+.input:has(input:not([readonly])):focus-within {
+  background: #fff;
+  border-color: #a44a2d;
+  box-shadow: 0 0 0 3px #bf603f20;
+}
+.hint, .pic-note p { color: #806650; }
+.btn-pill.primary { background: #bf603f; color: #fff; }
+.btn-pill.primary:hover:not(:disabled) { background: #a44a2d; }
+.btn-pill.secondary { background: #fff0df; border-color: #dfb99c; color: #674329; }
+.btn-pill.secondary:hover:not(:disabled) { background: #fce2d9; }
+.pic { background: #f8efd9; border-color: #dfb99c; color: #a97d55; }
+.pic .edit { background: #fffcf5; border-color: #dfb99c; color: #8b452d; }
+.pic .edit:hover { background: #fce2d9; border-color: #bf603f; }
+.pic-note { background: #eaf0d9; border-color: #cbd5ad; }
+.note-head { color: #526035; }
+.btn-change { background: #fff0df; color: #a44a2d; border-color: #dfb99c; }
+.btn-change:hover { background: #fce2d9; }
+.confirm { background: #fffcf5; border-color: #c96b4e; color: #502800; }
+.toast { background: #63370f; }
+.settings :is(a, button, input):focus-visible { outline-color: #a44a2d; }
+
+/* เมนูบนใช้ขนาดและชุดสีเดียวกับ Home */
+#app-navbar { font-size: 16px; line-height: normal; }
+:where(#app-navbar) *, :where(#app-navbar) *::before, :where(#app-navbar) *::after { margin: 0; padding: 0; }
+:where(#app-navbar) button { font-family: Arial, sans-serif; }
+.app-navbar { background: #fcf8ed; border-bottom: 2px dashed #d8c69d; padding: 10px 30px; }
+.app-navbar .search-bar { max-width: 740px; border: 1px solid #bf603f; border-radius: 20px; padding: 9px 12px; }
+.app-navbar .search-btn { background: #bf603f; color: #fff; padding: 8px 24px; }
+.app-navbar .search-btn:hover { background: #a44a2d; }
+.app-navbar :is(.brand-link, .menu-btn, .nav-icon-btn, .filter-btn, .user-profile, .search-icon, .chevron-icon, .search-input) { color: #633d20; }
+.app-navbar .user-profile { background: transparent; border-color: transparent; }
+.app-navbar .user-avatar-badge { background: #805333; color: #fff8ee; }
+.app-navbar .search-input::placeholder { color: #947d66; }
+.app-navbar :is(.menu-btn, .nav-icon-btn, .filter-btn, .user-profile):hover,
+.profile-dropdown a:hover, .sidebar-item:hover { background: #f5e4cd; color: #a44a2d; }
+.sidebar, .profile-dropdown, .app-navbar .search-history-dropdown { background: #fffcf5; border-color: #e2c9a9; }
+.sidebar :is(.sidebar-logo, .sidebar-item, .close-btn), .profile-dropdown a { color: #633d20; }
+.sidebar-item svg { color: inherit; }
+.sidebar-item.active { background: #f7dfcf; color: #954627; }
+.profile-dropdown a.logout { color: #a44832; }
+.profile-dropdown a.logout:hover { background: #fbe1d7; }
+.app-navbar .search-history-item { color: #633d20; }
+.app-navbar .search-history-item:hover { background: #f5e4cd; }
+@media (max-width: 1024px) {
+  .app-navbar { padding: 14px 18px; }
+}
+
+/* แสดงแผงเมื่อเปลี่ยนแท็บและตอบสนองต่อการกดปุ่ม */
+.panel:not([hidden]), .account-card { animation: settings-appear 0.35s ease-out; }
+.menu-item, .btn-pill, .btn-change, .pic .edit {
+  transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn-pill:hover:not(:disabled), .btn-change:hover:not(:disabled), .pic .edit:hover:not(:disabled) { transform: translateY(-2px); }
+}
+.btn-pill:active:not(:disabled), .btn-change:active:not(:disabled) { transform: scale(0.97); }
+@keyframes settings-appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .panel:not([hidden]), .account-card { animation: none; }
+  .menu-item, .btn-pill, .btn-change, .pic .edit, .toast { transition: none; }
+  .btn-pill:is(:hover, :active), .btn-change:is(:hover, :active), .pic .edit:hover { transform: none; }
 }
