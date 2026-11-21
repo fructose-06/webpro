@@ -1,11 +1,11 @@
 :root {
-  --bg: #f3f4f6;
-  --surface: #fff;
-  --ink: #16171a;
-  --muted: #6b7280;
-  --line: #e3e5e9;
-  --chip: #f1f2f4;
-  --accent: #16171a;
+  --bg: #fcf8ed;
+  --surface: #fffcf5;
+  --ink: #502800;
+  --muted: #806650;
+  --line: #c96b4e;
+  --chip: #fff0e9;
+  --accent: #bf603f;
   --on-accent: #fff;
 }
 
@@ -275,8 +275,8 @@ main {
 
 .item[aria-current="true"] {
   padding-left: 20px;
-  background: #d3d5d9;
-  box-shadow: inset 8px 0 0 #9aa0a9;
+  background: #ffebe1;
+  box-shadow: inset 8px 0 0 #bf603f;
 }
 
 .item .r1, .item .r2, .item .r3 {
@@ -362,7 +362,7 @@ main {
   bottom: 36px;
   left: 16px;
   width: 18px;
-  background-image: radial-gradient(circle at center, #d6d9de 0, #d6d9de 8.5px, transparent 9px);
+  background-image: radial-gradient(circle at center, #bf603f 0, #bf603f 8.5px, transparent 9px);
   background-repeat: repeat-y;
   background-size: 18px 38px;
 }
@@ -744,4 +744,81 @@ main {
     font-size: 14px;
     border-radius: 20px;
   }
+}
+
+/* สีรายการและหน้ากระดาษตัวอย่างรีวิว */
+.left .sub, .bookmark-empty .sub { color: #bf603f; }
+.panel, .detail { box-shadow: 0 8px 24px #66513412; }
+.item:not([aria-current="true"]) { background: #fff; box-shadow: inset 0 0 0 1px #c96b4e; }
+.item:not([aria-current="true"]):hover { background: #fff5e9; }
+.find, .tools .sel, .box { background: #fff; border-color: #c96b4e; }
+.find:focus-within, .tools .sel:focus-visible { outline: 2px solid #bf603f; outline-offset: 2px; }
+.item .chip, .detail .chip { background: #fff0b8; color: #674d20; border-color: transparent; }
+.item .chip:nth-child(3n + 2), .detail .chip:nth-child(3n + 2) { background: #fce2d9; color: #8b452d; }
+.item .chip:nth-child(3n), .detail .chip:nth-child(3n) { background: #e3e9c7; color: #526035; }
+.score { background: #fff0b8; color: #674d20; }
+.score:nth-child(2) { background: #e3e9c7; color: #526035; }
+.score:nth-child(3) { background: #fce2d9; color: #8b452d; }
+.mode { background: #fce2d9; color: #8b452d; border-color: #c96b4e; }
+.item [data-lucide="bookmark"], .detail .btn-out svg { color: #bf603f; }
+.detail footer .avatar { background: #efe2cc; color: #805333; }
+.btn-dark { background: #bf603f; color: #fff; border-color: #bf603f; }
+.btn-dark:hover { background: #a44a2d; }
+.btn-out, .btn-outline { background: #fffcf5; color: #8b452d; border-color: #c96b4e; }
+.btn-out:hover, .btn-outline:hover { background: #fce2d9; }
+.bookmark-modal-content, .empty-panel { background: #fffcf5; border-color: #e2c9b4; }
+.bookmark-cancel-btn { background: #fff0df; color: #63370f; }
+.bookmark-cancel-btn:hover { background: #f5e4cd; }
+.bookmark-confirm-btn { background: #bf603f; color: #fff; }
+.bookmark-confirm-btn:hover { background: #a44a2d; }
+.empty-panel > svg { color: #bf603f; }
+
+/* คืนค่าขนาดไอคอนเมนูและใช้ธีมเดียวกับ Home */
+#app-navbar { font-size: 16px; line-height: normal; }
+:where(#app-navbar) *, :where(#app-navbar) *::before, :where(#app-navbar) *::after { margin: 0; padding: 0; }
+:where(#app-navbar) button { font-family: Arial, sans-serif; }
+:where(#app-navbar) svg { width: 24px; height: 24px; flex: 0 1 auto; }
+.app-navbar { background: #fcf8ed; border-bottom: 2px dashed #d8c69d; padding: 10px 30px; }
+.app-navbar .search-bar { max-width: 740px; border: 1px solid #bf603f; border-radius: 20px; padding: 9px 12px; }
+.app-navbar .search-btn { background: #bf603f; color: #fff; padding: 8px 24px; }
+.app-navbar .search-btn:hover { background: #a44a2d; }
+.app-navbar :is(.brand-link, .menu-btn, .nav-icon-btn, .filter-btn, .user-profile, .search-icon, .chevron-icon, .search-input) { color: #633d20; }
+.app-navbar .user-profile { background: transparent; border-color: transparent; }
+.app-navbar .user-avatar-badge { background: #805333; color: #fff8ee; }
+.app-navbar .search-input::placeholder { color: #947d66; }
+.app-navbar :is(.menu-btn, .nav-icon-btn, .filter-btn, .user-profile):hover,
+.profile-dropdown a:hover, .sidebar-item:hover { background: #f5e4cd; color: #a44a2d; }
+.sidebar, .profile-dropdown, .app-navbar .search-history-dropdown { background: #fffcf5; border-color: #e2c9a9; }
+.sidebar :is(.sidebar-logo, .sidebar-item, .close-btn), .profile-dropdown a { color: #633d20; }
+.sidebar-item svg { color: inherit; }
+.sidebar-item.active { background: #f7dfcf; color: #954627; }
+.profile-dropdown a.logout { color: #a44832; }
+.profile-dropdown a.logout:hover { background: #fbe1d7; }
+.app-navbar .search-history-item { color: #633d20; }
+.app-navbar .search-history-item:hover { background: #f5e4cd; }
+@media (max-width: 1024px) {
+  .app-navbar { padding: 14px 18px; }
+}
+
+/* เคลื่อนไหวเบา ๆ ตอนเปิดหน้า เลือกรายการ และกดปุ่ม */
+.panel, .detail, .empty-panel { animation: bookmark-appear 0.4s ease-out; }
+.item[aria-current="true"] { animation: bookmark-selected 0.25s ease-out; }
+.bookmark-modal-content { animation: bookmark-appear 0.2s ease-out; }
+.btn-dark, .btn-out, .btn-outline { transition: transform 0.18s ease, background-color 0.18s ease; }
+@media (hover: hover) and (pointer: fine) {
+  .btn-dark:hover, .btn-out:hover, .btn-outline:hover { transform: translateY(-2px); }
+}
+.btn-dark:active, .btn-out:active, .btn-outline:active { transform: scale(0.97); }
+@keyframes bookmark-appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes bookmark-selected {
+  from { opacity: 0.75; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .panel, .detail, .empty-panel, .item[aria-current="true"], .bookmark-modal-content { animation: none; }
+  .item, .btn-dark, .btn-out, .btn-outline { transition: none; }
+  :is(.btn-dark, .btn-out, .btn-outline):is(:hover, :active) { transform: none; }
 }
