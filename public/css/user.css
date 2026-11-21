@@ -582,3 +582,90 @@ main {
   background: #34363b;
   box-shadow: 0 6px 16px rgba(0, 0, 0, .18);
 }
+
+/* ธีมโปรไฟล์และการ์ดรีวิว */
+body {
+  --surface: #fffcf5;
+  --ink: #502800;
+  --muted: #806650;
+  --line: #e2c9b4;
+  --accent: #bf603f;
+  background: #fcf8ed url("../images/login-bg.png") center top / 100% auto repeat-y;
+}
+.profile, .banner { border-color: #c96b4e; box-shadow: 0 3px 10px #80533318; }
+.profile .big { background: #ffd3c2; border-color: #c96b4e; color: #63370f; }
+.banner { background: #fcf0e5; }
+.profile .btn-sm, .sort-trigger { background: #fffcf5; border-color: #c96b4e; color: #63370f; }
+.profile .btn-sm:hover { background: #fce2d9; }
+.banner .btn-dark:hover { background: #a44a2d; }
+.sort-menu { background: #fffcf5; border-color: #e2c9b4; }
+.sort-option { color: #63370f; }
+.sort-option:hover { background: #fce2d9; }
+.sort-option.active { background: #bf603f; color: #fff; }
+#myReviews .review-card { background: #fffcf5; border-color: #c96b4e; }
+#myReviews .review-card::before { background: #f2d9a9; }
+#myReviews .review-card:nth-child(3n + 2)::before { background: #fce2d9; }
+#myReviews .review-card:nth-child(3n)::before { background: #e3e9c7; }
+#myReviews .review-card :is(.company-name, .author-name, .rating-num) { color: #502800; }
+#myReviews .review-card :is(.job-title, .salary-text, .card-row) { color: #674329; }
+#myReviews .review-card :is(.contains-label, .review-date) { color: #806650; }
+#myReviews .review-card .mode-badge { background: #ffebe2; border-color: #c96b4e; color: #8b452d; }
+#myReviews .review-card .skill-pill { background: #fff0b8; border-color: #d9b445; color: #674d20; }
+#myReviews .review-card .skill-pill:nth-child(3n + 2) { background: #fce2d9; border-color: #eaa38e; color: #8b452d; }
+#myReviews .review-card .skill-pill:nth-child(3n) { background: #e3e9c7; border-color: #a2b867; color: #526035; }
+#myReviews .review-card .info-pill { background: #fff7e8; border-color: #eaa38e; color: #8b452d; }
+#myReviews .review-card .row-icon { color: #ad5738; }
+#myReviews .review-card .star-icon { color: #b28030; }
+#myReviews .review-card .star-icon.filled { fill: #d5a64d; }
+#myReviews .review-card .action-btn { color: #63370f; }
+#myReviews .review-card .action-btn svg { color: inherit; }
+#myReviews .review-card .js-like-btn { color: #bf603f; }
+#myReviews .review-card .action-btn.active svg,
+#myReviews .review-card .action-btn svg.active-bookmark { color: inherit; stroke: currentColor; fill: currentColor; }
+#myReviews .owner-edit { background: #fff0df; color: #8b452d; }
+#myReviews .owner-delete { background: #fff5ef; color: #a44832; }
+#deleteReview { background: #fffcf5; border-color: #c96b4e; }
+
+/* เมนูขนาดเดียวกับ Home */
+#app-navbar { font-size: 16px; line-height: normal; }
+:where(#app-navbar) *, :where(#app-navbar) *::before, :where(#app-navbar) *::after { margin: 0; padding: 0; }
+:where(#app-navbar) button { font-family: Arial, sans-serif; }
+:where(#app-navbar) svg { width: 24px; height: 24px; flex: 0 1 auto; }
+.app-navbar { background: #fcf8ed; border-bottom: 2px dashed #d8c69d; padding: 10px 30px; }
+.app-navbar .search-bar { max-width: 740px; border: 1px solid #bf603f; border-radius: 20px; padding: 9px 12px; }
+.app-navbar .search-btn { background: #bf603f; color: #fff; padding: 8px 24px; }
+.app-navbar .search-btn:hover { background: #a44a2d; }
+.app-navbar :is(.brand-link, .menu-btn, .nav-icon-btn, .filter-btn, .user-profile, .search-icon, .chevron-icon, .search-input) { color: #633d20; }
+.app-navbar .user-profile { background: transparent; border-color: transparent; }
+.app-navbar .user-avatar-badge { background: #805333; color: #fff8ee; }
+.app-navbar .search-input::placeholder { color: #947d66; }
+.app-navbar :is(.menu-btn, .nav-icon-btn, .filter-btn, .user-profile):hover,
+.profile-dropdown a:hover, .sidebar-item:hover { background: #f5e4cd; color: #a44a2d; }
+.sidebar, .profile-dropdown, .app-navbar .search-history-dropdown { background: #fffcf5; border-color: #e2c9a9; }
+.sidebar :is(.sidebar-logo, .sidebar-item, .close-btn), .profile-dropdown a { color: #633d20; }
+.sidebar-item svg { color: inherit; }
+.sidebar-item.active { background: #f7dfcf; color: #954627; }
+.profile-dropdown a.logout { color: #a44832; }
+.profile-dropdown a.logout:hover { background: #fbe1d7; }
+.app-navbar .search-history-item { color: #633d20; }
+.app-navbar .search-history-item:hover { background: #f5e4cd; }
+@media (max-width: 1024px) {
+  .app-navbar { padding: 14px 18px; }
+}
+
+/* การเคลื่อนไหวเบา ๆ ของแถบโปรไฟล์และปุ่ม */
+.profile, .banner { animation: profile-appear 0.4s ease-out; }
+main :is(.btn-sm, .btn-dark) { transition: transform 0.18s ease, background-color 0.18s ease; }
+@media (hover: hover) and (pointer: fine) {
+  main :is(.btn-sm, .btn-dark):hover:not(:disabled) { transform: translateY(-2px); }
+}
+main :is(.btn-sm, .btn-dark):active:not(:disabled) { transform: scale(0.97); }
+@keyframes profile-appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .profile, .banner { animation: none; }
+  main :is(.btn-sm, .btn-dark), #myReviews .review-card { transition: none; }
+  main :is(.btn-sm, .btn-dark):is(:hover, :active), #myReviews .review-card:hover { transform: none; }
+}
