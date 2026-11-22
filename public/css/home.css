@@ -5,7 +5,7 @@
 }
 
 body {
-    font-family: "Noto Sans Thai", "Prompt", sans-serif;
+    font-family: "Noto Sans Thai", sans-serif;
     background-color: #ffffff;
     color: #16171a;
 }
@@ -533,4 +533,8 @@ body {
     .home-page .action-btn { transition: none; }
     .home-page .review-card:hover,
     .home-page .action-btn:hover { transform: none; }
+}
+
+button, input, select, textarea {
+  font-family: inherit;
 }

@@ -15,7 +15,7 @@ body {
 	margin: 0;
 	background: var(--background) url("../images/login-bg.png") center top / cover no-repeat;
 	color: var(--ink);
-	font-family: "Noto Sans Thai", Tahoma, Arial, sans-serif;
+	font-family: "Noto Sans Thai", sans-serif;
 }
 button,
 input {
@@ -43,8 +43,7 @@ button {
 	align-items: center;
 	gap: 12px;
 	font:
-		700 21px Arial,
-		sans-serif;
+		700 21px "Noto Sans Thai", sans-serif;
 }
 .brand-icon {
 	width: 40px;
@@ -530,4 +529,8 @@ dialog p {
 @keyframes note-float {
 	0%, 100% { translate: 0 0; }
 	50% { translate: 0 -20px; }
+}
+
+button, input, select, textarea {
+  font-family: inherit;
 }

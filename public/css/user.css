@@ -24,7 +24,7 @@ body {
 }
 
 h1, h2, h3, button, label, select, .brand, .nav {
-  font-family: "Prompt", "Noto Sans Thai", sans-serif;
+  font-family: "Noto Sans Thai", sans-serif;
 }
 
 button {
@@ -166,7 +166,7 @@ main {
 }
 
 .role {
-  font: 500 17px "Prompt";
+  font: 500 17px "Noto Sans Thai", sans-serif;
 }
 
 .pay {
@@ -323,7 +323,7 @@ main {
   display: grid; 
   place-items: center;
 }
-.profile h1 { margin: 0; font: 600 20px "Prompt", sans-serif; }
+.profile h1 { margin: 0; font: 600 20px "Noto Sans Thai", sans-serif; }
 
 .banner {
   display: flex; 
@@ -346,7 +346,7 @@ main {
 }
 .banner p { 
   margin: 0; 
-  font: 600 17px "Prompt", sans-serif; 
+  font: 600 17px "Noto Sans Thai", sans-serif;
 }
 
 .list-head {
@@ -480,7 +480,7 @@ main {
   background: #ffffff;
   border: 1.5px solid #d4d7de;
   border-radius: 9999px;
-  font-family: "Prompt", "Noto Sans Thai", sans-serif;
+  font-family: "Noto Sans Thai", sans-serif;
   font-size: 14px;
   font-weight: 500;
   color: #16171a;
@@ -629,7 +629,7 @@ body {
 /* เมนูขนาดเดียวกับ Home */
 #app-navbar { font-size: 16px; line-height: normal; }
 :where(#app-navbar) *, :where(#app-navbar) *::before, :where(#app-navbar) *::after { margin: 0; padding: 0; }
-:where(#app-navbar) button { font-family: Arial, sans-serif; }
+:where(#app-navbar) button { font-family: "Noto Sans Thai", sans-serif; }
 :where(#app-navbar) svg { width: 24px; height: 24px; flex: 0 1 auto; }
 .app-navbar { background: #fcf8ed; border-bottom: 2px dashed #d8c69d; padding: 10px 30px; }
 .app-navbar .search-bar { max-width: 740px; border: 1px solid #bf603f; border-radius: 20px; padding: 9px 12px; }
@@ -668,4 +668,8 @@ main :is(.btn-sm, .btn-dark):active:not(:disabled) { transform: scale(0.97); }
   .profile, .banner { animation: none; }
   main :is(.btn-sm, .btn-dark), #myReviews .review-card { transition: none; }
   main :is(.btn-sm, .btn-dark):is(:hover, :active), #myReviews .review-card:hover { transform: none; }
+}
+
+button, input, select, textarea {
+  font-family: inherit;
 }

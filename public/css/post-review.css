@@ -29,7 +29,7 @@ body {
   margin: 0;
   background-color: var(--bg);
   color: var(--ink);
-  font-family: "Noto Sans Thai", "Prompt", sans-serif;
+  font-family: "Noto Sans Thai", sans-serif;
   line-height: 1.5;
   min-height: 100vh;
   display: flex;
@@ -1063,4 +1063,8 @@ select.form-control {
   .page-container :is(button, a, .toggle-slider, .toggle-slider::before) { transition: none; }
   .page-container :is(.btn-primary, .btn-secondary, .add-skill-btn, .star-btn):is(:hover, :active) { transform: none; }
   .modal-box { transition: none; }
+}
+
+button, input, select, textarea {
+  font-family: inherit;
 }

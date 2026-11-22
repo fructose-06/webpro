@@ -6,7 +6,7 @@
 body {
   background-color: #fcf8ed;
   color: #502800;
-  font-family: "Inter", "Prompt", "Noto Sans Thai", sans-serif;
+  font-family: "Noto Sans Thai", sans-serif;
   margin: 0;
 }
 
@@ -1149,4 +1149,8 @@ body {
   .figma-header-card, .inline-reply-composer, .comment-dropdown-menu, .comment-modal-card { animation: none; }
   .post-review-page button, .back-arrow-link { transition: none; }
   .post-review-page button:is(:hover, :active), .back-arrow-link:hover { transform: none; }
+}
+
+button, input, select, textarea {
+  font-family: inherit;
 }

@@ -19,7 +19,7 @@ body {
   font: 400 14px/1.5 "Noto Sans Thai", system-ui, sans-serif;
 }
 h1, h2, h3, button, label,  select, .brand, .nav  {
-  font-family: "Prompt", "Noto Sans Thai", sans-serif;
+  font-family: "Noto Sans Thai", sans-serif;
 }
 button {
   cursor: pointer;
@@ -65,7 +65,7 @@ main {
   display: flex;
   align-items: center;
   gap: 8px;
-  font: 600 18px "Prompt";
+  font: 600 18px "Noto Sans Thai", sans-serif;
   padding-bottom: 12px;
   border-bottom: 1px solid var(--line);
   margin-bottom: 20px;
@@ -392,7 +392,7 @@ svg.active-bookmark {
   margin: 0;
   padding: 0;
 }
-:where(#app-navbar) button { font-family: Arial, sans-serif; }
+:where(#app-navbar) button { font-family: "Noto Sans Thai", sans-serif; }
 :where(#app-navbar) svg {
   width: 24px;
   height: 24px;
@@ -558,4 +558,8 @@ body {
   .pager button:is(:hover, :active):not(:disabled):not([aria-disabled="true"]) {
     transform: none;
   }
+}
+
+button, input, select, textarea {
+  font-family: inherit;
 }
