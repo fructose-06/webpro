@@ -11,7 +11,7 @@ body {
   padding: 1rem;
   background: #ffffff;
   color: #222222;
-  font-family: system-ui, "Noto Sans Thai", sans-serif;
+  font-family: "Noto Sans Thai", sans-serif;
   line-height: 1.6;
 }
 
@@ -164,4 +164,8 @@ form:not([hidden]) { animation: recovery-appear 0.25s ease-out; }
   .box, form:not([hidden]) { animation: none; }
   button, input { transition: none; }
   button:is(:hover, :active):not(:disabled):not(.link) { transform: none; }
+}
+
+button, input, select, textarea {
+  font-family: inherit;
 }

@@ -31,7 +31,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-family: "Prompt", "Noto Sans Thai", sans-serif;
+  font-family: "Noto Sans Thai", sans-serif;
   font-size: 14px;
   font-weight: 600;
   padding: 10px 20px;
@@ -146,7 +146,7 @@
   box-shadow: var(--shadow-card);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   cursor: pointer;
-  font-family: "Prompt", "Noto Sans Thai", sans-serif;
+  font-family: "Noto Sans Thai", sans-serif;
 }
 
 .review-card:hover {
@@ -395,7 +395,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: "Inter", "Prompt", sans-serif;
+  font-family: "Noto Sans Thai", sans-serif;
   font-size: 13px;
   font-weight: 700;
   color: #000000;
