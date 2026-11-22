@@ -89,8 +89,10 @@ async function matchesPassword(password, storedHash) {
 app.post("/api/auth/register", async (req, res) => {
     const { studentId, email, admissionYear, password } = req.body || {};
     const address = typeof email === "string" ? email.trim().toLowerCase() : "";
-    if (typeof studentId !== "string" || !/^[0-9]{1,20}$/.test(studentId) ||
-        !Number.isInteger(admissionYear) || admissionYear < 2503 ||
+    if (typeof studentId !== "string" || studentId.length !== 11 || !/^[0-9]{2}0905004[0-9]{2}$/.test(studentId)) {
+        return res.status(400).json({ message: "รหัสนักศึกษาต้องมี 11 หลัก รูปแบบ ??0905004?? โดย ? เป็นตัวเลข 0–9 เช่น 67090500400" });
+    }
+    if (!Number.isInteger(admissionYear) || admissionYear < 2503 ||
         admissionYear > new Date().getFullYear() + 543 ||
         !/^[^\s@]+@[^\s@]+$/.test(address) || address.length > 100 ||
         typeof password !== "string" || !password.length || password.length > 1024) {

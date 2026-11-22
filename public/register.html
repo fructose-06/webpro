@@ -45,12 +45,13 @@
 						<input
 							id="student-id"
 							name="studentId"
-							maxlength="20"
+							minlength="11"
+							maxlength="11"
 							type="text"
 							inputmode="numeric"
 							autocomplete="username"
-							pattern="[0-9]+"
-							title="กรอกรหัสนักศึกษาเป็นตัวเลข"
+							pattern="[0-9]{2}0905004[0-9]{2}"
+							title="กรอกรหัสนักศึกษา 11 หลัก รูปแบบ ??0905004?? โดย ? เป็นตัวเลข 0–9 เช่น 67090500400"
 							placeholder="เช่น 67090500400"
 							required
 						/>
