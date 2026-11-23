@@ -56,10 +56,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       mentor,
       pros: doc.pros || "-",
       cons: doc.cons || "-",
+      userId: !doc.is_anonymous && doc.user_id ? Number(doc.user_id) : null,
+      authorImage: !doc.is_anonymous && doc.author_image ? doc.author_image : null,
       user: doc.is_anonymous ? "ผู้ไม่ประสงค์ออกนาม" : (doc.author_name || "นักศึกษาฝึกงาน"),
       date: formatThaiDate(doc.created_at)
     };
   };
+
+  const renderAvatarInner = (r) =>
+    r?.authorImage
+      ? `<img src="${esc(r.authorImage)}" alt="${esc(r.user)}">`
+      : `<i data-lucide="user-round"></i>`;
 
   const itemHTML = (r, index) => `
     <li class="item" data-index="${index}">
@@ -73,7 +80,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       <div class="r3">
         <i data-lucide="code-xml"></i>
         ${r.skills.map((s) => `<span class="chip">${esc(s)}</span>`).join("")}
-        <span class="by"><span class="avatar"><i data-lucide="user-round"></i></span>${esc(r.user)}</span>
+        <span class="by">${
+          r.userId
+            ? `<a href="user.html?id=${encodeURIComponent(r.userId)}" class="bookmark-author-link"><span class="avatar">${renderAvatarInner(r)}</span>${esc(r.user)}</a>`
+            : `<span class="avatar">${renderAvatarInner(r)}</span>${esc(r.user)}`
+        }</span>
       </div>
     </li>`;
 
@@ -104,8 +115,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     field("mentor").textContent = `${r.mentor} / 5`;
     field("pros").textContent = r.pros;
     field("cons").textContent = r.cons;
-    field("user").textContent = r.user;
+
+    const detailAvatar = detailCard?.querySelector("footer .avatar");
+    if (detailAvatar) {
+      detailAvatar.innerHTML = renderAvatarInner(r);
+      detailAvatar.style.cursor = r.userId ? "pointer" : "";
+      detailAvatar.onclick = r.userId
+        ? () => { window.location.href = `user.html?id=${encodeURIComponent(r.userId)}`; }
+        : null;
+    }
+
+    const userField = field("user");
+    if (userField) {
+      if (r.userId) {
+        userField.innerHTML = `<a href="user.html?id=${encodeURIComponent(r.userId)}" class="bookmark-author-link">${esc(r.user)}</a>`;
+      } else {
+        userField.textContent = r.user;
+      }
+    }
     field("date").textContent = r.date;
+    if (window.lucide) window.lucide.createIcons();
 
     const chips = r.skills.map((skill) => {
       const chip = document.createElement("span");

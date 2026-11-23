@@ -73,6 +73,26 @@ svg.lg {
   height: 32px;
   border: 2px solid var(--ink);
   border-radius: 50%;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.bookmark-author-link {
+  color: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bookmark-author-link:hover {
+  text-decoration: underline;
 }
 
 .line {
