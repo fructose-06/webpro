@@ -313,6 +313,7 @@
   color: #000000;
   line-height: 1;
   margin-left: 2px;
+  transform: translateY(1.5px);
 }
 
 /* Row 7: Author Info (left-aligned, pushed to bottom so card footers align across grid) */
